@@ -98,7 +98,7 @@ class Sequence(Node):
     """Sequence is virtual operation to aid compilation to EasterEgg"""
 
     left: Node
-    right: Node
+    right: Node | None
 
 
 @dataclass
@@ -210,7 +210,7 @@ class Parser:
 
                 case 'DrawRect':
                     self.advance()
-                    rect = sk_command['co']
+                    rect = sk_command['coords']
                     res.append(DrawRect(self.clip_stack[-1], self.m44_stack[-1], None, Rect(*rect)))
 
                 case 'DrawImageRect':
@@ -244,8 +244,9 @@ class Parser:
                     self.clip_stack.pop()
                     self.m44_stack.pop()
 
+                    print(sk_command)
                     bounds = sk_command['bounds']
-                    paint = sk_command['paint']
+                    paint = sk_command.get('paint', None)
 
                     res.append(
                         SaveLayer(self.clip_stack[-1], self.m44_stack[-1], things, bounds, paint)
@@ -274,7 +275,7 @@ class Parser:
                 case 'ClipPath':
                     self.advance()
                     op = sk_command['op']
-                    fill_type = sk_command['path']['fill_type']
+                    fill_type = sk_command['path']['fillType']
                     verbs = sk_command['path']['verbs']
                     self.clip_stack[-1] = PathBounds(op, fill_type, verbs)
 
@@ -287,6 +288,17 @@ class Parser:
                     raise NotImplementedError(f'Unknown operator {sk_command["command"]}')
 
         return res
+
+
+def iterative(command):
+    if not command:
+        return None
+
+    result = None
+    for i in range(len(command) - 1, -1, -1):
+        result = Sequence(command[i], result)
+
+    return result
 
 
 if __name__ == '__main__':
@@ -308,4 +320,6 @@ if __name__ == '__main__':
     with open(filepath, 'rb') as f:
         skp = json.load(f)
 
-    print(Parser(skp['commands']).parse_commands())
+    commands = Parser(skp['commands']).parse_commands()
+
+    print(iterative(commands))
