@@ -1,3 +1,5 @@
+import json
+import sys
 from dataclasses import dataclass
 from typing import Any, NamedTuple
 
@@ -139,6 +141,18 @@ class DrawRRect(Draw):
     radii: Radii
 
 
+@dataclass
+class DrawRect(Draw):
+    rect: Rect
+
+
+@dataclass
+class DrawImageRect(Draw):
+    image: str
+    src: Rect
+    dst: Rect
+
+
 class Parser:
     ptr: int
     sk_commands: list[dict[str, Any]]
@@ -177,7 +191,7 @@ class Parser:
                     self.advance()
                     res.append(DrawPaint(self.clip_stack[-1], self.m44_stack[-1], None))
 
-                case 'DrawRect':
+                case 'DrawRRect':
                     self.advance()
                     rect, *radii = sk_command['coords']
                     left = radii[0][0]
@@ -194,6 +208,24 @@ class Parser:
                         )
                     )
 
+                case 'DrawRect':
+                    self.advance()
+                    rect = sk_command['co']
+                    res.append(DrawRect(self.clip_stack[-1], self.m44_stack[-1], None, Rect(*rect)))
+
+                case 'DrawImageRect':
+                    self.advance()
+                    image = sk_command['image']['data']
+                    src = sk_command['src']
+                    dst = sk_command['dst']
+                    paint = sk_command['paint']
+
+                    res.append(
+                        DrawImageRect(
+                            self.clip_stack[-1], self.m44_stack[-1], None, image, src, dst
+                        )
+                    )
+
                 case 'Save':
                     self.advance()
                     self.clip_stack.append(self.clip_stack[-1])
@@ -203,6 +235,22 @@ class Parser:
                     self.clip_stack.pop()
                     self.m44_stack.pop()
                     res.append(Save(self.clip_stack[-1], self.m44_stack[-1], things))
+                case 'SaveLayer':
+                    self.advance()
+                    self.clip_stack.append(self.clip_stack[-1])
+                    self.m44_stack.append(self.m44_stack[-1])
+                    things = self.parse_commands()
+                    self.advance()
+                    self.clip_stack.pop()
+                    self.m44_stack.pop()
+
+                    bounds = sk_command['bounds']
+                    paint = sk_command['paint']
+
+                    res.append(
+                        SaveLayer(self.clip_stack[-1], self.m44_stack[-1], things, bounds, paint)
+                    )
+
                 case 'ClipRect':
                     self.advance()
                     coords = sk_command['coords']
@@ -223,27 +271,41 @@ class Parser:
                         Radii(left, top, right, bottom),
                     )
 
+                case 'ClipPath':
+                    self.advance()
+                    op = sk_command['op']
+                    fill_type = sk_command['path']['fill_type']
+                    verbs = sk_command['path']['verbs']
+                    self.clip_stack[-1] = PathBounds(op, fill_type, verbs)
+
                 case 'Concat44':
                     self.advance()
                     m44: M44 = tuple(tuple(i) for i in sk_command['matrix'])  # pyright: ignore
                     self.m44_stack[-1] = matrix_multiply(self.m44_stack[-1], m44)
 
+                case _:
+                    raise NotImplementedError(f'Unknown operator {sk_command["command"]}')
+
         return res
 
 
 if __name__ == '__main__':
-    commands = [
-        {'command': 'DrawPaint'},
-        {'command': 'Save'},
-        {'command': 'ClipRect', 'op': 'intersect', 'coords': [1250.5, 866, 1263, 1570.1]},
-        {'command': 'DrawPaint'},
-        {'command': 'Restore'},
-        {'command': 'DrawPaint'},
-        {
-            'command': 'Concat44',
-            'matrix': [[1, 0, 0, 0], [0, 1, 0, -760], [0, 0, 1, 0], [0, 0, 0, 1]],
-        },
-        {'command': 'DrawPaint'},
-    ]
+    # commands = [
+    #     {'command': 'DrawPaint'},
+    #     {'command': 'Save'},
+    #     {'command': 'ClipRect', 'op': 'intersect', 'coords': [1250.5, 866, 1263, 1570.1]},
+    #     {'command': 'DrawPaint'},
+    #     {'command': 'Restore'},
+    #     {'command': 'DrawPaint'},
+    #     {
+    #         'command': 'Concat44',
+    #         'matrix': [[1, 0, 0, 0], [0, 1, 0, -760], [0, 0, 1, 0], [0, 0, 0, 1]],
+    #     },
+    #     {'command': 'DrawPaint'},
+    # ]
 
-    print(Parser(commands).parse_commands())
+    filepath = sys.argv[-1]
+    with open(filepath, 'rb') as f:
+        skp = json.load(f)
+
+    print(Parser(skp['commands']).parse_commands())
