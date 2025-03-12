@@ -1,0 +1,5 @@
+(datatype Math
+  (Num Rational)
+  (Var String)
+  (Add Math Math)
+  (Div Math Math))
