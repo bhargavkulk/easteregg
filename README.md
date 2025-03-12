@@ -6,8 +6,15 @@ Add urls to `urls.toml`, and then run the script as:
 
 All the skps along with the converted JSON files will be in `skps`.
 
-## todo
+`skp.py` is the skp -> easteregg compiler. Currently just takes in s json file and spits out the equivalent eastergg form to stdout. 
 
-- save layer with solid colors
-- save layer dstin/srcin
--
+# TODO
+
+- [ ] define eastergg in egglog
+- [ ] compile python eastergg objects to egglog
+- [ ] redo all skiaopt work
+- [ ] add the skiaopt test skps to the skps folder
+- [ ] write a json->skp compiler
+- [ ] measure memory and performance numbers
+- [ ] increase number of urls to look at
+- [ ] more rewrite rules
