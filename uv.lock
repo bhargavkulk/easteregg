@@ -2,6 +2,37 @@ version = 1
 requires-python = ">=3.12"
 
 [[package]]
+name = "dataclass-wizard"
+version = "0.35.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/64/c5/10f2bd575b4fee1cf26b0ffa5fead2d6525f950a797566437a51fa08a94f/dataclass-wizard-0.35.0.tar.gz", hash = "sha256:8e4b254991bf93416a48e2911bb985e3787cff11f00270c3d1165d2523cb3fb6", size = 295578 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3a/95/968dff23cfd82806bf0e2d1c155227717046aed5e7afd8bc0fefdc7eaaf3/dataclass_wizard-0.35.0-py2.py3-none-any.whl", hash = "sha256:3bb19292477f0bebb12e9cc9178f1a6b93d133af4ae065abf14b713142b32edf", size = 176558 },
+]
+
+[[package]]
+name = "easteregg"
+version = "0.1.0"
+source = { virtual = "." }
+dependencies = [
+    { name = "dataclass-wizard" },
+    { name = "playwright" },
+    { name = "pyright" },
+    { name = "ruff" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "dataclass-wizard", specifier = ">=0.35.0" },
+    { name = "playwright", specifier = ">=1.50.0" },
+    { name = "pyright", specifier = ">=1.1.396" },
+    { name = "ruff", specifier = ">=0.9.9" },
+]
+
+[[package]]
 name = "greenlet"
 version = "3.1.1"
 source = { registry = "https://pypi.org/simple" }
@@ -109,23 +140,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/42/55/e6c90f13880aeef327746052907e7e930681f26a164fe130ddac28b08269/ruff-0.9.9-py3-none-win32.whl", hash = "sha256:6b4c376d929c25ecd6d87e182a230fa4377b8e5125a4ff52d506ee8c087153c1", size = 10227912 },
     { url = "https://files.pythonhosted.org/packages/35/b2/da925693cb82a1208aa34966c0f36cb222baca94e729dd22a587bc22d0f3/ruff-0.9.9-py3-none-win_amd64.whl", hash = "sha256:837982ea24091d4c1700ddb2f63b7070e5baec508e43b01de013dc7eff974ff1", size = 11355632 },
     { url = "https://files.pythonhosted.org/packages/31/d8/de873d1c1b020d668d8ec9855d390764cb90cf8f6486c0983da52be8b7b7/ruff-0.9.9-py3-none-win_arm64.whl", hash = "sha256:3ac78f127517209fe6d96ab00f3ba97cafe38718b23b1db3e96d8b2d39e37ddf", size = 10435860 },
-]
-
-[[package]]
-name = "skpsonizer"
-version = "0.1.0"
-source = { virtual = "." }
-dependencies = [
-    { name = "playwright" },
-    { name = "pyright" },
-    { name = "ruff" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "playwright", specifier = ">=1.50.0" },
-    { name = "pyright", specifier = ">=1.1.396" },
-    { name = "ruff", specifier = ">=0.9.9" },
 ]
 
 [[package]]

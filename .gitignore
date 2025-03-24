@@ -1,1 +1,3 @@
 skps/
+.venv/
+.DS_Store

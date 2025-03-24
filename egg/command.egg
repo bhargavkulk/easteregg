@@ -1,5 +1,29 @@
-(datatype Math
-  (Num Rational)
-  (Var String)
-  (Add Math Math)
-  (Div Math Math))
+(datatype BlendMode
+          (BmSrc)
+          (BMSrcOver)
+          (BMOther))
+
+(datatype Bounds
+          (LTRB f64 f64 f64 f64))
+
+(datatype SkPaint
+          (NewPaint i64 i64 i64 i64 BlendMode))
+
+(datatype EEgg
+          (SrcOver EEgg EEgg)
+          (Src EEgg EEgg)
+          (Other EEgg EEgg)
+          (Empty)
+          (Rectangle Bounds SkPaint)
+          (SaveLayer SkPaint EEgg))
+
+(let test (SrcOver (Empty) (SrcOver (Rectangle (LTRB 10.0 70.0 60.0 120.0) (NewPaint 255 0 0 255 (BMSrcOver))) (SrcOver (Rectangle (LTRB 150.0 70.0 200.0 120.0) (NewPaint 255 0 0 255 (BMSrcOver))) (SaveLayer (NewPaint 0 0 0 255 (BMSrcOver)) (SrcOver (Empty) (SrcOver (Rectangle (LTRB 30.0 70.0 80.0 120.0) (NewPaint 0 255 0 255 (BMSrcOver))) (Rectangle (LTRB 170.0 70.0 220.0 120.0) (NewPaint 0 255 0 77 (BMSrcOver))))))))))
+
+(rewrite (SrcOver bot (SaveLayer
+                      (NewPaint r1 g1 b1 255 bm1)
+                      (SrcOver (Empty) top)))
+         (SrcOver bot top))
+
+(run 1)
+
+(extract 1)
