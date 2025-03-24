@@ -1,6 +1,3 @@
-[submodule "skia"]
-	path = skia
-	url = https://github.com/bhargavkulk/skia.git
 [submodule "egglog"]
 	path = egglog
 	url = https://github.com/egraphs-good/egglog
