@@ -415,42 +415,63 @@ class Paint(SExp):
             raise NotImplementedError('NewPaint.from_Paint ???')
 
 
-@dataclass
-class SrcOver(EEgg):
-    below: EEgg
-    above: EEgg
+# datatype Thing:
+# | Rect R
+# | RRect R r
+# | ...
+# | SaveLayer Layer
+# | Clip DrawCommand
+# | ...
+# datatype Layer:
+# | Empty
+# | SrcOver(Layer, DrawCommand)
+# | ...
+# | Blur Layer
 
 
 @dataclass
-class Src(EEgg):
-    below: EEgg
-    above: EEgg
-
-
-@dataclass
-class Other(EEgg):
-    below: EEgg
-    above: EEgg
-
-
-@dataclass
-class Empty(EEgg):
-    # clip: Clip
-    # m44: M44
+class Thing(SExp):
     pass
 
 
 @dataclass
-class Rectangle(Empty):
-    bounds: LTRB
+class Rectangle(Thing):
+    ltrb: LTRB
     paint: Paint
 
 
 @dataclass
-class SaveLayer(Empty):
-    # bounds: LTRB
+class SaveLayer(Thing):
     paint: Paint
-    commands: EEgg
+    layer: 'Layer'
+
+
+@dataclass
+class Layer(SExp):
+    pass
+
+
+@dataclass
+class Empty(Layer):
+    pass
+
+
+@dataclass
+class SrcOver(Layer):
+    bottom: Layer
+    thing: Thing
+
+
+@dataclass
+class Src(Layer):
+    bottom: Layer
+    thing: Thing
+
+
+@dataclass
+class Other(Layer):
+    bottom: Layer
+    thing: Thing
 
 
 def get_blend_constructor(paint: SkPaint):
@@ -466,14 +487,9 @@ def get_blend_constructor(paint: SkPaint):
 
 
 def skp_to_eegg(commands: list[Command]):
-    lhs = Empty(
-        # ClipFull('intersect'),
-        # ((1.0, 0.0, 0.0, 0.0), (0.0, 1.0, 0.0, 0.0), (0.0, 0.0, 1.0, 0.0), (0.0, 0.0, 0.0, 1.0)),
-    )
-
-    def recurse(cmds: list[Command], lhs: EEgg) -> EEgg:
+    def recurse(cmds: list[Command], accum: Layer) -> Layer:
         if len(cmds) == 0:
-            return lhs
+            return accum
         else:
             cmd, *rest = cmds
 
@@ -481,33 +497,30 @@ def skp_to_eegg(commands: list[Command]):
                 blend_mode = get_blend_constructor(cmd.paint)
 
                 if isinstance(cmd, DrawRect):
-                    return blend_mode(
-                        lhs,
-                        recurse(
-                            rest,
-                            Rectangle(LTRB.from_Rect(cmd.rect), Paint.from_Paint(cmd.paint)),
-                        ),
+                    new_layer = blend_mode(
+                        accum,
+                        Rectangle(LTRB.from_Rect(cmd.rect), Paint.from_Paint(cmd.paint)),
                     )
+                    return recurse(rest, new_layer)
                 else:
                     raise NotImplementedError('Draw Command not Implemented')
             if isinstance(cmd, SkSaveLayer):
                 blend_mode = get_blend_constructor(cmd.paint)
 
-                return blend_mode(
-                    lhs,
-                    recurse(
-                        rest,
-                        SaveLayer(
-                            Paint.from_Paint(cmd.paint),
-                            skp_to_eegg(cmd.commands),
-                        ),
+                new_layer = blend_mode(
+                    accum,
+                    SaveLayer(
+                        Paint.from_Paint(cmd.paint),
+                        skp_to_eegg(cmd.commands),
                     ),
                 )
+
+                return recurse(rest, new_layer)
 
             else:
                 raise NotImplementedError('Skia Command Not Implemented')
 
-    return recurse(commands, lhs)
+    return recurse(commands, Empty())
 
 
 if __name__ == '__main__':

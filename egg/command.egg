@@ -1,3 +1,16 @@
+; datatype Thing:
+; | Rect R
+; | RRect R r
+; | ...
+; | SaveLayer Layer
+; | Clip DrawCommand
+; | ...
+; datatype Layer:
+; | Empty
+; | SrcOver(Layer, DrawCommand)
+; | ...
+; | Blur Layer
+
 (datatype BlendMode
           (BmSrc)
           (BMSrcOver)
@@ -7,23 +20,30 @@
           (LTRB f64 f64 f64 f64))
 
 (datatype SkPaint
-          (NewPaint i64 i64 i64 i64 BlendMode))
+          (Paint i64 i64 i64 i64 BlendMode))
 
-(datatype EEgg
-          (SrcOver EEgg EEgg)
-          (Src EEgg EEgg)
-          (Other EEgg EEgg)
-          (Empty)
-          (Rectangle Bounds SkPaint)
-          (SaveLayer SkPaint EEgg))
+(sort Thing)
+(sort Layer)
 
-(let test (SrcOver (Empty) (SrcOver (Rectangle (LTRB 10.0 70.0 60.0 120.0) (NewPaint 255 0 0 255 (BMSrcOver))) (SrcOver (Rectangle (LTRB 150.0 70.0 200.0 120.0) (NewPaint 255 0 0 255 (BMSrcOver))) (SaveLayer (NewPaint 0 0 0 255 (BMSrcOver)) (SrcOver (Empty) (SrcOver (Rectangle (LTRB 30.0 70.0 80.0 120.0) (NewPaint 0 255 0 255 (BMSrcOver))) (Rectangle (LTRB 170.0 70.0 220.0 120.0) (NewPaint 0 255 0 77 (BMSrcOver))))))))))
+(constructor Rectangle (Bounds SkPaint) Thing)
+(constructor SaveLayer (SkPaint Layer) Thing)
 
-(rewrite (SrcOver bot (SaveLayer
-                      (NewPaint r1 g1 b1 255 bm1)
-                      (SrcOver (Empty) top)))
-         (SrcOver bot top))
+(constructor Empty () Layer)
+(constructor SrcOver (Layer Thing) Layer)
 
-(run 1)
+(let srcoveropaque (SrcOver (SrcOver (SrcOver (Empty) (Rectangle (LTRB 10.0 70.0 60.0 120.0) (Paint 255 0 0 255 (BMSrcOver)))) (Rectangle (LTRB 150.0 70.0 200.0 120.0) (Paint 255 0 0 255 (BMSrcOver)))) (SaveLayer (Paint 0 0 0 255 (BMSrcOver)) (SrcOver (SrcOver (Empty) (Rectangle (LTRB 30.0 70.0 80.0 120.0) (Paint 0 255 0 255 (BMSrcOver)))) (Rectangle (LTRB 170.0 70.0 220.0 120.0) (Paint 0 255 0 77 (BMSrcOver)))))))
 
-(extract 1)
+(let noopsavelayer (SrcOver (SrcOver (Empty) (Rectangle (LTRB 10.0 70.0 60.0 120.0) (Paint 0 255 0 255 (BMSrcOver)))) (SaveLayer (Paint 0 0 0 255 (BMSrcOver)) (Empty))))
+
+;; Strip SrcOver
+(rewrite (SrcOver bottom (SaveLayer (Paint r g b 255 bm) (SrcOver bottom2 draw)))
+         (SrcOver (SrcOver bottom (SaveLayer (Paint r g b 255 bm) bottom2)) draw))
+
+;; remove empty Save Layer
+(rewrite (SrcOver bottom (SaveLayer p (Empty)))
+         bottom)
+
+(run 3)
+
+(query-extract srcoveropaque)
+(query-extract noopsavelayer)
