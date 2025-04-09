@@ -1,4 +1,2 @@
-.PHONY: build
-
-build:
-	$(MAKE) -C skia build
+nightly:
+	bash run.sh

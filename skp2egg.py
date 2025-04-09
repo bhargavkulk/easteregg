@@ -40,6 +40,15 @@ M44 = tuple[
 ]
 
 
+def to_m44(l: list[list[float]]):
+    r0 = tuple(float(x) for x in l[0])
+    r1 = tuple(float(x) for x in l[1])
+    r2 = tuple(float(x) for x in l[2])
+    r3 = tuple(float(x) for x in l[3])
+
+    return (r0, r1, r2, r3)
+
+
 def matrix_multiply(m1: M44, m2: M44) -> M44:
     return (
         (
@@ -84,28 +93,28 @@ class Rect(NamedTuple):
 
 
 @dataclass
-class Clip:
+class SkClip:
     op: str
 
 
 @dataclass
-class ClipRect(Clip):
+class SkClipRect(SkClip):
     rect: Rect
 
 
 @dataclass
-class ClipRRect(Clip):
+class SkClipRRect(SkClip):
     rect: Rect
     radii: Radii
 
 
 @dataclass
-class ClipPath(Clip):
+class SkClipPath(SkClip):
     path_index: int
 
 
 @dataclass
-class ClipFull(Clip):
+class SkClipFull(SkClip):
     pass
 
 
@@ -137,7 +146,7 @@ class Sequence(Node):
 
 @dataclass
 class Command(Node):
-    clip: Clip
+    clip: SkClip
     m44: M44
 
 
@@ -181,10 +190,41 @@ class DrawImageRect(Draw):
     dst: Rect
 
 
+@dataclass
+class DrawOval(Draw):
+    rect: Rect
+
+
+@dataclass
+class DrawTextBlob(Draw):
+    x: float
+    y: float
+    bounds: Rect
+
+
+@dataclass
+class DrawPath(Draw):
+    pass
+
+
+def intersect_rect(a: Rect, b: Rect):
+    # Calculate intersection bounds
+    left = max(a.left, b.left)
+    top = max(a.top, b.top)
+    right = min(a.right, b.right)
+    bottom = min(a.bottom, b.bottom)
+
+    # Check if intersection is valid (non-empty)
+    if left < right and top < bottom:
+        return Rect(left, top, right, bottom)
+    else:
+        return Rect(0, 0, 0, 0)
+
+
 class Parser:
     ptr: int
     sk_commands: list[dict[str, Any]]
-    clip_stack: list[Clip]
+    clip_stack: list[SkClip]
     m44_stack: list[M44]
     paint_map: list[dict]
     image_map: list[str]
@@ -192,7 +232,7 @@ class Parser:
 
     def __init__(self, sk_commands):
         self.sk_commands = sk_commands
-        self.clip_stack = [ClipFull('intersect')]
+        self.clip_stack = [SkClipFull('intersect')]
         self.m44_stack = [
             ((1.0, 0.0, 0.0, 0.0), (0.0, 1.0, 0.0, 0.0), (0.0, 0.0, 1.0, 0.0), (0.0, 0.0, 0.0, 1.0))
         ]
@@ -214,6 +254,15 @@ class Parser:
             return self.peek()['command'] != 'Restore'
         else:
             return self.ptr < len(self.sk_commands)
+
+    def merge_clip(self, clip: SkClip):
+        top = self.clip_stack[-1]
+        if isinstance(top, SkClipFull):
+            self.clip_stack[-1] = clip
+        elif isinstance(clip, SkClipRect) and clip.op == 'intersect':
+            if isinstance(top, SkClipRect) and top.op == 'intersect':
+                rect = intersect_rect(top.rect, clip.rect)
+                self.clip_stack[-1] = SkClipRect('intersect', rect)
 
     def parse_paint(self, paint_json: dict | None) -> SkPaint:
         if paint_json is None:
@@ -267,6 +316,18 @@ class Parser:
                         )
                     )
 
+                case 'DrawOval':
+                    self.advance()
+                    rect = sk_command['coords']
+                    res.append(
+                        DrawOval(
+                            self.clip_stack[-1],
+                            self.m44_stack[-1],
+                            self.parse_paint(sk_command['paint']),
+                            Rect(*rect),
+                        )
+                    )
+
                 case 'DrawImageRect':
                     self.advance()
                     i = len(self.image_map)
@@ -283,6 +344,24 @@ class Parser:
                             i,
                             Rect(*src),
                             Rect(*dst),
+                        )
+                    )
+
+                case 'DrawTextBlob':
+                    self.advance()
+                    x = sk_command['x']
+                    y = sk_command['y']
+                    bounds = Rect(*sk_command['bounds'])
+                    paint = self.parse_paint(sk_command['paint'])
+
+                    res.append(
+                        DrawTextBlob(
+                            self.clip_stack[-1],
+                            self.m44_stack[-1],
+                            paint,
+                            float(x),
+                            float(y),
+                            bounds,
                         )
                     )
 
@@ -325,33 +404,34 @@ class Parser:
                     self.advance()
                     coords = sk_command['coords']
                     rect = Rect(*coords)
-                    bounds = ClipRect(sk_command['op'], rect)
-                    self.clip_stack[-1] = bounds
+                    bounds = SkClipRect(sk_command['op'], rect)
+                    print(bounds)
+                    self.merge_clip(bounds)
+                    print(self.clip_stack)
 
                 case 'ClipRRect':
                     self.advance()
-                    rect, *radii = sk_command['coords']
-                    left = radii[0][0]
-                    top = radii[0][1]
-                    right = radii[1][0]
-                    bottom = radii[2][1]
-                    self.clip_stack[-1] = ClipRRect(
-                        sk_command['op'],
-                        Rect(*rect),
-                        Radii(left, top, right, bottom),
-                    )
-
-                case 'ClipPath':
-                    self.advance()
-                    op = sk_command['op']
-                    i = len(self.path_map)
-                    self.path_map.append(sk_command['path'])
-                    self.clip_stack[-1] = ClipPath(op, i)
+                    # do nothing for now
+                    # union using skia python
 
                 case 'Concat44':
                     self.advance()
-                    m44: M44 = tuple(tuple(i) for i in sk_command['matrix'])  # pyright: ignore
+                    matrix = sk_command['matrix']
+                    m44 = to_m44(matrix)
                     self.m44_stack[-1] = matrix_multiply(self.m44_stack[-1], m44)
+                    print(self.m44_stack)
+
+                case 'DrawPath':
+                    self.advance()
+                    paint = self.parse_paint(sk_command['paint'])
+
+                    res.append(
+                        DrawPath(
+                            self.clip_stack[-1],
+                            self.m44_stack[-1],
+                            paint,
+                        )
+                    )
 
                 case _:
                     raise NotImplementedError(f'Unknown operator {sk_command["command"]}')
@@ -389,6 +469,10 @@ class LTRB(SExp):
     @staticmethod
     def from_Rect(rect: Rect):
         return LTRB(*[float(i) for i in rect])
+
+    @staticmethod
+    def from_Radii(radii: Radii):
+        return LTRB(*[float(i) for i in radii])
 
 
 @dataclass
@@ -435,9 +519,58 @@ class Thing(SExp):
 
 
 @dataclass
+class Full(Thing):
+    paint: Paint
+
+
+@dataclass
 class Rectangle(Thing):
     ltrb: LTRB
     paint: Paint
+
+
+@dataclass
+class Oval(Thing):
+    ltrb: LTRB
+    paint: Paint
+
+
+@dataclass
+class TextBlob(Thing):
+    x: float
+    y: float
+    bounds: LTRB
+    paint: Paint
+
+
+@dataclass
+class RRect(Thing):
+    rect: LTRB
+    radii: LTRB
+    paint: Paint
+
+
+@dataclass
+class ImageRect(Thing):
+    src: LTRB
+    dst: LTRB
+    paint: Paint
+
+
+@dataclass
+class Path(Thing):
+    paint: Paint
+
+
+@dataclass
+class ClipRect(Thing):
+    bounds: LTRB
+    thing: Thing
+
+
+@dataclass
+class ClipFull(Thing):
+    thing: Thing
 
 
 @dataclass
@@ -469,9 +602,27 @@ class Src(Layer):
 
 
 @dataclass
+class DstIn(Layer):
+    bottom: Layer
+    thing: Thing
+
+
+@dataclass
 class Other(Layer):
     bottom: Layer
     thing: Thing
+    pass
+
+
+def get_clip_constructor(clip: SkClip):
+    match clip:
+        case SkClipFull():
+            return lambda x: ClipFull(x)
+        case SkClipRect(_, rect):
+            bounds = LTRB.from_Rect(rect)
+            return lambda x: ClipRect(bounds, x)
+        case _:
+            raise NotImplementedError('get clip constructor unknown clip')
 
 
 def get_blend_constructor(paint: SkPaint):
@@ -482,6 +633,8 @@ def get_blend_constructor(paint: SkPaint):
             return SrcOver
         case OldPaint(_, 'Src', _):
             return Src
+        case OldPaint(_, 'DstIn', _):
+            return DstIn
         case _:
             return Other
 
@@ -493,17 +646,67 @@ def skp_to_eegg(commands: list[Command]):
         else:
             cmd, *rest = cmds
 
+            clip_constructor = get_clip_constructor(cmd.clip)
+
             if isinstance(cmd, Draw):
                 blend_mode = get_blend_constructor(cmd.paint)
 
                 if isinstance(cmd, DrawRect):
+                    thing = Rectangle(LTRB.from_Rect(cmd.rect), Paint.from_Paint(cmd.paint))
                     new_layer = blend_mode(
                         accum,
-                        Rectangle(LTRB.from_Rect(cmd.rect), Paint.from_Paint(cmd.paint)),
+                        clip_constructor(thing),
+                    )
+                    return recurse(rest, new_layer)
+                elif isinstance(cmd, DrawPaint):
+                    thing = Full(Paint.from_Paint(cmd.paint))
+                    new_layer = blend_mode(
+                        accum,
+                        clip_constructor(thing),
+                    )
+                    return recurse(rest, new_layer)
+                elif isinstance(cmd, DrawTextBlob):
+                    new_layer = blend_mode(
+                        accum,
+                        TextBlob(
+                            cmd.x,
+                            cmd.y,
+                            LTRB.from_Rect(cmd.bounds),
+                            Paint.from_Paint(cmd.paint),
+                        ),
+                    )
+                    return recurse(rest, new_layer)
+                elif isinstance(cmd, DrawOval):
+                    new_layer = blend_mode(
+                        accum,
+                        Oval(LTRB.from_Rect(cmd.rect), Paint.from_Paint(cmd.paint)),
+                    )
+                    return recurse(rest, new_layer)
+                elif isinstance(cmd, DrawPath):
+                    new_layer = blend_mode(accum, Path(Paint.from_Paint(cmd.paint)))
+                    return recurse(rest, new_layer)
+                elif isinstance(cmd, DrawRRect):
+                    new_layer = blend_mode(
+                        accum,
+                        RRect(
+                            LTRB.from_Rect(cmd.rect),
+                            LTRB.from_Radii(cmd.radii),
+                            Paint.from_Paint(cmd.paint),
+                        ),
+                    )
+                    return recurse(rest, new_layer)
+                elif isinstance(cmd, DrawImageRect):
+                    new_layer = blend_mode(
+                        accum,
+                        ImageRect(
+                            LTRB.from_Rect(cmd.src),
+                            LTRB.from_Rect(cmd.dst),
+                            Paint.from_Paint(cmd.paint),
+                        ),
                     )
                     return recurse(rest, new_layer)
                 else:
-                    raise NotImplementedError('Draw Command not Implemented')
+                    raise NotImplementedError('Draw Command not Implemented' + str(cmd))
             if isinstance(cmd, SkSaveLayer):
                 blend_mode = get_blend_constructor(cmd.paint)
 
@@ -516,9 +719,11 @@ def skp_to_eegg(commands: list[Command]):
                 )
 
                 return recurse(rest, new_layer)
+            if isinstance(cmd, SkSave):
+                return recurse(cmd.commands + rest, accum)
 
             else:
-                raise NotImplementedError('Skia Command Not Implemented')
+                raise NotImplementedError('Skia Command Not Implemented ' + str(cmd))
 
     return recurse(commands, Empty())
 

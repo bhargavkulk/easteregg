@@ -1,0 +1,39 @@
+{
+   "version": 1,
+   "commands": [
+      {
+         "command": "SaveLayer",
+         "visible": true,
+         "paint": {
+            "color": [ 128, 0, 0, 0 ]
+         }
+      },
+      {
+         "command": "ClipRect",
+         "visible": true,
+         "coords": [ 0, 0, 90, 80 ],
+         "op": "intersect",
+         "antiAlias": false,
+         "shortDesc": " [0 0 90 80]"
+      },
+      {
+         "command": "DrawOval",
+         "visible": true,
+         "coords": [ 40, 40, 160, 160 ],
+         "paint": {}
+      },
+      {
+         "command": "Restore",
+         "visible": true
+      },
+      {
+         "command": "DrawRect",
+         "visible": true,
+         "coords": [ 90, 90, 110, 130 ],
+         "paint": {
+            "color": [ 255, 0, 0, 255 ]
+         },
+         "shortDesc": " [90 90 110 130]"
+      }
+   ]
+}

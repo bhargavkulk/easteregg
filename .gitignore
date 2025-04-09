@@ -1,3 +1,5 @@
 skps/
 .venv/
 .DS_Store
+skia/
+egglog/
