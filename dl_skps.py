@@ -17,7 +17,7 @@ def find_command(json_data, target_command):
     return False
 
 
-def dump_skp(urlname: str, url: str, path: Path):
+def dump_skp(urlname: str, url: str, path: Path, outputPath: Path):
     with sync_playwright() as p:
         print(f'[{urlname}] starting up Chrome')
         browser = p.chromium.launch(
@@ -62,7 +62,7 @@ def dump_skp(urlname: str, url: str, path: Path):
                 if find_command(json_data, 'SaveLayer'):
                     print(f'[{urlname}] found "SaveLayer" @ {skp_file.stem}')
                 json_file_name = skp_file.stem + '.json'
-                json_file_path = path / json_file_name
+                json_file_path = Path(urlname + json_file_name)
                 with json_file_path.open('w') as f:
                     json.dump(json_data, f, indent=4)
         print(f'[{urlname}] done')
@@ -92,7 +92,7 @@ def process_urls():
         output_path.mkdir(parents=True, exist_ok=True)
 
         print(f'[*] processing {urlname}')
-        dump_skp(urlname, url, output_path)
+        dump_skp(urlname, url, output_path, args.output_folder)
 
 
 process_urls()

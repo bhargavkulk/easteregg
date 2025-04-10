@@ -10,4 +10,4 @@ ninja -C out/debug dm skp_parser
 # REPORT LOLW
 
 mkdir -p report
-echo '<!DOCTYPE html><html><head><title>Hello</title></head><body>EasterEgg</body></html>' > report/index.html
+touch report/index.html
