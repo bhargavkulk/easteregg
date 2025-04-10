@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e -x
-git clone https://skia.googlesource.com/skia.git
+if [ ! -d skia ]; then
+    git clone https://skia.googlesource.com/skia.git
+fi
 cd skia
 python3 tools/git-sync-deps
 python3 bin/fetch-ninja
