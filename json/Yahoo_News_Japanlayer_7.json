@@ -1,0 +1,377 @@
+{
+    "version": 1,
+    "commands": [
+        {
+            "command": "DrawPaint",
+            "visible": true,
+            "paint": {
+                "color": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "blendMode": "Src"
+            }
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "Concat44",
+            "visible": true,
+            "matrix": [
+                [
+                    1,
+                    0,
+                    0,
+                    -366
+                ],
+                [
+                    0,
+                    1,
+                    0,
+                    -45
+                ],
+                [
+                    0,
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            ]
+        },
+        {
+            "command": "DrawTextBlob",
+            "visible": true,
+            "x": 366,
+            "y": 60,
+            "bounds": [
+                -5.018,
+                -16.458,
+                107.107,
+                4.849
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    51,
+                    51,
+                    51
+                ]
+            },
+            "runs": [
+                {
+                    "font": {
+                        "linearText": true,
+                        "subpixelText": true,
+                        "textSize": 13,
+                        "edging": "subpixelantialias",
+                        "typeface": {
+                            "data": "data/0"
+                        }
+                    },
+                    "coords": [
+                        0,
+                        0
+                    ],
+                    "glyphs": [
+                        42,
+                        37,
+                        880,
+                        907,
+                        876,
+                        881,
+                        3624,
+                        3938,
+                        884
+                    ],
+                    "positions": [
+                        0,
+                        3.237,
+                        13.091,
+                        26.091,
+                        39.091,
+                        52.091,
+                        65.091,
+                        78.091,
+                        91.091
+                    ]
+                }
+            ],
+            "shortDesc": " [360.982 43.542 473.107 64.849]"
+        },
+        {
+            "command": "DrawTextBlob",
+            "visible": true,
+            "x": 470.094,
+            "y": 60,
+            "bounds": [
+                -5.213,
+                -16.653,
+                56.251,
+                5.811
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    0,
+                    51,
+                    204
+                ]
+            },
+            "runs": [
+                {
+                    "font": {
+                        "linearText": true,
+                        "subpixelText": true,
+                        "textSize": 13,
+                        "edging": "subpixelantialias",
+                        "typeface": {
+                            "data": "data/1"
+                        }
+                    },
+                    "coords": [
+                        0,
+                        0
+                    ],
+                    "glyphs": [
+                        2557,
+                        1606,
+                        2324,
+                        3224
+                    ],
+                    "positions": [
+                        0,
+                        13,
+                        26,
+                        39
+                    ]
+                }
+            ],
+            "shortDesc": " [464.881 43.347 526.345 65.811]"
+        },
+        {
+            "command": "DrawTextBlob",
+            "visible": true,
+            "x": 366,
+            "y": 79,
+            "bounds": [
+                -5.213,
+                -16.653,
+                55.471,
+                5.811
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    0,
+                    51,
+                    204
+                ]
+            },
+            "runs": [
+                {
+                    "font": {
+                        "linearText": true,
+                        "subpixelText": true,
+                        "textSize": 13,
+                        "edging": "subpixelantialias",
+                        "typeface": {
+                            "data": "data/1"
+                        }
+                    },
+                    "coords": [
+                        0,
+                        0
+                    ],
+                    "glyphs": [
+                        1001,
+                        940,
+                        928,
+                        1007
+                    ],
+                    "positions": [
+                        0,
+                        13,
+                        25.22,
+                        38.22
+                    ]
+                }
+            ],
+            "shortDesc": " [360.787 62.347 421.471 84.811]"
+        },
+        {
+            "command": "DrawTextBlob",
+            "visible": true,
+            "x": 422.234,
+            "y": 79,
+            "bounds": [
+                -5.018,
+                -16.458,
+                16.016,
+                4.849
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    51,
+                    51,
+                    51
+                ]
+            },
+            "runs": [
+                {
+                    "font": {
+                        "linearText": true,
+                        "subpixelText": true,
+                        "textSize": 13,
+                        "edging": "subpixelantialias",
+                        "typeface": {
+                            "data": "data/0"
+                        }
+                    },
+                    "coords": [
+                        0,
+                        0
+                    ],
+                    "glyphs": [
+                        1
+                    ],
+                    "positions": [
+                        0
+                    ]
+                }
+            ],
+            "shortDesc": " [417.216 62.542 438.25 83.849]"
+        },
+        {
+            "command": "DrawImageRect",
+            "visible": true,
+            "image": {
+                "data": "data/2"
+            },
+            "src": [
+                4.44444,
+                0,
+                40,
+                40
+            ],
+            "dst": [
+                427,
+                65,
+                443,
+                83
+            ],
+            "sampling": {
+                "maxAniso": 0,
+                "useCubic": false,
+                "filter": 1,
+                "mipmap": 2,
+                "cubic.B": 0,
+                "cubic.C": 0
+            },
+            "paint": {
+                "antiAlias": true
+            },
+            "strict": true,
+            "shortDesc": " [427 65 443 83]"
+        },
+        {
+            "command": "DrawTextBlob",
+            "visible": true,
+            "x": 444.578,
+            "y": 79,
+            "bounds": [
+                -5.018,
+                -16.458,
+                228.085,
+                4.849
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    0,
+                    51,
+                    204
+                ]
+            },
+            "runs": [
+                {
+                    "font": {
+                        "linearText": true,
+                        "subpixelText": true,
+                        "textSize": 13,
+                        "edging": "subpixelantialias",
+                        "typeface": {
+                            "data": "data/0"
+                        }
+                    },
+                    "coords": [
+                        0,
+                        0
+                    ],
+                    "glyphs": [
+                        678,
+                        851,
+                        964,
+                        939,
+                        679,
+                        18,
+                        22,
+                        715,
+                        48,
+                        39,
+                        39,
+                        939,
+                        660,
+                        985,
+                        1007,
+                        843,
+                        915,
+                        903,
+                        866
+                    ],
+                    "positions": [
+                        0,
+                        13,
+                        26,
+                        39,
+                        52,
+                        65,
+                        73.541,
+                        82.082,
+                        95.082,
+                        105.417,
+                        113.243,
+                        121.069,
+                        134.069,
+                        147.069,
+                        160.069,
+                        173.069,
+                        186.069,
+                        199.069,
+                        212.069
+                    ]
+                }
+            ],
+            "shortDesc": " [439.56 62.542 672.663 83.849]"
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        }
+    ]
+}

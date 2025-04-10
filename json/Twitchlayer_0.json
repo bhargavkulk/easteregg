@@ -1,0 +1,80 @@
+{
+    "version": 1,
+    "commands": [
+        {
+            "command": "DrawPaint",
+            "visible": true,
+            "paint": {
+                "color": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "blendMode": "Src"
+            }
+        },
+        {
+            "command": "DrawRect",
+            "visible": true,
+            "coords": [
+                0,
+                0,
+                1280,
+                720
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    247,
+                    247,
+                    248
+                ],
+                "blendMode": "Src"
+            },
+            "shortDesc": " [0 0 1280 720]"
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "ClipRect",
+            "visible": true,
+            "coords": [
+                0,
+                230,
+                1280,
+                659
+            ],
+            "op": "intersect",
+            "antiAlias": true,
+            "shortDesc": " [0 230 1280 659]"
+        },
+        {
+            "command": "DrawRect",
+            "visible": true,
+            "coords": [
+                0,
+                230,
+                240,
+                659
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    239,
+                    239,
+                    241
+                ]
+            },
+            "shortDesc": " [0 230 240 659]"
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        }
+    ]
+}

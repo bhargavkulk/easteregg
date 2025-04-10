@@ -1,0 +1,115 @@
+{
+    "version": 1,
+    "commands": [
+        {
+            "command": "DrawPaint",
+            "visible": true,
+            "paint": {
+                "color": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "blendMode": "Src"
+            }
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "ClipRect",
+            "visible": true,
+            "coords": [
+                3840,
+                0,
+                5120,
+                600
+            ],
+            "op": "intersect",
+            "antiAlias": true,
+            "shortDesc": " [3840 0 5120 600]"
+        },
+        {
+            "command": "DrawRect",
+            "visible": true,
+            "coords": [
+                3840,
+                0,
+                5120,
+                600
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    35,
+                    35,
+                    35
+                ]
+            },
+            "shortDesc": " [3840 0 5120 600]"
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "ClipRect",
+            "visible": true,
+            "coords": [
+                3840,
+                0,
+                5120,
+                600
+            ],
+            "op": "intersect",
+            "antiAlias": true,
+            "shortDesc": " [3840 0 5120 600]"
+        },
+        {
+            "command": "DrawRect",
+            "visible": true,
+            "coords": [
+                3840,
+                0,
+                5120,
+                300
+            ],
+            "paint": {
+                "antiAlias": true
+            },
+            "shortDesc": " [3840 0 5120 300]"
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "ClipRect",
+            "visible": true,
+            "coords": [
+                4180,
+                0,
+                4780,
+                300
+            ],
+            "op": "intersect",
+            "antiAlias": true,
+            "shortDesc": " [4180 0 4780 300]"
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        }
+    ]
+}

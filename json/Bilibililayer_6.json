@@ -1,0 +1,75 @@
+{
+    "version": 1,
+    "commands": [
+        {
+            "command": "DrawPaint",
+            "visible": true,
+            "paint": {
+                "color": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "blendMode": "Src"
+            }
+        },
+        {
+            "command": "DrawRRect",
+            "visible": true,
+            "coords": [
+                [
+                    0,
+                    0,
+                    14,
+                    7
+                ],
+                [
+                    7,
+                    7
+                ],
+                [
+                    7,
+                    7
+                ],
+                [
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0
+                ]
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    255,
+                    255,
+                    255
+                ]
+            }
+        },
+        {
+            "command": "DrawRect",
+            "visible": true,
+            "coords": [
+                0,
+                7,
+                14,
+                8
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    255,
+                    255,
+                    255
+                ]
+            },
+            "shortDesc": " [0 7 14 8]"
+        }
+    ]
+}

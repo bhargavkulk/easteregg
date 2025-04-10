@@ -1,0 +1,49 @@
+{
+    "version": 1,
+    "commands": [
+        {
+            "command": "DrawPaint",
+            "visible": true,
+            "paint": {
+                "color": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "blendMode": "Src"
+            }
+        },
+        {
+            "command": "DrawRRect",
+            "visible": true,
+            "coords": [
+                [
+                    2,
+                    2,
+                    548,
+                    42
+                ],
+                [
+                    8,
+                    8
+                ],
+                [
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0
+                ],
+                [
+                    8,
+                    8
+                ]
+            ],
+            "paint": {
+                "antiAlias": true
+            }
+        }
+    ]
+}

@@ -1,0 +1,17 @@
+{
+    "version": 1,
+    "commands": [
+        {
+            "command": "DrawPaint",
+            "visible": true,
+            "paint": {
+                "color": [
+                    255,
+                    34,
+                    34,
+                    34
+                ]
+            }
+        }
+    ]
+}

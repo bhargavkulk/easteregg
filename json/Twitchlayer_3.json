@@ -1,0 +1,156 @@
+{
+    "version": 1,
+    "commands": [
+        {
+            "command": "DrawPaint",
+            "visible": true,
+            "paint": {
+                "color": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "blendMode": "Src"
+            }
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "Concat44",
+            "visible": true,
+            "matrix": [
+                [
+                    1,
+                    0,
+                    0,
+                    -30
+                ],
+                [
+                    0,
+                    1,
+                    0,
+                    -717
+                ],
+                [
+                    0,
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            ]
+        },
+        {
+            "command": "DrawPath",
+            "visible": true,
+            "path": {
+                "dump": "path.setFillType(SkPathFillType::kWinding);\npath.moveTo(30, 718);\npath.lineTo(452, 718);\npath.lineTo(452, 719);\npath.lineTo(30, 719);\npath.lineTo(30, 718);\npath.close();\n",
+                "fillType": "winding",
+                "verbs": [
+                    {
+                        "move": [
+                            30,
+                            718
+                        ]
+                    },
+                    {
+                        "line": [
+                            452,
+                            718
+                        ]
+                    },
+                    {
+                        "line": [
+                            452,
+                            719
+                        ]
+                    },
+                    {
+                        "line": [
+                            30,
+                            719
+                        ]
+                    },
+                    {
+                        "line": [
+                            30,
+                            718
+                        ]
+                    },
+                    "close"
+                ]
+            },
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    89,
+                    173,
+                    173,
+                    184
+                ]
+            }
+        },
+        {
+            "command": "DrawPath",
+            "visible": true,
+            "path": {
+                "dump": "path.setFillType(SkPathFillType::kWinding);\npath.moveTo(588, 718);\npath.lineTo(1010, 718);\npath.lineTo(1010, 719);\npath.lineTo(588, 719);\npath.lineTo(588, 718);\npath.close();\n",
+                "fillType": "winding",
+                "verbs": [
+                    {
+                        "move": [
+                            588,
+                            718
+                        ]
+                    },
+                    {
+                        "line": [
+                            1010,
+                            718
+                        ]
+                    },
+                    {
+                        "line": [
+                            1010,
+                            719
+                        ]
+                    },
+                    {
+                        "line": [
+                            588,
+                            719
+                        ]
+                    },
+                    {
+                        "line": [
+                            588,
+                            718
+                        ]
+                    },
+                    "close"
+                ]
+            },
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    89,
+                    173,
+                    173,
+                    184
+                ]
+            }
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        }
+    ]
+}

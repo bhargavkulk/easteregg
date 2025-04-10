@@ -1,0 +1,130 @@
+{
+    "version": 1,
+    "commands": [
+        {
+            "command": "DrawPaint",
+            "visible": true,
+            "paint": {
+                "color": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "blendMode": "Src"
+            }
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "Concat44",
+            "visible": true,
+            "matrix": [
+                [
+                    1,
+                    0,
+                    0,
+                    -463
+                ],
+                [
+                    0,
+                    1,
+                    0,
+                    -985
+                ],
+                [
+                    0,
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            ]
+        },
+        {
+            "command": "DrawRRect",
+            "visible": true,
+            "coords": [
+                [
+                    463,
+                    985,
+                    543,
+                    1005
+                ],
+                [
+                    4,
+                    4
+                ],
+                [
+                    4,
+                    4
+                ],
+                [
+                    4,
+                    4
+                ],
+                [
+                    4,
+                    4
+                ]
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    6,
+                    170,
+                    72
+                ]
+            }
+        },
+        {
+            "command": "DrawRRect",
+            "visible": true,
+            "coords": [
+                [
+                    720,
+                    989,
+                    801,
+                    1009
+                ],
+                [
+                    4,
+                    4
+                ],
+                [
+                    4,
+                    4
+                ],
+                [
+                    4,
+                    4
+                ],
+                [
+                    4,
+                    4
+                ]
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    6,
+                    170,
+                    72
+                ]
+            }
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        }
+    ]
+}

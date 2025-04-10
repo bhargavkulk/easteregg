@@ -1,0 +1,106 @@
+{
+    "version": 1,
+    "commands": [
+        {
+            "command": "DrawPaint",
+            "visible": true,
+            "paint": {
+                "color": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "blendMode": "Src"
+            }
+        },
+        {
+            "command": "DrawRect",
+            "visible": true,
+            "coords": [
+                0,
+                0,
+                944,
+                110
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    255,
+                    255,
+                    255
+                ]
+            },
+            "shortDesc": " [0 0 944 110]"
+        },
+        {
+            "command": "DrawTextBlob",
+            "visible": true,
+            "x": 0,
+            "y": 38,
+            "bounds": [
+                -4.5,
+                -22.26,
+                135.38,
+                4.84
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    22,
+                    24,
+                    35
+                ]
+            },
+            "runs": [
+                {
+                    "font": {
+                        "linearText": true,
+                        "subpixelText": true,
+                        "textSize": 20,
+                        "edging": "antialias",
+                        "hinting": "none",
+                        "typeface": {
+                            "data": "data/0"
+                        }
+                    },
+                    "coords": [
+                        0,
+                        0
+                    ],
+                    "glyphs": [
+                        28,
+                        159,
+                        165,
+                        3,
+                        157,
+                        145,
+                        169,
+                        3,
+                        156,
+                        153,
+                        155,
+                        149
+                    ],
+                    "positions": [
+                        0,
+                        11.84,
+                        24.3,
+                        36.18,
+                        41.18,
+                        58.94,
+                        69.94,
+                        81.58,
+                        86.58,
+                        92.18,
+                        97.78,
+                        108.92
+                    ]
+                }
+            ],
+            "shortDesc": " [-4.5 15.74 135.38 42.84]"
+        }
+    ]
+}

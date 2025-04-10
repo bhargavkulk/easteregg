@@ -1,0 +1,87 @@
+{
+    "version": 1,
+    "commands": [
+        {
+            "command": "DrawPaint",
+            "visible": true,
+            "paint": {
+                "color": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "blendMode": "Src"
+            }
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "ClipRect",
+            "visible": true,
+            "coords": [
+                0,
+                0,
+                18,
+                16
+            ],
+            "op": "intersect",
+            "antiAlias": true,
+            "shortDesc": " [0 0 18 16]"
+        },
+        {
+            "command": "DrawTextBlob",
+            "visible": true,
+            "x": 0,
+            "y": 13,
+            "bounds": [
+                -8.63916,
+                -13.0762,
+                36.8291,
+                4.22119
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    44,
+                    45,
+                    46
+                ]
+            },
+            "runs": [
+                {
+                    "font": {
+                        "linearText": true,
+                        "subpixelText": true,
+                        "textSize": 13,
+                        "edging": "antialias",
+                        "hinting": "none",
+                        "typeface": {
+                            "data": "data/0"
+                        }
+                    },
+                    "coords": [
+                        0,
+                        0
+                    ],
+                    "glyphs": [
+                        582,
+                        580
+                    ],
+                    "positions": [
+                        0,
+                        10.8291
+                    ]
+                }
+            ],
+            "shortDesc": " [-8.63916 -0.0761719 36.8291 17.2212]"
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        }
+    ]
+}

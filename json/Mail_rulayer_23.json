@@ -1,0 +1,135 @@
+{
+    "version": 1,
+    "commands": [
+        {
+            "command": "DrawPaint",
+            "visible": true,
+            "paint": {
+                "color": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "blendMode": "Src"
+            }
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "ClipRect",
+            "visible": true,
+            "coords": [
+                0,
+                0,
+                172,
+                16
+            ],
+            "op": "intersect",
+            "antiAlias": true,
+            "shortDesc": " [0 0 172 16]"
+        },
+        {
+            "command": "DrawTextBlob",
+            "visible": true,
+            "x": 0,
+            "y": 13,
+            "bounds": [
+                -8.63916,
+                -13.0762,
+                194.016,
+                4.22119
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    44,
+                    45,
+                    46
+                ]
+            },
+            "runs": [
+                {
+                    "font": {
+                        "linearText": true,
+                        "subpixelText": true,
+                        "textSize": 13,
+                        "edging": "antialias",
+                        "hinting": "none",
+                        "typeface": {
+                            "data": "data/0"
+                        }
+                    },
+                    "coords": [
+                        0,
+                        0
+                    ],
+                    "glyphs": [
+                        36,
+                        78,
+                        72,
+                        85,
+                        48,
+                        72,
+                        75,
+                        68,
+                        81,
+                        76,
+                        78,
+                        3,
+                        11,
+                        570,
+                        612,
+                        607,
+                        618,
+                        3,
+                        582,
+                        607,
+                        623,
+                        602,
+                        615,
+                        610,
+                        612,
+                        12
+                    ],
+                    "positions": [
+                        0,
+                        8.6709,
+                        15.1709,
+                        22.4009,
+                        26.73,
+                        37.5591,
+                        44.7891,
+                        52.019,
+                        59.249,
+                        66.479,
+                        69.3672,
+                        75.8672,
+                        79.479,
+                        83.8081,
+                        92.479,
+                        98.3125,
+                        105.542,
+                        112.772,
+                        116.384,
+                        127.359,
+                        134.304,
+                        140.658,
+                        147.888,
+                        155.067,
+                        162.329,
+                        168.016
+                    ]
+                }
+            ],
+            "shortDesc": " [-8.63916 -0.0761719 194.016 17.2212]"
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        }
+    ]
+}

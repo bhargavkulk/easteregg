@@ -1,0 +1,111 @@
+{
+    "version": 1,
+    "commands": [
+        {
+            "command": "DrawPaint",
+            "visible": true,
+            "paint": {
+                "color": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "blendMode": "Src"
+            }
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "ClipRect",
+            "visible": true,
+            "coords": [
+                0,
+                0,
+                77,
+                77
+            ],
+            "op": "intersect",
+            "antiAlias": true,
+            "shortDesc": " [0 0 77 77]"
+        },
+        {
+            "command": "DrawRect",
+            "visible": true,
+            "coords": [
+                0,
+                0,
+                77,
+                77
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    239,
+                    239,
+                    239
+                ]
+            },
+            "shortDesc": " [0 0 77 77]"
+        },
+        {
+            "command": "DrawImageRect",
+            "visible": true,
+            "image": {
+                "data": "data/0"
+            },
+            "src": [
+                0,
+                66.6176,
+                170,
+                237.603
+            ],
+            "dst": [
+                0,
+                0,
+                77,
+                77
+            ],
+            "sampling": {
+                "maxAniso": 0,
+                "useCubic": false,
+                "filter": 1,
+                "mipmap": 2,
+                "cubic.B": 0,
+                "cubic.C": 0
+            },
+            "paint": {
+                "antiAlias": true
+            },
+            "strict": true,
+            "shortDesc": " [0 0 77 77]"
+        },
+        {
+            "command": "DrawRect",
+            "visible": true,
+            "coords": [
+                0,
+                0,
+                77,
+                77
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    10,
+                    0,
+                    0,
+                    0
+                ]
+            },
+            "shortDesc": " [0 0 77 77]"
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        }
+    ]
+}

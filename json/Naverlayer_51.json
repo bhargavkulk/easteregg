@@ -1,0 +1,170 @@
+{
+    "version": 1,
+    "commands": [
+        {
+            "command": "DrawPaint",
+            "visible": true,
+            "paint": {
+                "color": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "blendMode": "Src"
+            }
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "Concat44",
+            "visible": true,
+            "matrix": [
+                [
+                    1,
+                    0,
+                    0,
+                    -50
+                ],
+                [
+                    0,
+                    1,
+                    0,
+                    -1821
+                ],
+                [
+                    0,
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            ]
+        },
+        {
+            "command": "DrawRRect",
+            "visible": true,
+            "coords": [
+                [
+                    50,
+                    1822,
+                    52,
+                    1976
+                ],
+                [
+                    2,
+                    2
+                ],
+                [
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0
+                ],
+                [
+                    2,
+                    2
+                ]
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    38,
+                    0,
+                    0,
+                    0
+                ]
+            }
+        },
+        {
+            "command": "DrawRect",
+            "visible": true,
+            "coords": [
+                54,
+                1821,
+                55,
+                1977
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    38,
+                    0,
+                    0,
+                    0
+                ]
+            },
+            "shortDesc": " [54 1821 55 1977]"
+        },
+        {
+            "command": "DrawRRect",
+            "visible": true,
+            "coords": [
+                [
+                    50,
+                    2072,
+                    52,
+                    2226
+                ],
+                [
+                    2,
+                    2
+                ],
+                [
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0
+                ],
+                [
+                    2,
+                    2
+                ]
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    38,
+                    0,
+                    0,
+                    0
+                ]
+            }
+        },
+        {
+            "command": "DrawRect",
+            "visible": true,
+            "coords": [
+                54,
+                2071,
+                55,
+                2227
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    38,
+                    0,
+                    0,
+                    0
+                ]
+            },
+            "shortDesc": " [54 2071 55 2227]"
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        }
+    ]
+}

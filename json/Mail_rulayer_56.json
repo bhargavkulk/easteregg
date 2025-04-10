@@ -1,0 +1,95 @@
+{
+    "version": 1,
+    "commands": [
+        {
+            "command": "DrawPaint",
+            "visible": true,
+            "paint": {
+                "color": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "blendMode": "Src"
+            }
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "Concat44",
+            "visible": true,
+            "matrix": [
+                [
+                    1,
+                    0,
+                    0,
+                    -808
+                ],
+                [
+                    0,
+                    1,
+                    0,
+                    -2877
+                ],
+                [
+                    0,
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            ]
+        },
+        {
+            "command": "DrawRRect",
+            "visible": true,
+            "coords": [
+                [
+                    808.5,
+                    2878.5,
+                    1237.5,
+                    3271.5
+                ],
+                [
+                    19.5,
+                    19.5
+                ],
+                [
+                    19.5,
+                    19.5
+                ],
+                [
+                    19.5,
+                    19.5
+                ],
+                [
+                    19.5,
+                    19.5
+                ]
+            ],
+            "paint": {
+                "strokeWidth": 1,
+                "antiAlias": true,
+                "color": [
+                    31,
+                    0,
+                    16,
+                    61
+                ],
+                "style": "stroke"
+            }
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        }
+    ]
+}

@@ -1,7 +1,7 @@
 import argparse
 import json
-import os
 import subprocess
+import sys
 import tomllib
 from pathlib import Path
 from typing import Any
@@ -62,7 +62,7 @@ def dump_skp(urlname: str, url: str, path: Path, outputPath: Path):
                 if find_command(json_data, 'SaveLayer'):
                     print(f'[{urlname}] found "SaveLayer" @ {skp_file.stem}')
                 json_file_name = skp_file.stem + '.json'
-                json_file_path = Path(urlname + json_file_name)
+                json_file_path = outputPath / (urlname + json_file_name)
                 with json_file_path.open('w') as f:
                     json.dump(json_data, f, indent=4)
         print(f'[{urlname}] done')
@@ -74,7 +74,8 @@ parser = argparse.ArgumentParser(description='dump and serialize skps to JSON')
 parser.add_argument(
     'input_file', help='path to a TOML file of a list of urls to dump and serialize', type=Path
 )
-parser.add_argument('output_folder', help='output path to skps', type=Path)
+parser.add_argument('skp_folder', help='output path to skps', type=Path)
+parser.add_argument('json_folder', help='output path to json', type=Path)
 args = parser.parse_args()
 
 toml_urls: dict[str, Any] = dict()
@@ -88,11 +89,12 @@ except Exception as e:
 
 def process_urls():
     for urlname, url in toml_urls.items():
-        output_path: Path = args.output_folder / urlname
+        output_path: Path = args.skp_folder / urlname
         output_path.mkdir(parents=True, exist_ok=True)
+        args.json_folder.mkdir(parents=True, exist_ok=True)
 
         print(f'[*] processing {urlname}')
-        dump_skp(urlname, url, output_path, args.output_folder)
+        dump_skp(urlname, url, output_path, args.json_folder)
 
 
 process_urls()

@@ -1,0 +1,558 @@
+{
+    "version": 1,
+    "commands": [
+        {
+            "command": "DrawPaint",
+            "visible": true,
+            "paint": {
+                "color": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "blendMode": "Src"
+            }
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "Concat44",
+            "visible": true,
+            "matrix": [
+                [
+                    1,
+                    0,
+                    0,
+                    11
+                ],
+                [
+                    0,
+                    1,
+                    0,
+                    96
+                ],
+                [
+                    0,
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            ]
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "Concat44",
+            "visible": true,
+            "matrix": [
+                [
+                    1,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0,
+                    -88
+                ],
+                [
+                    0,
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            ]
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "ClipRRect",
+            "visible": true,
+            "coords": [
+                [
+                    1,
+                    1,
+                    51,
+                    175
+                ],
+                [
+                    2.2,
+                    2.2
+                ],
+                [
+                    2.2,
+                    2.2
+                ],
+                [
+                    2.2,
+                    2.2
+                ],
+                [
+                    2.2,
+                    2.2
+                ]
+            ],
+            "op": "difference",
+            "antiAlias": true
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "Concat44",
+            "visible": true,
+            "matrix": [
+                [
+                    1,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0,
+                    3
+                ],
+                [
+                    0,
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            ]
+        },
+        {
+            "command": "DrawRRect",
+            "visible": true,
+            "coords": [
+                [
+                    0,
+                    0,
+                    52,
+                    176
+                ],
+                [
+                    3.2,
+                    3.2
+                ],
+                [
+                    3.2,
+                    3.2
+                ],
+                [
+                    3.2,
+                    3.2
+                ],
+                [
+                    3.2,
+                    3.2
+                ]
+            ],
+            "paint": {
+                "antiAlias": true,
+                "blur": {
+                    "sigma": 3.5,
+                    "style": "normal"
+                },
+                "colorfilter": {
+                    "name": "SkBlendModeColorFilter",
+                    "data": "data/0",
+                    "values": {
+                        "00_color": [
+                            0.301961,
+                            0,
+                            0,
+                            0
+                        ],
+                        "01_uint": 5
+                    }
+                }
+            }
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "Concat44",
+            "visible": true,
+            "matrix": [
+                [
+                    1,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0,
+                    1
+                ],
+                [
+                    0,
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            ]
+        },
+        {
+            "command": "DrawRRect",
+            "visible": true,
+            "coords": [
+                [
+                    0,
+                    0,
+                    52,
+                    176
+                ],
+                [
+                    3.2,
+                    3.2
+                ],
+                [
+                    3.2,
+                    3.2
+                ],
+                [
+                    3.2,
+                    3.2
+                ],
+                [
+                    3.2,
+                    3.2
+                ]
+            ],
+            "paint": {
+                "antiAlias": true,
+                "blur": {
+                    "sigma": 1,
+                    "style": "normal"
+                },
+                "colorfilter": {
+                    "name": "SkBlendModeColorFilter",
+                    "data": "data/1",
+                    "values": {
+                        "00_color": [
+                            0.45098,
+                            0,
+                            0,
+                            0
+                        ],
+                        "01_uint": 5
+                    }
+                }
+            }
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        },
+        {
+            "command": "DrawRRect",
+            "visible": true,
+            "coords": [
+                [
+                    0,
+                    0,
+                    52,
+                    176
+                ],
+                [
+                    3.2,
+                    3.2
+                ],
+                [
+                    3.2,
+                    3.2
+                ],
+                [
+                    3.2,
+                    3.2
+                ],
+                [
+                    3.2,
+                    3.2
+                ]
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    0,
+                    103,
+                    184
+                ]
+            }
+        },
+        {
+            "command": "DrawRRect",
+            "visible": true,
+            "coords": [
+                [
+                    0,
+                    132,
+                    52,
+                    176
+                ],
+                [
+                    3.2,
+                    3.2
+                ],
+                [
+                    3.2,
+                    3.2
+                ],
+                [
+                    3.2,
+                    3.2
+                ],
+                [
+                    3.2,
+                    3.2
+                ]
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    36,
+                    58,
+                    94
+                ]
+            }
+        },
+        {
+            "command": "DrawTextBlob",
+            "visible": true,
+            "x": 18,
+            "y": 30,
+            "bounds": [
+                -0.00732422,
+                -15.022,
+                59.7656,
+                0.0512695
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    255,
+                    255,
+                    255
+                ]
+            },
+            "runs": [
+                {
+                    "font": {
+                        "linearText": true,
+                        "subpixelText": true,
+                        "textSize": 15,
+                        "edging": "subpixelantialias",
+                        "typeface": {
+                            "data": "data/2"
+                        }
+                    },
+                    "coords": [
+                        0,
+                        0
+                    ],
+                    "glyphs": [
+                        77
+                    ],
+                    "positions": [
+                        0
+                    ]
+                }
+            ],
+            "shortDesc": " [17.9927 14.978 77.7656 30.0513]"
+        },
+        {
+            "command": "DrawTextBlob",
+            "visible": true,
+            "x": 18,
+            "y": 74,
+            "bounds": [
+                -0.00732422,
+                -15.022,
+                59.7656,
+                0.0512695
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    255,
+                    255,
+                    255
+                ]
+            },
+            "runs": [
+                {
+                    "font": {
+                        "linearText": true,
+                        "subpixelText": true,
+                        "textSize": 15,
+                        "edging": "subpixelantialias",
+                        "typeface": {
+                            "data": "data/2"
+                        }
+                    },
+                    "coords": [
+                        0,
+                        0
+                    ],
+                    "glyphs": [
+                        5
+                    ],
+                    "positions": [
+                        0
+                    ]
+                }
+            ],
+            "shortDesc": " [17.9927 58.978 77.7656 74.0513]"
+        },
+        {
+            "command": "DrawTextBlob",
+            "visible": true,
+            "x": 18,
+            "y": 118,
+            "bounds": [
+                -0.00732422,
+                -15.022,
+                59.7656,
+                0.0512695
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    255,
+                    255,
+                    255
+                ]
+            },
+            "runs": [
+                {
+                    "font": {
+                        "linearText": true,
+                        "subpixelText": true,
+                        "textSize": 15,
+                        "edging": "subpixelantialias",
+                        "typeface": {
+                            "data": "data/2"
+                        }
+                    },
+                    "coords": [
+                        0,
+                        0
+                    ],
+                    "glyphs": [
+                        13
+                    ],
+                    "positions": [
+                        0
+                    ]
+                }
+            ],
+            "shortDesc": " [17.9927 102.978 77.7656 118.051]"
+        },
+        {
+            "command": "DrawTextBlob",
+            "visible": true,
+            "x": 18,
+            "y": 162,
+            "bounds": [
+                -0.00732422,
+                -15.022,
+                59.7656,
+                0.0512695
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    255,
+                    255,
+                    255
+                ]
+            },
+            "runs": [
+                {
+                    "font": {
+                        "linearText": true,
+                        "subpixelText": true,
+                        "textSize": 15,
+                        "edging": "subpixelantialias",
+                        "typeface": {
+                            "data": "data/2"
+                        }
+                    },
+                    "coords": [
+                        0,
+                        0
+                    ],
+                    "glyphs": [
+                        197
+                    ],
+                    "positions": [
+                        0
+                    ]
+                }
+            ],
+            "shortDesc": " [17.9927 146.978 77.7656 162.051]"
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        }
+    ]
+}

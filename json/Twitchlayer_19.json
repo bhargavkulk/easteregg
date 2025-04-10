@@ -1,0 +1,389 @@
+{
+    "version": 1,
+    "commands": [
+        {
+            "command": "DrawPaint",
+            "visible": true,
+            "paint": {
+                "color": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "blendMode": "Src"
+            }
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "Concat44",
+            "visible": true,
+            "matrix": [
+                [
+                    1,
+                    0,
+                    0,
+                    -440
+                ],
+                [
+                    0,
+                    1,
+                    0,
+                    -182
+                ],
+                [
+                    0,
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            ]
+        },
+        {
+            "command": "DrawRRect",
+            "visible": true,
+            "coords": [
+                [
+                    801,
+                    187,
+                    835,
+                    223
+                ],
+                [
+                    0,
+                    0
+                ],
+                [
+                    6,
+                    6
+                ],
+                [
+                    6,
+                    6
+                ],
+                [
+                    0,
+                    0
+                ]
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    56,
+                    173,
+                    173,
+                    184
+                ]
+            }
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "ClipRRect",
+            "visible": true,
+            "coords": [
+                [
+                    801,
+                    187,
+                    835,
+                    223
+                ],
+                [
+                    0,
+                    0
+                ],
+                [
+                    6,
+                    6
+                ],
+                [
+                    6,
+                    6
+                ],
+                [
+                    0,
+                    0
+                ]
+            ],
+            "op": "intersect",
+            "antiAlias": true
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "ClipRect",
+            "visible": true,
+            "coords": [
+                806,
+                193,
+                830,
+                217
+            ],
+            "op": "intersect",
+            "antiAlias": true,
+            "shortDesc": " [806 193 830 217]"
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "Concat44",
+            "visible": true,
+            "matrix": [
+                [
+                    1,
+                    0,
+                    0,
+                    806
+                ],
+                [
+                    0,
+                    1,
+                    0,
+                    193
+                ],
+                [
+                    0,
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            ]
+        },
+        {
+            "command": "ClipRect",
+            "visible": true,
+            "coords": [
+                0,
+                0,
+                24,
+                24
+            ],
+            "op": "intersect",
+            "antiAlias": true,
+            "shortDesc": " [0 0 24 24]"
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "Concat44",
+            "visible": true,
+            "matrix": [
+                [
+                    1.2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1.2,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            ]
+        },
+        {
+            "command": "DrawPath",
+            "visible": true,
+            "path": {
+                "dump": "path.setFillType(SkPathFillType::kEvenOdd);\npath.moveTo(13.1920004f, 14.6059999f);\npath.conicTo(4.47226286f, 21.1263542f, 2.15971851f, 10.4867592f, 0.540788293f);\npath.conicTo(-0.152825594f, -0.152837068f, 10.4867687f, 2.15971565f, 0.540788293f);\npath.conicTo(21.1263638f, 4.47226858f, 14.6060009f, 13.1919994f, 0.540788293f);\npath.lineTo(17.7070007f, 16.2919998f);\npath.lineTo(16.2930012f, 17.7070007f);\npath.lineTo(13.1930008f, 14.6070004f);\npath.lineTo(13.1920004f, 14.6059999f);\npath.close();\npath.moveTo(14, 9);\npath.conicTo(14, 14, 9, 14, 0.707106829f);\npath.conicTo(4, 14, 4, 9, 0.707106829f);\npath.conicTo(4, 4, 9, 4, 0.707106709f);\npath.conicTo(14, 4, 14, 9, 0.707106709f);\npath.close();\n",
+                "fillType": "evenOdd",
+                "verbs": [
+                    {
+                        "move": [
+                            13.192,
+                            14.606
+                        ]
+                    },
+                    {
+                        "conic": [
+                            [
+                                4.47226,
+                                21.1264
+                            ],
+                            [
+                                2.15972,
+                                10.4868
+                            ],
+                            0.540788
+                        ]
+                    },
+                    {
+                        "conic": [
+                            [
+                                -0.152826,
+                                -0.152837
+                            ],
+                            [
+                                10.4868,
+                                2.15972
+                            ],
+                            0.540788
+                        ]
+                    },
+                    {
+                        "conic": [
+                            [
+                                21.1264,
+                                4.47227
+                            ],
+                            [
+                                14.606,
+                                13.192
+                            ],
+                            0.540788
+                        ]
+                    },
+                    {
+                        "line": [
+                            17.707,
+                            16.292
+                        ]
+                    },
+                    {
+                        "line": [
+                            16.293,
+                            17.707
+                        ]
+                    },
+                    {
+                        "line": [
+                            13.193,
+                            14.607
+                        ]
+                    },
+                    {
+                        "line": [
+                            13.192,
+                            14.606
+                        ]
+                    },
+                    "close",
+                    {
+                        "move": [
+                            14,
+                            9
+                        ]
+                    },
+                    {
+                        "conic": [
+                            [
+                                14,
+                                14
+                            ],
+                            [
+                                9,
+                                14
+                            ],
+                            0.707107
+                        ]
+                    },
+                    {
+                        "conic": [
+                            [
+                                4,
+                                14
+                            ],
+                            [
+                                4,
+                                9
+                            ],
+                            0.707107
+                        ]
+                    },
+                    {
+                        "conic": [
+                            [
+                                4,
+                                4
+                            ],
+                            [
+                                9,
+                                4
+                            ],
+                            0.707107
+                        ]
+                    },
+                    {
+                        "conic": [
+                            [
+                                14,
+                                4
+                            ],
+                            [
+                                14,
+                                9
+                            ],
+                            0.707107
+                        ]
+                    },
+                    "close"
+                ]
+            },
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    14,
+                    14,
+                    16
+                ]
+            }
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        }
+    ]
+}

@@ -1,0 +1,106 @@
+{
+    "version": 1,
+    "commands": [
+        {
+            "command": "DrawPaint",
+            "visible": true,
+            "paint": {
+                "color": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "blendMode": "Src"
+            }
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "Concat44",
+            "visible": true,
+            "matrix": [
+                [
+                    1,
+                    0,
+                    0,
+                    -30
+                ],
+                [
+                    0,
+                    1,
+                    0,
+                    -1935
+                ],
+                [
+                    0,
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            ]
+        },
+        {
+            "command": "DrawPath",
+            "visible": true,
+            "path": {
+                "dump": "path.setFillType(SkPathFillType::kWinding);\npath.moveTo(30, 1935);\npath.lineTo(1010, 1935);\npath.lineTo(1010, 1936);\npath.lineTo(30, 1936);\npath.lineTo(30, 1935);\npath.close();\n",
+                "fillType": "winding",
+                "verbs": [
+                    {
+                        "move": [
+                            30,
+                            1935
+                        ]
+                    },
+                    {
+                        "line": [
+                            1010,
+                            1935
+                        ]
+                    },
+                    {
+                        "line": [
+                            1010,
+                            1936
+                        ]
+                    },
+                    {
+                        "line": [
+                            30,
+                            1936
+                        ]
+                    },
+                    {
+                        "line": [
+                            30,
+                            1935
+                        ]
+                    },
+                    "close"
+                ]
+            },
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    89,
+                    173,
+                    173,
+                    184
+                ]
+            }
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        }
+    ]
+}

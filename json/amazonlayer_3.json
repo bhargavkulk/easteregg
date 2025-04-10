@@ -1,0 +1,150 @@
+{
+    "version": 1,
+    "commands": [
+        {
+            "command": "DrawPaint",
+            "visible": true,
+            "paint": {
+                "color": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "blendMode": "Src"
+            }
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "ClipRRect",
+            "visible": true,
+            "coords": [
+                [
+                    0,
+                    0,
+                    50,
+                    50
+                ],
+                [
+                    25,
+                    25
+                ],
+                [
+                    25,
+                    25
+                ],
+                [
+                    25,
+                    25
+                ],
+                [
+                    25,
+                    25
+                ]
+            ],
+            "op": "intersect",
+            "antiAlias": true
+        },
+        {
+            "command": "ClipRRect",
+            "visible": true,
+            "coords": [
+                [
+                    6,
+                    6,
+                    44,
+                    44
+                ],
+                [
+                    19,
+                    19
+                ],
+                [
+                    19,
+                    19
+                ],
+                [
+                    19,
+                    19
+                ],
+                [
+                    19,
+                    19
+                ]
+            ],
+            "op": "difference",
+            "antiAlias": true
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "ClipPath",
+            "visible": true,
+            "path": {
+                "dump": "path.setFillType(SkPathFillType::kWinding);\npath.moveTo(0, 0);\npath.lineTo(15.5f, 15.5f);\npath.lineTo(34.5f, 15.5f);\npath.lineTo(50, 0);\n",
+                "fillType": "winding",
+                "verbs": [
+                    {
+                        "move": [
+                            0,
+                            0
+                        ]
+                    },
+                    {
+                        "line": [
+                            15.5,
+                            15.5
+                        ]
+                    },
+                    {
+                        "line": [
+                            34.5,
+                            15.5
+                        ]
+                    },
+                    {
+                        "line": [
+                            50,
+                            0
+                        ]
+                    }
+                ]
+            },
+            "op": "intersect",
+            "antiAlias": true
+        },
+        {
+            "command": "DrawRect",
+            "visible": true,
+            "coords": [
+                0,
+                0,
+                50,
+                50
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    115,
+                    133,
+                    159
+                ]
+            },
+            "shortDesc": " [0 0 50 50]"
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        }
+    ]
+}

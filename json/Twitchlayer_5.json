@@ -1,0 +1,156 @@
+{
+    "version": 1,
+    "commands": [
+        {
+            "command": "DrawPaint",
+            "visible": true,
+            "paint": {
+                "color": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "blendMode": "Src"
+            }
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "Concat44",
+            "visible": true,
+            "matrix": [
+                [
+                    1,
+                    0,
+                    0,
+                    -30
+                ],
+                [
+                    0,
+                    1,
+                    0,
+                    -1038
+                ],
+                [
+                    0,
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            ]
+        },
+        {
+            "command": "DrawPath",
+            "visible": true,
+            "path": {
+                "dump": "path.setFillType(SkPathFillType::kWinding);\npath.moveTo(30, 1528);\npath.lineTo(461, 1528);\npath.lineTo(461, 1529);\npath.lineTo(30, 1529);\npath.lineTo(30, 1528);\npath.close();\n",
+                "fillType": "winding",
+                "verbs": [
+                    {
+                        "move": [
+                            30,
+                            1528
+                        ]
+                    },
+                    {
+                        "line": [
+                            461,
+                            1528
+                        ]
+                    },
+                    {
+                        "line": [
+                            461,
+                            1529
+                        ]
+                    },
+                    {
+                        "line": [
+                            30,
+                            1529
+                        ]
+                    },
+                    {
+                        "line": [
+                            30,
+                            1528
+                        ]
+                    },
+                    "close"
+                ]
+            },
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    89,
+                    173,
+                    173,
+                    184
+                ]
+            }
+        },
+        {
+            "command": "DrawPath",
+            "visible": true,
+            "path": {
+                "dump": "path.setFillType(SkPathFillType::kWinding);\npath.moveTo(579, 1528);\npath.lineTo(1010, 1528);\npath.lineTo(1010, 1529);\npath.lineTo(579, 1529);\npath.lineTo(579, 1528);\npath.close();\n",
+                "fillType": "winding",
+                "verbs": [
+                    {
+                        "move": [
+                            579,
+                            1528
+                        ]
+                    },
+                    {
+                        "line": [
+                            1010,
+                            1528
+                        ]
+                    },
+                    {
+                        "line": [
+                            1010,
+                            1529
+                        ]
+                    },
+                    {
+                        "line": [
+                            579,
+                            1529
+                        ]
+                    },
+                    {
+                        "line": [
+                            579,
+                            1528
+                        ]
+                    },
+                    "close"
+                ]
+            },
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    89,
+                    173,
+                    173,
+                    184
+                ]
+            }
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        }
+    ]
+}

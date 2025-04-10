@@ -1,0 +1,88 @@
+{
+    "version": 1,
+    "commands": [
+        {
+            "command": "DrawPaint",
+            "visible": true,
+            "paint": {
+                "color": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "blendMode": "Src"
+            }
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "ClipRRect",
+            "visible": true,
+            "coords": [
+                [
+                    0,
+                    0,
+                    230,
+                    128
+                ],
+                [
+                    12,
+                    12
+                ],
+                [
+                    12,
+                    12
+                ],
+                [
+                    12,
+                    12
+                ],
+                [
+                    12,
+                    12
+                ]
+            ],
+            "op": "intersect",
+            "antiAlias": true
+        },
+        {
+            "command": "DrawImageRect",
+            "visible": true,
+            "image": {
+                "data": "data/0"
+            },
+            "src": [
+                0,
+                2.23077,
+                515,
+                287.769
+            ],
+            "dst": [
+                0,
+                0,
+                230,
+                128
+            ],
+            "sampling": {
+                "maxAniso": 0,
+                "useCubic": false,
+                "filter": 1,
+                "mipmap": 2,
+                "cubic.B": 0,
+                "cubic.C": 0
+            },
+            "paint": {
+                "antiAlias": true
+            },
+            "strict": true,
+            "shortDesc": " [0 0 230 128]"
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        }
+    ]
+}

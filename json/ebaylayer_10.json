@@ -1,0 +1,249 @@
+{
+    "version": 1,
+    "commands": [
+        {
+            "command": "DrawPaint",
+            "visible": true,
+            "paint": {
+                "color": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "blendMode": "Src"
+            }
+        },
+        {
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "Concat44",
+            "visible": true,
+            "matrix": [
+                [
+                    1,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0,
+                    -538
+                ],
+                [
+                    0,
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            ]
+        },
+        {
+            "command": "DrawRRect",
+            "visible": true,
+            "coords": [
+                [
+                    635.5,
+                    538.5,
+                    642.5,
+                    545.5
+                ],
+                [
+                    3.5,
+                    3.5
+                ],
+                [
+                    3.5,
+                    3.5
+                ],
+                [
+                    3.5,
+                    3.5
+                ],
+                [
+                    3.5,
+                    3.5
+                ]
+            ],
+            "paint": {
+                "strokeWidth": 1,
+                "antiAlias": true,
+                "color": [
+                    255,
+                    47,
+                    14,
+                    4
+                ],
+                "style": "stroke"
+            }
+        },
+        {
+            "command": "DrawRRect",
+            "visible": true,
+            "coords": [
+                [
+                    649.5,
+                    538.5,
+                    656.5,
+                    545.5
+                ],
+                [
+                    3.5,
+                    3.5
+                ],
+                [
+                    3.5,
+                    3.5
+                ],
+                [
+                    3.5,
+                    3.5
+                ],
+                [
+                    3.5,
+                    3.5
+                ]
+            ],
+            "paint": {
+                "antiAlias": true,
+                "color": [
+                    255,
+                    47,
+                    14,
+                    4
+                ]
+            }
+        },
+        {
+            "command": "DrawRRect",
+            "visible": true,
+            "coords": [
+                [
+                    649.5,
+                    538.5,
+                    656.5,
+                    545.5
+                ],
+                [
+                    3.5,
+                    3.5
+                ],
+                [
+                    3.5,
+                    3.5
+                ],
+                [
+                    3.5,
+                    3.5
+                ],
+                [
+                    3.5,
+                    3.5
+                ]
+            ],
+            "paint": {
+                "strokeWidth": 1,
+                "antiAlias": true,
+                "color": [
+                    255,
+                    47,
+                    14,
+                    4
+                ],
+                "style": "stroke"
+            }
+        },
+        {
+            "command": "DrawRRect",
+            "visible": true,
+            "coords": [
+                [
+                    663.5,
+                    538.5,
+                    670.5,
+                    545.5
+                ],
+                [
+                    3.5,
+                    3.5
+                ],
+                [
+                    3.5,
+                    3.5
+                ],
+                [
+                    3.5,
+                    3.5
+                ],
+                [
+                    3.5,
+                    3.5
+                ]
+            ],
+            "paint": {
+                "strokeWidth": 1,
+                "antiAlias": true,
+                "color": [
+                    255,
+                    47,
+                    14,
+                    4
+                ],
+                "style": "stroke"
+            }
+        },
+        {
+            "command": "DrawRRect",
+            "visible": true,
+            "coords": [
+                [
+                    677.5,
+                    538.5,
+                    684.5,
+                    545.5
+                ],
+                [
+                    3.5,
+                    3.5
+                ],
+                [
+                    3.5,
+                    3.5
+                ],
+                [
+                    3.5,
+                    3.5
+                ],
+                [
+                    3.5,
+                    3.5
+                ]
+            ],
+            "paint": {
+                "strokeWidth": 1,
+                "antiAlias": true,
+                "color": [
+                    255,
+                    47,
+                    14,
+                    4
+                ],
+                "style": "stroke"
+            }
+        },
+        {
+            "command": "Restore",
+            "visible": true
+        }
+    ]
+}
