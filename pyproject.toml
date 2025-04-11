@@ -15,3 +15,6 @@ line-length = 100
 
 [tool.ruff.format]
 quote-style = "single"
+
+[tool.poetry]
+version = "1.0"  # base version
