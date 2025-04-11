@@ -11,6 +11,7 @@ ninja -C out/debug dm skp_parser
 
 # REPORT LOLW
 
+cd ..
 mkdir -p report
 touch report/index.html
 poetry install --no-root
