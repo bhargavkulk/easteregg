@@ -16,6 +16,7 @@ line-length = 100
 quote-style = "single"
 
 [tool.poetry]
+name = "easteregg"
 version = "0.1.0"
 authors = ["Bhargav Kulkarni <bhargavkishork@gmail.com>"]
 description = "Add your description here"
