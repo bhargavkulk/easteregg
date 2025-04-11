@@ -13,4 +13,5 @@ ninja -C out/debug dm skp_parser
 
 mkdir -p report
 touch report/index.html
+poetry install --no-root
 poetry run python dl_skps.py urls.toml skps json
