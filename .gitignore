@@ -3,4 +3,5 @@ skps/
 .DS_Store
 skia/
 egglog/
-*.lock/
+*.lock
+venv/
