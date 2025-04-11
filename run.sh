@@ -14,5 +14,8 @@ ninja -C out/debug dm skp_parser
 cd ..
 mkdir -p report
 touch report/index.html
-poetry install --no-root
-poetry run python dl_skps.py urls.toml skps json
+
+python3 -m venv .
+
+$(pwd)/.venv/bin/python -m pip install playwright
+$(pwd)/.venv/bin/python dl_skps.py urls.toml skps json
