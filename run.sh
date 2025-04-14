@@ -16,7 +16,7 @@ ninja -C out/debug dm skp_parser
 cd ..
 
 cd egglog
-cargo install cargo-nextest --version 0.9.85
+cargo install --locked cargo-nextest --version 0.9.85
 make all
 cd ..
 
