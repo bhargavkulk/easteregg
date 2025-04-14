@@ -17,7 +17,7 @@ cd ..
 
 cd egglog
 cargo install --locked cargo-nextest --version 0.9.85
-make all
+cargo build
 cd ..
 
 mkdir -p report
