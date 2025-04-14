@@ -15,50 +15,38 @@
             }
         },
         {
-            "command": "SaveLayer",
+            "command": "Save",
+            "visible": true
+        },
+        {
+            "command": "Concat44",
             "visible": true,
-            "bounds": [
-                0,
-                0,
-                144,
-                82
-            ],
-            "paint": {
-                "imagefilter": {
-                    "name": "SkColorFilterImageFilter",
-                    "data": "data/0",
-                    "values": {
-                        "00_int": 1,
-                        "01_bool": false,
-                        "02_SkMatrixColorFilter": {
-                            "00_scalarArray": [
-                                0.95,
-                                0,
-                                0,
-                                0,
-                                0,
-                                0,
-                                0.95,
-                                0,
-                                0,
-                                0,
-                                0,
-                                0,
-                                0.95,
-                                0,
-                                0,
-                                0,
-                                0,
-                                0,
-                                1,
-                                0
-                            ],
-                            "01_bool": true,
-                            "02_bool": true
-                        }
-                    }
-                }
-            }
+            "matrix": [
+                [
+                    1,
+                    0,
+                    0,
+                    -36
+                ],
+                [
+                    0,
+                    1,
+                    0,
+                    -3798
+                ],
+                [
+                    0,
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            ]
         },
         {
             "command": "Save",
@@ -69,26 +57,26 @@
             "visible": true,
             "coords": [
                 [
-                    0,
-                    0,
-                    144,
-                    81
+                    36,
+                    3798,
+                    158,
+                    3898
                 ],
                 [
-                    6,
-                    6
+                    12,
+                    12
                 ],
                 [
-                    6,
-                    6
+                    12,
+                    12
                 ],
                 [
-                    6,
-                    6
+                    12,
+                    12
                 ],
                 [
-                    6,
-                    6
+                    12,
+                    12
                 ]
             ],
             "op": "intersect",
@@ -96,110 +84,52 @@
         },
         {
             "command": "SaveLayer",
+            "visible": true
+        },
+        {
+            "command": "DrawImageRect",
             "visible": true,
-            "bounds": [
+            "image": {
+                "data": "data/0"
+            },
+            "src": [
+                80.3427,
                 0,
-                0,
-                0,
-                0
+                434.657,
+                290
             ],
+            "dst": [
+                36,
+                3798,
+                158,
+                3898
+            ],
+            "sampling": {
+                "maxAniso": 0,
+                "useCubic": false,
+                "filter": 1,
+                "mipmap": 2,
+                "cubic.B": 0,
+                "cubic.C": 0
+            },
             "paint": {
-                "imagefilter": {
-                    "name": "SkColorFilterImageFilter",
-                    "data": "data/0",
-                    "values": {
-                        "00_int": 1,
-                        "01_bool": false,
-                        "02_SkMatrixColorFilter": {
-                            "00_scalarArray": [
-                                0.95,
-                                0,
-                                0,
-                                0,
-                                0,
-                                0,
-                                0.95,
-                                0,
-                                0,
-                                0,
-                                0,
-                                0,
-                                0.95,
-                                0,
-                                0,
-                                0,
-                                0,
-                                0,
-                                1,
-                                0
-                            ],
-                            "01_bool": true,
-                            "02_bool": true
-                        }
-                    }
-                }
-            }
-        },
-        {
-            "command": "Save",
-            "visible": true
-        },
-        {
-            "command": "ClipRRect",
-            "visible": true,
-            "coords": [
-                [
-                    0,
-                    0,
-                    144,
-                    81
-                ],
-                [
-                    6,
-                    6
-                ],
-                [
-                    6,
-                    6
-                ],
-                [
-                    6,
-                    6
-                ],
-                [
-                    6,
-                    6
-                ]
-            ],
-            "op": "intersect",
-            "antiAlias": true
-        },
-        {
-            "command": "Restore",
-            "visible": true
-        },
-        {
-            "command": "Restore",
-            "visible": true
+                "antiAlias": true
+            },
+            "strict": true,
+            "shortDesc": " [36 3798 158 3898]"
         },
         {
             "command": "DrawRect",
             "visible": true,
             "coords": [
-                0,
-                0,
-                144,
-                81
+                36,
+                3798,
+                158,
+                3898
             ],
             "paint": {
                 "antiAlias": true,
                 "dither": true,
-                "color": [
-                    204,
-                    0,
-                    0,
-                    0
-                ],
                 "shader": {
                     "name": "SkLocalMatrixShader",
                     "data": "data/1",
@@ -208,12 +138,12 @@
                             [
                                 1,
                                 0,
-                                0
+                                36
                             ],
                             [
                                 0,
                                 1,
-                                0
+                                3798
                             ],
                             [
                                 0,
@@ -222,22 +152,16 @@
                             ]
                         ],
                         "01_SkLinearGradient": {
-                            "00_uint": 2684354561,
+                            "00_uint": 536870913,
                             "01_colorArray": [
                                 [
-                                    0,
-                                    0,
-                                    0,
-                                    0
-                                ],
-                                [
-                                    0,
+                                    0.101961,
                                     0,
                                     0,
                                     0
                                 ],
                                 [
-                                    1,
+                                    0.101961,
                                     0,
                                     0,
                                     0
@@ -313,24 +237,23 @@
                                 "36",
                                 "3f"
                             ],
-                            "03_scalarArray": [
+                            "03_point": [
                                 0,
-                                0.3,
-                                1
+                                100
                             ],
                             "04_point": [
                                 0,
                                 0
-                            ],
-                            "05_point": [
-                                0,
-                                81
                             ]
                         }
                     }
                 }
             },
-            "shortDesc": " [0 0 144 81]"
+            "shortDesc": " [36 3798 158 3898]"
+        },
+        {
+            "command": "Restore",
+            "visible": true
         },
         {
             "command": "Restore",

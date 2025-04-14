@@ -61,10 +61,10 @@ def dump_skp(urlname: str, url: str, path: Path, outputPath: Path):
                 json_data = json.loads(result.stdout.decode())
                 if find_command(json_data, 'SaveLayer'):
                     print(f'[{urlname}] found "SaveLayer" @ {skp_file.stem}')
-                json_file_name = skp_file.stem + '.json'
-                json_file_path = outputPath / (urlname + json_file_name)
-                with json_file_path.open('w') as f:
-                    json.dump(json_data, f, indent=4)
+                    json_file_name = skp_file.stem + '.json'
+                    json_file_path = outputPath / (urlname + json_file_name)
+                    with json_file_path.open('w') as f:
+                        json.dump(json_data, f, indent=4)
         print(f'[{urlname}] done')
     except Exception as e:
         print(f'[{urlname}] error running subprocess: {e}')

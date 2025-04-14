@@ -5,3 +5,6 @@ skia/
 egglog/
 *.lock
 venv/
+json/
+eegg/
+err/

@@ -1,8 +1,10 @@
+import argparse
 import json
+import pathlib as pl
 import sys
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, NamedTuple, get_args
+from typing import Any, NamedTuple
 
 
 class SExp:
@@ -405,9 +407,9 @@ class Parser:
                     coords = sk_command['coords']
                     rect = Rect(*coords)
                     bounds = SkClipRect(sk_command['op'], rect)
-                    print(bounds)
+                    # print(bounds)
                     self.merge_clip(bounds)
-                    print(self.clip_stack)
+                    # print(self.clip_stack)
 
                 case 'ClipRRect':
                     self.advance()
@@ -419,7 +421,7 @@ class Parser:
                     matrix = sk_command['matrix']
                     m44 = to_m44(matrix)
                     self.m44_stack[-1] = matrix_multiply(self.m44_stack[-1], m44)
-                    print(self.m44_stack)
+                    # print(self.m44_stack)
 
                 case 'DrawPath':
                     self.advance()
@@ -728,15 +730,45 @@ def skp_to_eegg(commands: list[Command]):
     return recurse(commands, Empty())
 
 
-if __name__ == '__main__':
-    filepath = sys.argv[-1]
-    with open(filepath, 'rb') as f:
-        skp = json.load(f)
-
+def compile_json(json_thing):
     commands = Parser(skp['commands']).parse_commands()
+    return skp_to_eegg(commands).to_sexp()
 
-    print(commands)
 
-    print()
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('input', type=pl.Path)
+    parser.add_argument('egg', type=pl.Path)
+    parser.add_argument('err', type=pl.Path)
 
-    print(skp_to_eegg(commands).to_sexp())
+    args = parser.parse_args()
+
+    args.egg.mkdir(parents=True, exist_ok=True)
+    args.err.mkdir(parents=True, exist_ok=True)
+
+    for json_file in args.input.glob('*.json'):
+        with json_file.open('rb') as f:
+            skp = json.load(f)
+
+        try:
+            output = compile_json(skp)
+            path = args.egg / (json_file.stem + '.egg')
+            with path.open('w') as f:
+                f.write(output)
+        except Exception as e:
+            output = f'{e}'
+            path = args.err / (json_file.stem + '.txt')
+            with path.open('w') as f:
+                f.write(output)
+
+    # folder = sys.argv[-1]
+    # with open(filepath, 'rb') as f:
+    #     skp = json.load(f)
+
+    # commands = Parser(skp['commands']).parse_commands()
+
+    # print(commands)
+
+    # print()
+
+    # print(skp_to_eegg(commands).to_sexp())
