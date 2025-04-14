@@ -754,7 +754,7 @@ if __name__ == '__main__':
             output = compile_json(skp)
             path = args.egg / (json_file.stem + '.egg')
             with path.open('w') as f:
-                f.write(output)
+                f.write('(let test' + output + ')')
         except Exception as e:
             output = f'{e}'
             path = args.err / (json_file.stem + '.txt')

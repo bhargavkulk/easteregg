@@ -7,7 +7,7 @@ if [ ! -d egglog ]; then
     git clone https://github.com/egraphs-good/egglog/
 fi
 
-rm -rf skps json eegg err
+rm -rf eegg err
 
 cd skia
 python3 tools/git-sync-deps
@@ -29,9 +29,7 @@ python3 -m venv venv
 $(pwd)/venv/bin/python -m pip install playwright
 $(pwd)/venv/bin/python -m playwright install
 ## SHOULD PROBABLY CACHE THE SKPS TALK TO PAVEL ABOUT THIS
-$(pwd)/venv/bin/python dl_skps.py urls.toml skps json
 $(pwd)/venv/bin/python skp2egg.py json eegg err
 
-ls json
 ls eegg
 ls err
