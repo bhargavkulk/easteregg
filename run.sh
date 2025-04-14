@@ -28,3 +28,4 @@ python3 -m venv venv
 $(pwd)/venv/bin/python -m pip install playwright
 $(pwd)/venv/bin/python -m playwright install
 $(pwd)/venv/bin/python dl_skps.py urls.toml skps json
+ls json
