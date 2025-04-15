@@ -65,7 +65,7 @@ auto;max-width:650px;line-height:1.6;font-size:18px;color:#444;padding:0
             row = f"""<tr>
   <td>{json_file.stem}</td>
   <td><a href="{json_file}">»</td>
-  <td class="success"><a href="{egg_path}">»</a></td>
+  <td><a href="{egg_path}">»</a></td>
   <td><a href="{opt_path}">»</a></td>
   <td class="{thing}">{start} → {end}</td>
 </tr>\n"""
