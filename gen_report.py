@@ -25,9 +25,13 @@ if __name__ == '__main__':
     string = """<!DOCTYPE html><html><head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>EasterEgg Report</title><style type="text/css">body{margin:40px
+  <title>EasterEgg Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <style type="text/css">body{margin:40px
 auto;max-width:650px;line-height:1.6;font-size:18px;color:#444;padding:0
-10px}h1,h2,h3{line-height:1.2}td.success{background-color:green}td.fail{background-color:red}</style></head>
+10px}h1,h2,h3{line-height:1.2}td.success{background-color:green}td.fail{background-color:red}body{font-family:'Public Sans',sans-serif}</style></head>
   <body><header><h1>EasterEgg Report</h1></header>
 <table>
 <tr>
