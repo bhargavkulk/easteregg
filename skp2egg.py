@@ -752,7 +752,7 @@ if __name__ == '__main__':
 
         try:
             output = compile_json(skp)
-            path = args.egg / (json_file.stem + '.egg')
+            path = args.egg / (json_file.stem + '.txt')
             with path.open('w') as f:
                 f.write('(let test' + output + ')')
         except Exception as e:

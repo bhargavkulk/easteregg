@@ -15,9 +15,12 @@ if __name__ == '__main__':
     facts = args.facts / 'command.egg'
     run = args.facts / 'extract.egg'
 
-    for test_case in args.eggs.glob('*.egg'):
-        command = f'cargo run --manifest-path egglog/Cargo.toml -- {facts} {test_case} {run}'
-        print(command)
-        result = subprocess.run(
-            command.split(),
+    for test_case in args.eggs.glob('*.txt'):
+        print('[*] Optimizing', test_case.stem)
+        command = (
+            f'cargo run --quiet --manifest-path egglog/Cargo.toml -- {facts} {test_case} {run}'
         )
+        result = subprocess.run(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        with (args.opt / (test_case.stem + '.txt')).open('wb') as f:
+            f.write(result.stdout)

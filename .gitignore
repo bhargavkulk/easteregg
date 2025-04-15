@@ -7,3 +7,5 @@ egglog/
 venv/
 eegg/
 err/
+opt/
+report/

@@ -39,6 +39,7 @@
 (constructor Empty () Layer)
 (constructor SrcOver (Layer Thing) Layer)
 (constructor Src (Layer Thing) Layer)
+(constructor Other (Layer Thing) Layer)
 (constructor DstIn (Layer Thing) Layer)
 
 (let srcoveropaque (SrcOver (SrcOver (SrcOver (Empty) (Rectangle (LTRB 10.0 70.0 60.0 120.0) (Paint 255 0 0 255 (BMSrcOver)))) (Rectangle (LTRB 150.0 70.0 200.0 120.0) (Paint 255 0 0 255 (BMSrcOver)))) (SaveLayer (Paint 0 0 0 255 (BMSrcOver)) (SrcOver (SrcOver (Empty) (Rectangle (LTRB 30.0 70.0 80.0 120.0) (Paint 0 255 0 255 (BMSrcOver)))) (Rectangle (LTRB 170.0 70.0 220.0 120.0) (Paint 0 255 0 77 (BMSrcOver)))))))
