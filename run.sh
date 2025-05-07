@@ -26,7 +26,7 @@ touch report/index.html
 
 python3 -m venv venv
 
-$(pwd)/venv/bin/python -m pip install playwright
+$(pwd)/venv/bin/python -m pip install pygments sexpdata
 $(pwd)/venv/bin/python -m playwright install
 ## SHOULD PROBABLY CACHE THE SKPS TALK TO PAVEL ABOUT THIS
 $(pwd)/venv/bin/python skp2egg.py json eegg err

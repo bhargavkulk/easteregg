@@ -9,3 +9,4 @@ eegg/
 err/
 opt/
 report/
+unit-tests/*.skp
