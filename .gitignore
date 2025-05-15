@@ -9,3 +9,5 @@ eegg/
 err/
 opt/
 report/
+__pycache__/
+tmp/

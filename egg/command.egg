@@ -1,23 +1,10 @@
-; datatype Thing:
-; | Rect R
-; | RRect R r
-; | ...
-; | SaveLayer Layer
-; | Clip DrawCommand
-; | ...
-; datatype Layer:
-; | Empty
-; | SrcOver(Layer, DrawCommand)
-; | ...
-; | Blur Layer
-
 (datatype BlendMode
           (BMSrc)
           (BMSrcOver)
           (BMOther))
 
 (datatype Bounds
-          (LTRB f64 f64 f64 f64))
+          (LTRB i64 i64 i64 i64))
 
 (datatype SkPaint
           (Paint i64 i64 i64 i64 BlendMode))
@@ -25,7 +12,7 @@
 (sort Thing)
 (sort Layer)
 
-(constructor Rectangle (Bounds SkPaint) Thing)
+(constructor Rect (Bounds SkPaint) Thing)
 (constructor Full (SkPaint) Thing)
 (constructor SaveLayer (SkPaint Layer) Thing)
 (constructor ClipFull (Thing) Thing)
@@ -35,6 +22,7 @@
 (constructor RRect (Bounds Bounds SkPaint) Thing)
 (constructor Oval (Bounds SkPaint) Thing)
 (constructor ImageRect (Bounds Bounds SkPaint) Thing)
+(constructor Transform (f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 Thing) Thing)
 
 (constructor Empty () Layer)
 (constructor SrcOver (Layer Thing) Layer)
@@ -42,40 +30,19 @@
 (constructor Other (Layer Thing) Layer)
 (constructor DstIn (Layer Thing) Layer)
 
-(let srcoveropaque (SrcOver (SrcOver (SrcOver (Empty) (Rectangle (LTRB 10.0 70.0 60.0 120.0) (Paint 255 0 0 255 (BMSrcOver)))) (Rectangle (LTRB 150.0 70.0 200.0 120.0) (Paint 255 0 0 255 (BMSrcOver)))) (SaveLayer (Paint 0 0 0 255 (BMSrcOver)) (SrcOver (SrcOver (Empty) (Rectangle (LTRB 30.0 70.0 80.0 120.0) (Paint 0 255 0 255 (BMSrcOver)))) (Rectangle (LTRB 170.0 70.0 220.0 120.0) (Paint 0 255 0 77 (BMSrcOver)))))))
+;; Strip Opaque SrcOver SaveLayer
+(rewrite (SrcOver bottom
+                  (ClipFull
+                   (Transform e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16
+                    (SaveLayer (Paint r g b 255 bm) (SrcOver bottom2 draw)))))
+         (SrcOver (SrcOver bottom
+                           (ClipFull
+                            (Transform e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16
+                             (SaveLayer (Paint r g b 255 bm) bottom2)))) draw))
 
-(let noopsavelayer (SrcOver (SrcOver (Empty) (Rectangle (LTRB 10.0 70.0 60.0 120.0) (Paint 0 255 0 255 (BMSrcOver)))) (SaveLayer (Paint 0 0 0 255 (BMSrcOver)) (Empty))))
-
-(let nestedsavelayer (SrcOver (Empty) (SaveLayer (Paint 0 0 0 255 (BMSrcOver)) (SrcOver (Empty) (SaveLayer (Paint 0 0 0 255 (BMSrcOver)) (SrcOver (SrcOver (Empty) (Rectangle (LTRB 10.0 70.0 60.0 120.0) (Paint 0 255 0 255 (BMSrcOver)))) (Rectangle (LTRB 170.0 70.0 220.0 120.0) (Paint 255 0 0 255 (BMSrcOver)))))))))
-
-(let nestedsavelayerdrawrestore (SrcOver (SrcOver (DstIn (SrcOver (SrcOver (Empty) (Rectangle (LTRB 0.0 0.0 50.0 60.0) (Paint 2 2 2 255 (BMSrcOver)))) (Rectangle (LTRB 0.0 0.0 50.0 60.0) (Paint 2 2 2 255 (BMSrcOver)))) (SaveLayer (Paint 0 0 0 0 (BMOther)) (SrcOver (Empty) (Rectangle (LTRB 0.0 0.0 50.0 60.0) (Paint 2 2 2 255 (BMSrcOver)))))) (Rectangle (LTRB 0.0 0.0 50.0 60.0) (Paint 2 2 2 0 (BMSrcOver)))) (Rectangle (LTRB 0.0 0.0 50.0 60.0) (Paint 2 2 2 3 (BMSrcOver)))))
-
-;(let )
-
-
-;; merge save layer opacity into the draw
-;(let savelayers (SrcOver (SrcOver (SrcOver (SrcOver (SrcOver (SrcOver (SrcOver (SrcOver (Empty) (Rectangle (LTRB 10.0 10.0 60.0 60.0) (Paint 255 0 0 255 (BMSrcOver)))) (Rectangle (LTRB 150.0 10.0 200.0 60.0) (Paint 255 0 0 255 (BMSrcOver)))) (Rectangle (LTRB 30.0 10.0 80.0 60.0) (Paint 0 255 0 255 (BMSrcOver)))) (Rectangle (LTRB 170.0 10.0 220.0 60.0) (Paint 0 255 0 77 (BMSrcOver)))) (Rectangle (LTRB 10.0 70.0 60.0 120.0) (Paint 255 0 0 255 (BMSrcOver)))) (Rectangle (LTRB 150.0 70.0 200.0 120.0) (Paint 255 0 0 255 (BMSrcOver)))) (SaveLayer (Paint 0 0 0 77 (BMSrcOver)) (SrcOver (SrcOver (Empty) (Rectangle (LTRB 30.0 70.0 80.0 120.0) (Paint 0 255 0 255 (BMSrcOver)))) (Rectangle (LTRB 170.0 70.0 220.0 120.0) (Paint 0 255 0 77 (BMSrcOver)))))) (SaveLayer (Paint 0 0 0 77 (BMSrcOver)) (SrcOver (SrcOver (SrcOver (SrcOver (Empty) (Rectangle (LTRB 10.0 130.0 60.0 180.0) (Paint 255 0 0 255 (BMSrcOver)))) (Rectangle (LTRB 150.0 130.0 200.0 180.0) (Paint 255 0 0 255 (BMSrcOver)))) (Rectangle (LTRB 30.0 130.0 80.0 180.0) (Paint 0 255 0 255 (BMSrcOver)))) (Rectangle (LTRB 170.0 130.0 220.0 180.0) (Paint 0 255 0 77 (BMSrcOver)))))))
-
-;(let noopsave (SrcOver (SrcOver (SrcOver (Empty) (Rectangle (LTRB 90.0 90.0 110.0 130.0) (Paint 0 255 0 255 (BMSrcOver)))) (SaveLayer (Paint 0 0 0 255 (BMSrcOver)) (Empty))) (Rectangle (LTRB 110.0 130.0 190.0 190.0) (Paint 0 255 0 77 (BMSrcOver)))))
-
-;; merge save layer opacity into the draw
-;(let notonlyasl (SrcOver (SrcOver (Empty) (Rectangle (LTRB 0.0 0.0 50.0 60.0) (Paint 16 48 32 255 (BMSrcOver)))) (SaveLayer (Paint 128 128 128 128 (BMSrcOver)) (SrcOver (Empty) (Rectangle (LTRB 0.0 0.0 150.0 60.0) (Paint 128 0 0 255 (BMSrcOver)))))))
-
-;(let srcovertree (SrcOver (SrcOver (Empty) (Rectangle (LTRB 10.0 60.0 100.0 120.0) (Paint 255 0 0 128 (BMSrcOver)))) (SaveLayer (Paint 0 0 0 255 (BMSrcOver)) (SrcOver (SrcOver (Empty) (Rectangle (LTRB 50.0 60.0 120.0 120.0) (Paint 0 255 0 128 (BMSrcOver)))) (SaveLayer (Paint 0 0 0 255 (BMSrcOver)) (SrcOver (SrcOver (Empty) (Rectangle (LTRB 30.0 30.0 90.0 100.0) (Paint 0 0 255 128 (BMSrcOver)))) (Rectangle (LTRB 30.0 110.0 90.0 140.0) (Paint 255 0 255 128 (BMSrcOver)))))))))
-
-;(let cliprectbaseg (SrcOver (SrcOver (Src (Src (Empty) (ClipFull (Full (Paint 255 255 255 255 (BMSrc))))) (ClipFull (Full (Paint 255 255 255 255 (BMSrc))))) (ClipRect (LTRB 0.0 0.0 192.0 192.0) (Full (Paint 255 0 0 255 (BMSrcOver))))) (ClipRect (LTRB 60.0 60.0 192.0 192.0) (Full (Paint 0 255 0 255 (BMSrcOver))))))
-
-;; THIS SHOLD STOP AT CLIP, IF CLIP IT SHOULD BECOME A SAVE RESTORE
-;; Strip SrcOver
-(rewrite (SrcOver bottom (SaveLayer (Paint r g b 255 bm) (SrcOver bottom2 draw)))
-         (SrcOver (SrcOver bottom (SaveLayer (Paint r g b 255 bm) bottom2)) draw))
-
-;; remove empty Save Layer
-(rewrite (SrcOver bottom (SaveLayer p (Empty)))
+;; Remove Empty Save Layer
+(rewrite (SrcOver bottom
+                  (ClipFull
+                   (Transform e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16
+                    (SaveLayer p (Empty)))))
          bottom)
-
-;; Save Draw* Restore -> Save Restore
-;; Save !(Draw|Save|SaveLayer) Restore -> NOOP
-;; SrcOver(bottom, SaveLayer[Paint(_, _, _, s, _) (SrcOver Empty Draw[Paint(_, _, _, b)])])
-;; -->
-;; SrcOver(bottom, Draw[Paint(_, _, _, a*b/255)])
