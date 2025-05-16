@@ -10,6 +10,7 @@ dependencies = [
     { name = "pyright" },
     { name = "ruff" },
     { name = "sexpdata" },
+    { name = "yattag" },
 ]
 
 [package.metadata]
@@ -18,6 +19,7 @@ requires-dist = [
     { name = "pyright", specifier = ">=1.1.396" },
     { name = "ruff", specifier = ">=0.9.9" },
     { name = "sexpdata", specifier = ">=1.0.2" },
+    { name = "yattag", specifier = ">=1.16.1" },
 ]
 
 [[package]]
@@ -147,3 +149,9 @@ sdist = { url = "https://files.pythonhosted.org/packages/df/db/f35a00659bc03fec3
 wheels = [
     { url = "https://files.pythonhosted.org/packages/26/9f/ad63fc0248c5379346306f8668cda6e2e2e9c95e01216d2b8ffd9ff037d0/typing_extensions-4.12.2-py3-none-any.whl", hash = "sha256:04e5ca0351e0f3f85c6853954072df659d0d13fac324d0072316b67d7794700d", size = 37438 },
 ]
+
+[[package]]
+name = "yattag"
+version = "1.16.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/1c/1a/d3b2a2b8f843f5e7138471c4a5c9172ef62bb41239aa4371784b7448110c/yattag-1.16.1.tar.gz", hash = "sha256:baa8f254e7ea5d3e0618281ad2ff5610e0e5360b3608e695c29bfb3b29d051f4", size = 29069 }

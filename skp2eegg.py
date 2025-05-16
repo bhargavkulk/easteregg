@@ -18,7 +18,7 @@ def mm(a, b):
 
 
 def sexp_ltrb(ltrb):
-    return '(LTRB ' + ' '.join(str(i) for i in ltrb) + ')'
+    return '(LTRB ' + ' '.join(str(float(i)) for i in ltrb) + ')'
 
 
 # returns paint and blend mode
@@ -118,8 +118,10 @@ def compile(commands: list):
                 curr_state.matrix = mm(curr_state.matrix, matrix)
             case 'DrawTextBlob':
                 ltrb = sexp_ltrb(command_data['bounds'])
+                x = str(float(command_data['x']))
+                y = str(float(command_data['y']))
                 paint, blend_mode = compile_paint(command_data.get('paint', {}))
-                shape = '(TextBlob ' + ltrb + ' ' + paint + ')'
+                shape = '(TextBlob ' + x + ' ' + y + ' ' + ltrb + ' ' + paint + ')'
                 shape = curr_state.wrap_state(shape)
                 curr_state.layer = f'({blend_mode} ' + curr_state.layer + ' ' + shape + ')'
             case _:

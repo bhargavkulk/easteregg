@@ -1,13 +1,18 @@
 (datatype BlendMode
           (BMSrc)
           (BMSrcOver)
+          (BMDstIn)
           (BMOther))
 
 (datatype Bounds
-          (LTRB i64 i64 i64 i64))
+  (LTRB f64 f64 f64 f64))
 
 (datatype SkPaint
-          (Paint i64 i64 i64 i64 BlendMode))
+  (Paint i64 i64 i64 i64 BlendMode))
+
+(datatype ClipOp
+  (I)
+  (D))
 
 (sort Thing)
 (sort Layer)
@@ -16,7 +21,7 @@
 (constructor Full (SkPaint) Thing)
 (constructor SaveLayer (SkPaint Layer) Thing)
 (constructor ClipFull (Thing) Thing)
-(constructor ClipRect (Bounds Thing) Thing)
+(constructor ClipRect (Bounds ClipOp Thing) Thing)
 (constructor TextBlob (f64 f64 Bounds SkPaint) Thing)
 (constructor Path (SkPaint) Thing)
 (constructor RRect (Bounds Bounds SkPaint) Thing)

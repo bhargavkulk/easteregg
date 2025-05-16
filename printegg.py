@@ -77,8 +77,9 @@ class Formatter:
             self.fmt_paint(paint)
             self.newline()
         elif shape[0] == 'TextBlob':
-            _, ltrb, paint = shape
-            self.write('Rect ')
+            _, x, y, ltrb, paint = shape
+            self.write('TextBlob ')
+            self.write(f'{x} {y} ')
             self.fmt_ltrb(ltrb)
             self.write(' ')
             self.fmt_paint(paint)
