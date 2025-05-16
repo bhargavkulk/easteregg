@@ -48,6 +48,11 @@ class Formatter:
         elif cmd[0] == 'ClipRect':
             self.write(' ClipRect ')
             self.fmt_ltrb(cmd[1])
+        elif cmd[0] == 'ClipRRect':
+            self.write(' ClipRRect ')
+            self.fmt_ltrb(cmd[1])
+            self.write(' ')
+            self.fmt_ltrb(cmd[2])
         else:
             raise ValueError(f'Unknown Clip: {cmd[0]}')
         transform = cmd[-1]
@@ -66,6 +71,29 @@ class Formatter:
             _, ltrb, paint = shape
             self.write('Rect ')
             self.fmt_ltrb(ltrb)
+            self.write(' ')
+            self.fmt_paint(paint)
+            self.newline()
+        elif shape[0] == 'RRect':
+            _, ltrb, radii, paint = shape
+            self.write('RRect ')
+            self.fmt_ltrb(ltrb)
+            self.write(' ')
+            self.fmt_ltrb(radii)
+            self.write(' ')
+            self.fmt_paint(paint)
+            self.newline()
+        elif shape[0] == 'Path':
+            _, paint = shape
+            self.write('Path ')
+            self.fmt_paint(paint)
+            self.newline()
+        elif shape[0] == 'ImageRect':
+            _, src, dst, paint = shape
+            self.write('Rect ')
+            self.fmt_ltrb(src)
+            self.write(' ')
+            self.fmt_ltrb(dst)
             self.write(' ')
             self.fmt_paint(paint)
             self.newline()
@@ -90,6 +118,11 @@ class Formatter:
             self.fmt_paint(paint)
             self.newline()
             self.fmt_layer(layer)
+        elif shape[0] == 'Fill':
+            _, paint = shape
+            self.write('Fill ')
+            self.fmt_paint(paint)
+            self.newline()
         else:
             raise ValueError(f'Unknown shape: {shape[0]}')
 

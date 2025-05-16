@@ -18,10 +18,11 @@
 (sort Layer)
 
 (constructor Rect (Bounds SkPaint) Thing)
-(constructor Full (SkPaint) Thing)
+(constructor Fill (SkPaint) Thing)
 (constructor SaveLayer (SkPaint Layer) Thing)
 (constructor ClipFull (Thing) Thing)
 (constructor ClipRect (Bounds ClipOp Thing) Thing)
+(constructor ClipRRect (Bounds Bounds ClipOp Thing) Thing)
 (constructor TextBlob (f64 f64 Bounds SkPaint) Thing)
 (constructor Path (SkPaint) Thing)
 (constructor RRect (Bounds Bounds SkPaint) Thing)
@@ -39,15 +40,45 @@
 (rewrite (SrcOver bottom
                   (ClipFull
                    (Transform e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16
-                    (SaveLayer (Paint r g b 255 bm) (SrcOver bottom2 draw)))))
+                    (SaveLayer (Paint 255 r g b bm) (SrcOver bottom2 draw)))))
          (SrcOver (SrcOver bottom
                            (ClipFull
                             (Transform e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16
-                             (SaveLayer (Paint r g b 255 bm) bottom2)))) draw))
+                                       (SaveLayer (Paint 255 r g b bm) bottom2)))) draw))
+
+(rewrite (SrcOver bottom
+                  (ClipRect bounds op
+                   (Transform e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16
+                    (SaveLayer (Paint 255 r g b bm) (SrcOver bottom2 draw)))))
+         (SrcOver (SrcOver bottom
+                           (ClipRect bounds op
+                            (Transform e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16
+                                       (SaveLayer (Paint 255 r g b bm) bottom2)))) draw))
+
+(rewrite (SrcOver bottom
+                  (ClipRRect bounds radii op
+                   (Transform e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16
+                    (SaveLayer (Paint 255 r g b bm) (SrcOver bottom2 draw)))))
+         (SrcOver (SrcOver bottom
+                           (ClipRRect bounds radii op
+                            (Transform e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16
+                             (SaveLayer (Paint 255 r g b bm) bottom2)))) draw))
 
 ;; Remove Empty Save Layer
 (rewrite (SrcOver bottom
                   (ClipFull
+                   (Transform e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16
+                    (SaveLayer p (Empty)))))
+         bottom)
+
+(rewrite (SrcOver bottom
+                  (ClipRect bounds op
+                   (Transform e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16
+                    (SaveLayer p (Empty)))))
+         bottom)
+
+(rewrite (SrcOver bottom
+                  (ClipRRect bounds radii op
                    (Transform e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16
                     (SaveLayer p (Empty)))))
          bottom)

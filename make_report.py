@@ -15,6 +15,13 @@ EGG = 'egg'
 JSON = 'json'
 
 
+def rewrite_name(string):
+    suite, name = string.split('__', 1)
+    name = name.replace('_', ' ')
+    suite = suite.replace('_', ' ')
+    return suite + ' | ' + name
+
+
 def index_template(table):
     string = """<!DOCTYPE html><html><head>
   <meta charset="utf-8">
@@ -70,10 +77,14 @@ if __name__ == '__main__':
     JSON_FOLDER = args.output / JSON
 
     benchmarks = []
+    improved = 0
+    unchanged = 0
+    regressed = 0
+    failed = 0
     formatter = Formatter()
-
-    for benchmark in args.bench.glob('*.json'):
-        print('[easteregg] running ' + str(benchmark))
+    files = list(args.bench.glob('*.json'))
+    for i, benchmark in enumerate(files):
+        print(f'[{i + 1}/{len(files)}] running ' + str(benchmark))
         bench_name = benchmark.stem
         data = dict()
         data['name'] = bench_name
@@ -95,6 +106,8 @@ if __name__ == '__main__':
                 f.write(bench_template(error_msg))
             data['compile_error'] = str(err_file).replace('report', '.')
             data['state'] = 0
+            benchmarks.append(data)
+            failed += 1
             continue
 
         assert egg is not None
@@ -142,6 +155,8 @@ if __name__ == '__main__':
                 f.write(bench_template(stderr))
             data['opt_err_file'] = str(opt_err_file).replace('report', '.')
             data['state'] = 1
+            benchmarks.append(data)
+            failed += 1
             continue
 
         assert fmt_opt is not None
@@ -157,10 +172,13 @@ if __name__ == '__main__':
 
         if before == after:
             data['change'] = 'yellow'
+            unchanged += 1
         elif before < after:
             data['change'] = 'red'
+            regressed += 1
         elif before > after:
             data['change'] = 'green'
+            improved += 1
 
         data['state'] = 2
 
@@ -192,26 +210,52 @@ if __name__ == '__main__':
     with (args.output / 'report.json').open('w') as f:
         json.dump({'benchmarks': benchmarks}, f)
 
+    num_benchmarks = len(benchmarks)
+
     doc, tag, text = yattag.Doc().tagtext()
+
+    with tag('p'):
+        text('No. of websites ')
+        with tag('span', klass='green'):
+            text('Improved')
+        text(f': {improved} / {num_benchmarks}')
+        doc.stag('br')
+
+        text('No. of websites ')
+        with tag('span', klass='yellow'):
+            text('Unchanged')
+        text(f': {unchanged} / {num_benchmarks}')
+        doc.stag('br')
+
+        text('No. of websites ')
+        with tag('span', klass='red'):
+            text('Regressed')
+        text(f': {regressed} / {num_benchmarks}')
+        doc.stag('br')
+
+        text('No. of websites ')
+        with tag('span'):
+            text('Failed')
+        text(f': {failed} / {num_benchmarks}')
 
     with tag('table', style='white-space: nowrap;border-collapse: collapse;'):
         with tag('tr', klass='gray'):
-            with tag('th', style='padding:0 5px;'):
+            with tag('th'):
                 text('Benchmark')
-            with tag('th', style='padding:0 5px;'):
+            with tag('th'):
                 text('JSON')
-            with tag('th', style='padding:0 5px', colspan=2):
+            with tag('th', colspan=2):
                 text('Before')
-            with tag('th', style='padding:0 5px;', colspan=2):
+            with tag('th', colspan=2):
                 text('After')
             with tag('th'):
                 text('Diff')
-            with tag('th', style='padding:0 5px;'):
+            with tag('th'):
                 text('#SaveLayers')
         for benchmark in benchmarks:
             with tag('tr'):
                 with tag('td', klass='lgray'):
-                    text(benchmark['name'])
+                    text(rewrite_name(benchmark['name']))
 
                 with tag('td', klass='ctr'):
                     with tag('a', href=benchmark['json']):
