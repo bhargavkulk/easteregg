@@ -32,7 +32,7 @@ def index_template(table):
   <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <style type="text/css">:root{--uchu-gray-raw: 84.68% 0.002 197.12;--uchu-gray: oklch(var(--uchu-gray-raw));--uchu-yellow-raw: 90.92% 0.125 92.56;--uchu-yellow: oklch(var(--uchu-yellow-raw));--uchu-red-raw: 62.73% 0.209 12.37;--uchu-red: oklch(var(--uchu-red-raw));--uchu-green-raw: 79.33% 0.179 145.62;--uchu-green: oklch(var(--uchu-green-raw));}body{margin:40px
 auto;max-width:800px;line-height:1.6;font-size:18px;color:#444;padding:0
-10px}h1,h2,h3{line-height:1.2}.ctr{text-align:center;}th{border:1px solid black;padding:0 5px;}td{border:1px solid black;padding:0 5px;}.green{background-color:var(--uchu-green)}.gray{background-color:var(--uchu-gray)}.red{background-color:var(--uchu-red)}.yellow{background-color:var(--uchu-yellow)}body{font-family:'Public Sans',sans-serif}</style></head>
+10px}h1,h2,h3{line-height:1.2}.ctr{text-align:center;}th{border:1px solid black;padding:0 5px;}td{border:1px solid black;padding:0 5px;}.green{background-color:var(--uchu-green)}.gray{background-color:var(--uchu-gray)}.red{background-color:var(--uchu-red);color:white}.yellow{background-color:var(--uchu-yellow)}body{font-family:'Public Sans',sans-serif}</style></head>
   <body><header><h1>EasterEgg Report</h1></header>\n"""
     string += table
     string += '</body></html>'
