@@ -3,9 +3,9 @@ set -e -x
 # if [ ! -d skia ]; then
 #     git clone https://skia.googlesource.com/skia.git
 # fi
-if [ ! -d egglog ]; then
-    git clone https://github.com/egraphs-good/egglog/
-fi
+#if [ ! -d egglog ]; then
+#    git clone https://github.com/egraphs-good/egglog/
+#fi
 
 rm -rf report
 
@@ -16,10 +16,10 @@ rm -rf report
 # ninja -C out/debug dm skp_parser
 # cd ..
 
-cd egglog
-cargo install --locked cargo-nextest --version 0.9.85
-cargo build
-cd ..
+#cd egglog
+#cargo install --locked cargo-nextest --version 0.9.85
+#cargo build
+#cd ..
 
 python3 -m venv venv
 
