@@ -8,6 +8,8 @@ dependencies = [
     "pyparsing>=3.2.3",
     "pyright>=1.1.396",
     "ruff>=0.9.9",
+    "sexpdata>=1.0.2",
+    "yattag>=1.16.1",
 ]
 package-mode = false
 

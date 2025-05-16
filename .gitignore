@@ -9,4 +9,5 @@ eegg/
 err/
 opt/
 report/
-unit-tests/*.skp
+__pycache__/
+tmp/
