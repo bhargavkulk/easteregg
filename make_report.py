@@ -148,7 +148,8 @@ if __name__ == '__main__':
         # 2. Optimize
         opt_file = args.output / (bench_name + '__OPT.html')
         opt_fmt_file = args.output / (bench_name + '__OPT_FMT.html')
-        opt_err_file = args.output / (bench_name + '__OPT_ERR.html')
+        opt_err_file = args.output / (bench_name + '__OPT_ERR.txt')
+        egg_warn_file = args.output / (bench_name + '__EWARN.txt')
         #    run egglog
         ret_code, opt, stderr = run_egglog(egglog_file)
 
@@ -163,10 +164,12 @@ if __name__ == '__main__':
                 fmt_opt = formatter.buffer.getvalue()
                 formatter.clear()
                 f.write(bench_template(fmt_opt))
-            print(stderr)
+
+            with egg_warn_file.open('w') as f:
+                f.write(stderr)
         else:
             with opt_err_file.open('w') as f:
-                f.write(bench_template(stderr))
+                f.write(stderr)
             data['opt_err_file'] = str(opt_err_file).replace('report', '.')
             data['state'] = 1
             benchmarks.append(data)
@@ -176,6 +179,7 @@ if __name__ == '__main__':
         assert fmt_opt is not None
         data['opt_file'] = str(opt_file).replace('report', '.')
         data['opt_fmt_file'] = str(opt_fmt_file).replace('report', '.')
+        data['egg_warn_file'] = str(egg_warn_file).replace('report', '.')
 
         # 3. Collect Stats, file names
         #    Count SaveLayers before and after
@@ -325,6 +329,12 @@ if __name__ == '__main__':
                     with tag('td', klass='ctr cw'):
                         with tag('a', href=benchmark['warn_file']):
                             text('»')
+
+                if 'egg_warn_file' in benchmark.keys():
+                    with tag('td', klass='ctr ew'):
+                        with tag('a', href=benchmark['warn_file']):
+                            text('»')
+
     with tag('script', type='text/javascript'):
         doc.asis("""function toggleHidden(s, c) {
     document.querySelectorAll(`.${s}`).forEach(cell => {
