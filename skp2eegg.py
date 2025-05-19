@@ -46,30 +46,47 @@ def radii_to_ltrb(radii):
 
 
 # returns paint and blend mode
-def compile_paint(paint_json: dict | None):
+# def compile_paint(paint_json: dict | None):
+#     color = [255, 0, 0, 0]
+#     blend_mode = 'SrcOver'
+
+#     if paint_json is None:
+#         color = [255, 0, 0, 0]
+#         blend_mode = 'SrcOver'
+#     else:
+#         if blend_mode in paint_json.keys():
+#             blend_mode = paint_json['blend_mode']
+#             if blend_mode not in ('Src', 'SrcOver', 'DstIn'):
+#                 blend_mode = 'Other'
+#                 warn(f'[WARN] UNKNOWN BLEND MODE {blend_mode}')
+#             color = paint_json.get('color', [255, 0, 0, 0])
+#         elif 'color' in paint_json.keys():
+#             blend_mode = 'SrcOver'
+#             color = paint_json.get('color', [255, 0, 0, 0])
+#         else:
+#             color = [0, 0, 0, 0]
+#             warn(f'[WARN] not a blend mode')
+#             if 'image_filter' in paint_json.keys():
+#                 blend_mode = 'ImageFilter'
+#             else:
+#                 blend_mode = 'OtherFilter'
+
+#     return (
+#         '(Paint ' + ' '.join(str(i) for i in color) + ' (' + blend_mode + ')' + ')',
+#         blend_mode,
+#     )
+
+
+def compile_paint(paint_json):
     color = [255, 0, 0, 0]
     blend_mode = 'SrcOver'
+    if paint_json is not None:
+        color = paint_json.get('color', [0, 0, 0, 0])
+        blend_mode = paint_json.get('blendMode', 'SrcOver')
 
-    if paint_json is None:
-        color = [255, 0, 0, 0]
-        blend_mode = 'SrcOver'
-    else:
-        if blend_mode in paint_json.keys():
-            blend_mode = paint_json['blend_mode']
-            if blend_mode not in ('Src', 'SrcOver', 'DstIn'):
-                blend_mode = 'Other'
-                warn(f'[WARN] UNKNOWN BLEND MODE {blend_mode}')
-            color = paint_json.get('color', [255, 0, 0, 0])
-        elif 'color' in paint_json.keys():
-            blend_mode = 'SrcOver'
-            color = paint_json.get('color', [255, 0, 0, 0])
-        else:
-            color = [0, 0, 0, 0]
-            warn(f'[WARN] not a blend mode')
-            if 'image_filter' in paint_json.keys():
-                blend_mode = 'ImageFilter'
-            else:
-                blend_mode = 'OtherFilter'
+    if blend_mode not in ('Src', 'SrcOver', 'DstIn'):
+        blend_mode = 'Other'
+        print(f'[skp2egg] UNKNOWN BLEND MODE {blend_mode}')
 
     return (
         '(Paint ' + ' '.join(str(i) for i in color) + ' (' + blend_mode + ')' + ')',
