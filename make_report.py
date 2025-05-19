@@ -314,7 +314,7 @@ if __name__ == '__main__':
 
                 if 'warn_file' in benchmark.keys():
                     with tag('td', klass='ctr'):
-                        with tag('a', href=benchmark['diff_file']):
+                        with tag('a', href=benchmark['warn_file']):
                             text('»')
     with (args.output / 'index.html').open('w', encoding='utf-8') as f:
         f.write(index_template(yattag.indent(doc.getvalue())))
