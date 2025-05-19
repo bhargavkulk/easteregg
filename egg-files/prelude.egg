@@ -40,17 +40,17 @@
 (constructor Blend (BlendMode Layer Thing) Layer)
 
 ;; Strip Opaque SrcOver SaveLayer
-(rewrite (SrcOver bottom
+(rewrite (Blend (SrcOver) bottom
                   (Clip cb
                    (Transform m
-                              (SaveLayer (Paint 255 r g b bm) (SrcOver bottom2 draw)))))
-         (SrcOver (SrcOver bottom
+                              (SaveLayer (Paint 255 r g b bm) (Blend (SrcOver) bottom2 draw)))))
+         (Blend (SrcOver) (Blend (SrcOver) bottom
                            (Clip cb
                             (Transform m
                                        (SaveLayer (Paint 255 r g b bm) bottom2)))) draw))
 
 ;; Remove Empty Save Layer
-(rewrite (SrcOver bottom
+(rewrite (Blend (SrcOver) bottom
                   (Clip cb
                    (Transform m
                               (SaveLayer p (Empty)))))
