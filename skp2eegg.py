@@ -57,16 +57,16 @@ class State:
 
     def __init__(self):
         self.matrix = I
-        self.clip = 'ClipFull'
+        self.clip = 'Clip (ClipFull)'
         self.layer = '(Empty)'
         self.is_save_layer = False
         self.save_layer = None
 
     def wrap_state(self, shape):
         shape = (
-            '(Transform '
+            '(Transform (M4x4 '
             + ' '.join(str(element) for row in self.matrix for element in row)
-            + ' '
+            + ') '
             + shape
             + ')'
         )
@@ -139,13 +139,13 @@ def compile(commands: list):
             case 'ClipRect':
                 ltrb = sexp_ltrb(command_data['coords'])
                 op = '(I)' if command_data['op'] == 'intersect' else '(D)'
-                curr_state.clip = 'ClipRect ' + ltrb + ' ' + op
+                curr_state.clip = 'Clip (ClipRect ' + ltrb + ' ' + op + ')'
             case 'ClipRRect':
                 coords, *radii = command_data['coords']
                 ltrb = sexp_ltrb(coords)
                 radii = sexp_ltrb(radii_to_ltrb(radii))
                 op = '(I)' if command_data['op'] == 'intersect' else '(D)'
-                curr_state.clip = 'ClipRRect ' + ltrb + ' ' + radii + ' ' + op
+                curr_state.clip = 'Clip (ClipRRect ' + ltrb + ' ' + radii + ' ' + op + ')'
             case 'Concat44':
                 matrix = command_data['matrix']
                 curr_state.matrix = mm(curr_state.matrix, matrix)
