@@ -121,7 +121,7 @@ if __name__ == '__main__':
         warnings = get_reset_warnings()
 
         egg_file: Path = args.output / (bench_name + '__NOOPT.html')
-        warning_file: Path = args.output / (bench_name + '__WARN.html')
+        warning_file: Path = args.output / (bench_name + '__WARN.txt')
         egglog_file: Path = EGG_FOLDER / (bench_name + '.egg')
 
         with egg_file.open('w') as f:
@@ -130,8 +130,10 @@ if __name__ == '__main__':
         with egglog_file.open('w') as f:
             f.write('(let test ' + egg + ')')
 
-        with warning_file.open('w') as f:
-            f.writelines(warnings)
+        if len(warnings) != 0:
+            with warning_file.open('w') as f:
+                f.writelines(warnings)
+            data['warn_file'] = str(warning_file).replace('report', '.')
 
         fmt_egg_file = args.output / (bench_name + '__NOOPT_FMT.html')
         fmt_egg = None
@@ -143,7 +145,6 @@ if __name__ == '__main__':
 
         data['egg_file'] = str(egg_file).replace('report', '.')
         data['fmt_egg_file'] = str(fmt_egg_file).replace('report', '.')
-        data['warn_file'] = str(warning_file).replace('report', '.')
 
         # 2. Optimize
         opt_file = args.output / (bench_name + '__OPT.html')
