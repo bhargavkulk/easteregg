@@ -278,9 +278,9 @@ if __name__ == '__main__':
                 text('Diff')
             with tag('th'):
                 text('#SaveLayers')
-            with tag('th', klass='cw'):
+            with tag('th', klass='cw hidden'):
                 text('CW')
-            with tag('th', klass='cw'):
+            with tag('th', klass='ew hidden'):
                 text('EW')
         for benchmark in benchmarks:
             with tag('tr'):
@@ -328,12 +328,12 @@ if __name__ == '__main__':
                     text(f'{benchmark["counts"][0]} → {benchmark["counts"][1]}')
 
                 if 'warn_file' in benchmark.keys():
-                    with tag('td', klass='ctr cw'):
+                    with tag('td', klass='ctr cw hidden'):
                         with tag('a', href=benchmark['warn_file']):
                             text('»')
 
                 if 'egg_warn_file' in benchmark.keys():
-                    with tag('td', klass='ctr ew'):
+                    with tag('td', klass='ctr ew hidden'):
                         with tag('a', href=benchmark['egg_warn_file']):
                             text('»')
 
