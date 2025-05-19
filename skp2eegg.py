@@ -60,6 +60,9 @@ def compile_paint(paint_json: dict | None):
                 blend_mode = 'Other'
                 warn(f'[WARN] UNKNOWN BLEND MODE {blend_mode}')
             color = paint_json.get('color', [255, 0, 0, 0])
+        elif color in paint_json.keys():
+            blend_mode = 'SrcOver'
+            color = paint_json.get('color', [255, 0, 0, 0])
         else:
             color = [0, 0, 0, 0]
             warn(f'[WARN] not a blend mode')
