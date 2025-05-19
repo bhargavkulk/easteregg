@@ -325,10 +325,15 @@ if __name__ == '__main__':
                         with tag('a', href=benchmark['warn_file']):
                             text('»')
     with tag('script', type='text/javascript'):
-        doc.asis("""
-        console.log('Script at end of document.');
-        alert('Hello from JS!');
-        """)
+        doc.asis("""function toggleHidden(s, c) {
+    document.querySelectorAll(`.${s}`).forEach(cell => {
+        if (c.checked) {
+            cell.classList.remove('hidden');
+        } else {
+            cell.classList.add('hidden');
+        }
+    });
+}""")
 
     with (args.output / 'index.html').open('w', encoding='utf-8') as f:
         f.write(index_template(yattag.indent(doc.getvalue())))
