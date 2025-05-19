@@ -1,8 +1,8 @@
 (datatype BlendMode
-          (BMSrc)
-          (BMSrcOver)
-          (BMDstIn)
-          (BMOther))
+          (Src)
+          (SrcOver)
+          (DstIn)
+          (Other))
 
 (datatype Bounds
   (LTRB f64 f64 f64 f64))
@@ -37,10 +37,7 @@
 (constructor Transform (Matrix Thing) Thing)
 
 (constructor Empty () Layer)
-(constructor SrcOver (Layer Thing) Layer)
-(constructor Src (Layer Thing) Layer)
-(constructor Other (Layer Thing) Layer)
-(constructor DstIn (Layer Thing) Layer)
+(constructor Blend (BlendMode Layer Thing) Layer)
 
 ;; Strip Opaque SrcOver SaveLayer
 (rewrite (SrcOver bottom

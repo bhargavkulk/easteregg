@@ -32,14 +32,14 @@ class Formatter:
         self.buffer.close()
 
     def fmt_layer(self, layer):
-        """LAYER = blend_mode LAYER COMMAND"""
         if layer[0] == 'Empty':
             self.write_line('Empty')
         else:
-            blend_mode, layer, cmd = layer
+            print(len(layer), layer)
+            _, blend_mode, layer, cmd = layer
             self.fmt_layer(layer)
             self.indent_line()
-            self.write(f'ᐊ {blend_mode}')
+            self.write(f'ᐊ {blend_mode[0]}')
             self.fmt_cmd(cmd)
 
     def fmt_cmd(self, cmd):
