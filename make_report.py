@@ -163,6 +163,7 @@ if __name__ == '__main__':
                 fmt_opt = formatter.buffer.getvalue()
                 formatter.clear()
                 f.write(bench_template(fmt_opt))
+            print(stderr)
         else:
             with opt_err_file.open('w') as f:
                 f.write(bench_template(stderr))
