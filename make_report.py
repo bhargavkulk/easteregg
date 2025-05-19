@@ -253,10 +253,10 @@ if __name__ == '__main__':
 
     with tag('p'):
         with tag('label'):
-            with tag('input', type='checkbox', onchange='toggleHidden(0, this)'):
+            with tag('input', type='checkbox', onchange="toggleHidden('cw', this)"):
                 text('Show Compiler Warnings')
         with tag('label'):
-            with tag('input', type='checkbox', onchange='toggleHidden(1, this)'):
+            with tag('input', type='checkbox', onchange="toggleHidden('ew', this)"):
                 text('Show Egglog Warnings')
 
     with tag('table', style='white-space: nowrap;border-collapse: collapse;'):
@@ -273,7 +273,7 @@ if __name__ == '__main__':
                 text('Diff')
             with tag('th'):
                 text('#SaveLayers')
-            with tag('th'):
+            with tag('th', klass='cw'):
                 text('Warnings')
         for benchmark in benchmarks:
             with tag('tr'):
@@ -321,8 +321,14 @@ if __name__ == '__main__':
                     text(f'{benchmark["counts"][0]} → {benchmark["counts"][1]}')
 
                 if 'warn_file' in benchmark.keys():
-                    with tag('td', klass='ctr'):
+                    with tag('td', klass='ctr cw'):
                         with tag('a', href=benchmark['warn_file']):
                             text('»')
+    with tag('script', type='text/javascript'):
+        doc.asis("""
+        console.log('Script at end of document.');
+        alert('Hello from JS!');
+        """)
+
     with (args.output / 'index.html').open('w', encoding='utf-8') as f:
         f.write(index_template(yattag.indent(doc.getvalue())))
