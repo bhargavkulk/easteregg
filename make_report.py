@@ -279,7 +279,9 @@ if __name__ == '__main__':
             with tag('th'):
                 text('#SaveLayers')
             with tag('th', klass='cw'):
-                text('Warnings')
+                text('CW')
+            with tag('th', klass='cw'):
+                text('EW')
         for benchmark in benchmarks:
             with tag('tr'):
                 with tag('td', klass='lgray'):
@@ -332,7 +334,7 @@ if __name__ == '__main__':
 
                 if 'egg_warn_file' in benchmark.keys():
                     with tag('td', klass='ctr ew'):
-                        with tag('a', href=benchmark['warn_file']):
+                        with tag('a', href=benchmark['egg_warn_file']):
                             text('»')
 
     with tag('script', type='text/javascript'):
