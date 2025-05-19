@@ -328,13 +328,15 @@ if __name__ == '__main__':
                 with tag('td', klass=f'{benchmark["change"]} ctr'):
                     text(f'{benchmark["counts"][0]} → {benchmark["counts"][1]}')
 
-                if 'warn_file' in benchmark.keys():
-                    with tag('td', klass='ctr cw hidden'):
+                with tag('td', klass='ctr cw hidden'):
+                    if 'warn_file' in benchmark.keys():
                         with tag('a', href=benchmark['warn_file']):
                             text('»')
+                    else:
+                        text('')
 
-                if 'egg_warn_file' in benchmark.keys():
-                    with tag('td', klass='ctr ew hidden'):
+                with tag('td', klass='ctr ew hidden'):
+                    if 'egg_warn_file' in benchmark.keys():
                         with tag('a', href=benchmark['egg_warn_file']):
                             text('»')
 
