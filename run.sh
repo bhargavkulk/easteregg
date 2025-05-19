@@ -3,9 +3,9 @@ set -e -x
 # if [ ! -d skia ]; then
 #     git clone https://skia.googlesource.com/skia.git
 # fi
-#if [ ! -d egglog ]; then
-#    git clone https://github.com/egraphs-good/egglog/
-#fi
+if [ ! -d egglog ]; then
+    git clone https://github.com/egraphs-good/egglog/
+fi
 
 rm -rf report
 
