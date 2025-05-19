@@ -35,7 +35,6 @@ class Formatter:
         if layer[0] == 'Empty':
             self.write_line('Empty')
         else:
-            print(len(layer), layer)
             _, blend_mode, layer, cmd = layer
             self.fmt_layer(layer)
             self.indent_line()
