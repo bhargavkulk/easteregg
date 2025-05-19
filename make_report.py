@@ -15,6 +15,10 @@ EGG = 'egg'
 JSON = 'json'
 
 
+class SaneHtmlDiff(difflib.HtmlDiff):
+    _legend = ''
+
+
 def rewrite_name(string):
     suite, name = string.split('__', 1)
     name = name.replace('_', ' ')
@@ -182,7 +186,7 @@ if __name__ == '__main__':
 
         data['state'] = 2
 
-        diff = difflib.HtmlDiff().make_file(
+        diff = SaneHtmlDiff().make_file(
             fmt_egg.splitlines(), fmt_opt.splitlines(), fromdesc='NoOpt', todesc='Opt'
         )
 
