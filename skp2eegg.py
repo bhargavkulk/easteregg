@@ -1,9 +1,25 @@
 import argparse
 import json
+from contextvars import ContextVar
 from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
+warnings_var: ContextVar[list[str]] = ContextVar('warnings', default=[])
+
+
+def get_reset_warnings():
+    warnings = warnings_var.get()
+    warnings_var.set([])
+    return warnings
+
+
+def warn(msg):
+    warnings = warnings_var.get()
+    warnings.append(msg)
+    warnings_var.set(warnings)
+
 
 I = [[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]]
 
@@ -30,16 +46,27 @@ def radii_to_ltrb(radii):
 
 
 # returns paint and blend mode
-def compile_paint(paint_json):
+def compile_paint(paint_json: dict | None):
     color = [255, 0, 0, 0]
     blend_mode = 'SrcOver'
-    if paint_json is not None:
-        color = paint_json.get('color', [0, 0, 0, 0])
-        blend_mode = paint_json.get('blendMode', 'SrcOver')
 
-    if blend_mode not in ('Src', 'SrcOver', 'DstIn'):
-        blend_mode = 'Other'
-        print(f'[skp2egg] UNKNOWN BLEND MODE {blend_mode}')
+    if paint_json is None:
+        color = [255, 0, 0, 0]
+        blend_mode = 'SrcOver'
+    else:
+        if blend_mode in paint_json.keys():
+            blend_mode = paint_json['blend_mode']
+            if blend_mode not in ('Src', 'SrcOver', 'DstIn'):
+                blend_mode = 'Other'
+                warn(f'[WARN] UNKNOWN BLEND MODE {blend_mode}')
+            color = paint_json.get('color', [255, 0, 0, 0])
+        else:
+            color = [0, 0, 0, 0]
+            warn(f'[WARN] not a blend mode')
+            if 'image_filter' in paint_json.keys():
+                blend_mode = 'ImageFilter'
+            else:
+                blend_mode = 'OtherFilter'
 
     return (
         '(Paint ' + ' '.join(str(i) for i in color) + ' (' + blend_mode + ')' + ')',

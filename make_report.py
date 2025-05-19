@@ -9,7 +9,7 @@ import yattag
 
 from egglog_runner import run_egglog
 from printegg import Formatter, parse_sexp
-from skp2eegg import compile_json_skp
+from skp2eegg import compile_json_skp, get_reset_warnings
 
 EGG = 'egg'
 JSON = 'json'
@@ -116,14 +116,22 @@ if __name__ == '__main__':
 
         assert egg is not None
 
-        egg_file = args.output / (bench_name + '__NOOPT.html')
-        egglog_file = EGG_FOLDER / (bench_name + '.egg')
+        # Collect Warnings
+
+        warnings = get_reset_warnings()
+
+        egg_file: Path = args.output / (bench_name + '__NOOPT.html')
+        warning_file: Path = args.output / (bench_name + '__WARN.html')
+        egglog_file: Path = EGG_FOLDER / (bench_name + '.egg')
 
         with egg_file.open('w') as f:
             f.write(bench_template(egg))
 
         with egglog_file.open('w') as f:
             f.write('(let test ' + egg + ')')
+
+        with warning_file.open('w') as f:
+            f.writelines(warnings)
 
         fmt_egg_file = args.output / (bench_name + '__NOOPT_FMT.html')
         fmt_egg = None
@@ -135,6 +143,7 @@ if __name__ == '__main__':
 
         data['egg_file'] = str(egg_file).replace('report', '.')
         data['fmt_egg_file'] = str(fmt_egg_file).replace('report', '.')
+        data['warn_file'] = str(warning_file).replace('report', '.')
 
         # 2. Optimize
         opt_file = args.output / (bench_name + '__OPT.html')
@@ -256,6 +265,8 @@ if __name__ == '__main__':
                 text('Diff')
             with tag('th'):
                 text('#SaveLayers')
+            with tag('th'):
+                text('Warnings')
         for benchmark in benchmarks:
             with tag('tr'):
                 with tag('td', klass='lgray'):
@@ -300,5 +311,10 @@ if __name__ == '__main__':
 
                 with tag('td', klass=f'{benchmark["change"]} ctr'):
                     text(f'{benchmark["counts"][0]} → {benchmark["counts"][1]}')
+
+                if 'warn_file' in benchmark.keys():
+                    with tag('td', klass='ctr'):
+                        with tag('a', href=benchmark['diff_file']):
+                            text('»')
     with (args.output / 'index.html').open('w', encoding='utf-8') as f:
         f.write(index_template(yattag.indent(doc.getvalue())))
