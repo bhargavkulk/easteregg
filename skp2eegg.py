@@ -60,7 +60,7 @@ def compile_paint(paint_json: dict | None):
                 blend_mode = 'Other'
                 warn(f'[WARN] UNKNOWN BLEND MODE {blend_mode}')
             color = paint_json.get('color', [255, 0, 0, 0])
-        elif color in paint_json.keys():
+        elif 'color' in paint_json.keys():
             blend_mode = 'SrcOver'
             color = paint_json.get('color', [255, 0, 0, 0])
         else:
@@ -221,13 +221,10 @@ if __name__ == '__main__':
     with args.input.open('rb') as f:
         skp = json.load(f)
 
-    try:
-        eegg = compile_json_skp(skp)
+    eegg = compile_json_skp(skp)
 
-        if args.output:
-            with args.output.open('w') as f:
-                f.write(eegg)
-        else:
-            print(eegg)
-    except Exception as e:
-        print(f'[{args.input.name}]', str(e))
+    if args.output:
+        with args.output.open('w') as f:
+            f.write(eegg)
+    else:
+        print(eegg)
