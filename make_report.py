@@ -135,8 +135,8 @@ if __name__ == '__main__':
 
         if len(warnings) != 0:
             with warning_file.open('w') as f:
-                f.writelines(warnings)
-            data['warn_file'] = str(warning_file).replace('report', '.')
+                f.write('\n'.join(warnings) + '\n')
+            data['warn_file'] = str(warning_file.relative_to(args.output.parent))
 
         fmt_egg_file = args.output / (bench_name + '__NOOPT_FMT.html')
         fmt_egg = None
