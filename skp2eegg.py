@@ -51,7 +51,7 @@ def compile_paint(paint_json):
     if paint_json is not None:
         color = paint_json.get('color', [0, 0, 0, 0])
         blend_mode = paint_json.get('blendMode', 'SrcOver')
-        if 'blend_mode' not in paint_json.keys() and 'color' not in paint_json.keys():
+        if 'blendMode' not in paint_json.keys() and 'color' not in paint_json.keys():
             warn(f'[WARN] Not a Blend Mode: {[key for key in paint_json.keys()]}')
 
     if blend_mode not in ('Src', 'SrcOver', 'DstIn'):
