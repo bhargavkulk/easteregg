@@ -1,9 +1,12 @@
 import argparse
 import difflib
 import json
+import os
 import shutil
+import subprocess
 import sys
 import traceback
+from os.path import isdir
 from pathlib import Path
 from typing import Callable
 
@@ -208,6 +211,20 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
     unchanged = benchmarks['unchanged']
     regressed = benchmarks['regressed']
     failed = benchmarks['failed']
+
+    with tag('h1'):
+        text('EasterEgg Report')
+
+    if os.path.isdir('.git'):
+        commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+        branch = subprocess.check_output(
+            ['git', 'rev-parse', '--abbrev-ref', 'HEAD'], text=True
+        ).strip()
+        with tag('a', href=f'https://github.com/bhargavkulk/easteregg/tree/{commit}'):
+            text(commit[:8])
+        text(f' on ')
+        with tag('a', href=f'https://github.com/bhargavkulk/easteregg/tree/{branch}'):
+            text(branch)
 
     with tag('p'):
         text('No. of websites ')
