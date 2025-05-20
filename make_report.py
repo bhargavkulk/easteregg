@@ -3,8 +3,8 @@ import difflib
 import json
 import shutil
 import sys
+import traceback
 from pathlib import Path
-from typing import Any, Tuple
 
 import yattag
 
@@ -107,10 +107,10 @@ if __name__ == '__main__':
         try:
             egg = compile_json_skp(skp)
         except Exception as e:
-            error_msg = str(e)
+            tb = traceback.format_exc()
             err_file = args.output / (bench_name + '__NOOPT_ERR.html')
             with err_file.open('w') as f:
-                f.write(bench_template(error_msg))
+                f.write(bench_template(tb))
             data['compile_error'] = str(err_file).replace('report', '.')
             data['state'] = 0
             benchmarks.append(data)
