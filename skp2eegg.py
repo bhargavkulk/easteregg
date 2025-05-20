@@ -194,7 +194,7 @@ def compile(commands: list):
     return curr_state.layer
 
 
-def compile_json_skp(skp):
+def compile_json_skp(skp) -> str:
     return compile(skp['commands'])
 
 
