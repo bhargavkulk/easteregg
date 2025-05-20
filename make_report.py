@@ -4,6 +4,7 @@ import json
 import shutil
 import sys
 from pathlib import Path
+from typing import Any, Tuple
 
 import yattag
 
@@ -34,9 +35,9 @@ def index_template(table):
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-  <style type="text/css">:root{--uchu-gray-raw: 84.68% 0.002 197.12;--uchu-gray: oklch(var(--uchu-gray-raw));--uchu-yellow-raw: 90.92% 0.125 92.56;--uchu-yellow: oklch(var(--uchu-yellow-raw));--uchu-red-raw: 62.73% 0.209 12.37;--uchu-red: oklch(var(--uchu-red-raw));--uchu-green-raw: 79.33% 0.179 145.62;--uchu-green: oklch(var(--uchu-green-raw));}body{margin:40px
+  <style type="text/css">:root{--uchu-light-gray-raw: 95.57% 0.003 286.35;--uchu-light-gray: oklch(var(--uchu-light-gray-raw));--uchu-gray-raw: 84.68% 0.002 197.12;--uchu-gray: oklch(var(--uchu-gray-raw));--uchu-yellow-raw: 90.92% 0.125 92.56;--uchu-yellow: oklch(var(--uchu-yellow-raw));--uchu-red-raw: 62.73% 0.209 12.37;--uchu-red: oklch(var(--uchu-red-raw));--uchu-green-raw: 79.33% 0.179 145.62;--uchu-green: oklch(var(--uchu-green-raw));}body{margin:40px
 auto;max-width:800px;line-height:1.6;font-size:18px;color:#444;padding:0
-10px}h1,h2,h3{line-height:1.2}.ctr{text-align:center;}th{border:1px solid black;padding:0 5px;}td{border:1px solid black;padding:0 5px;}.green{background-color:var(--uchu-green)}.gray{background-color:var(--uchu-gray)}.red{background-color:var(--uchu-red);color:white}.yellow{background-color:var(--uchu-yellow)}body{font-family:'Public Sans',sans-serif}.hidden{display: none;}</style></head>
+10px}h1,h2,h3{line-height:1.2}.ctr{text-align:center;}th{border:1px solid black;padding:0 5px;}td{border:1px solid black;padding:0 5px;}.green{background-color:var(--uchu-green)}.gray{background-color:var(--uchu-gray)}.red{background-color:var(--uchu-red);color:white}.lgray{background-color:var(--uchu-light-gray)}.yellow{background-color:var(--uchu-yellow)}body{font-family:'Public Sans',sans-serif}.hidden{display: none;}.void{background-image:repeating-linear-gradient(45deg, #ccc, #ccc 10px, #fff 10px, #fff 20px);}</style></head>
   <body><header><h1>EasterEgg Report</h1></header>\n"""
     string += table
     string += '</body></html>'
@@ -51,9 +52,9 @@ def bench_template(inside):
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-  <style type="text/css">:root{--uchu-gray-raw: 84.68% 0.002 197.12;--uchu-gray: oklch(var(--uchu-gray-raw));--uchu-yellow-raw: 90.92% 0.125 92.56;--uchu-yellow: oklch(var(--uchu-yellow-raw));--uchu-red-raw: 62.73% 0.209 12.37;--uchu-red: oklch(var(--uchu-red-raw));--uchu-green-raw: 79.33% 0.179 145.62;--uchu-green: oklch(var(--uchu-green-raw));}body{margin:40px
+  <style type="text/css">:root{--uchu-light-gray-raw: 95.57% 0.003 286.35;--uchu-light-gray: oklch(var(--uchu-light-gray-raw));--uchu-gray-raw: 84.68% 0.002 197.12;--uchu-gray: oklch(var(--uchu-gray-raw));--uchu-yellow-raw: 90.92% 0.125 92.56;--uchu-yellow: oklch(var(--uchu-yellow-raw));--uchu-red-raw: 62.73% 0.209 12.37;--uchu-red: oklch(var(--uchu-red-raw));--uchu-green-raw: 79.33% 0.179 145.62;--uchu-green: oklch(var(--uchu-green-raw));}body{margin:40px
 auto;max-width:800px;line-height:1.6;font-size:18px;color:#444;padding:0
-10px}h1,h2,h3{line-height:1.2}.ctr{text-align:center;}td{padding:0 5px;border:1px solid black;}.green{background-color:var(--uchu-green)}.gray{background-color:var(--uchu-gray)}.red{background-color:var(--uchu-red)}.yellow{background-color:var(--uchu-yellow)}body{font-family:'Public Sans',sans-serif}</style></head>
+10px}h1,h2,h3{line-height:1.2}.ctr{text-align:center;}td{padding:0 5px;border:1px solid black;}.green{background-color:var(--uchu-green)}.gray{background-color:var(--uchu-gray)}.red{background-color:var(--uchu-red)}.yellow{background-color:var(--uchu-yellow)}.lgray{background-color:var(--uchu-light-gray)}body{font-family:'Public Sans',sans-serif}</style></head>
   <body><pre style="white-space: pre; overflow: auto;">\n"""
     string += inside
     string += '</pre></html>'
@@ -92,6 +93,8 @@ if __name__ == '__main__':
         bench_name = benchmark.stem
         data = dict()
         data['name'] = bench_name
+        suite, _ = bench_name.split('__', 1)
+        data['website'] = suite.replace('_', '-').lower()
 
         with benchmark.open('rb') as f:
             skp = json.load(f)
@@ -259,13 +262,24 @@ if __name__ == '__main__':
 
     with tag('p'):
         with tag('label'):
-            with tag('input', type='checkbox', onchange="toggleHidden('cw', this)"):
+            with tag(
+                'input',
+                type='checkbox',
+                onchange="toggleHidden('cw', this)",
+                style='margin-right: 8px',
+            ):
                 text('Show Compiler Warnings')
+        doc.stag('br')
         with tag('label'):
-            with tag('input', type='checkbox', onchange="toggleHidden('ew', this)"):
+            with tag(
+                'input',
+                type='checkbox',
+                onchange="toggleHidden('ew', this)",
+                style='margin-right: 8px',
+            ):
                 text('Show Egglog Warnings')
 
-    with tag('table', style='white-space: nowrap;border-collapse: collapse;'):
+    with tag('table', style='white-space: nowrap;'):
         with tag('tr', klass='gray'):
             with tag('th'):
                 text('Benchmark')
@@ -284,7 +298,7 @@ if __name__ == '__main__':
             with tag('th', klass='ew hidden'):
                 text('EW')
         for benchmark in benchmarks:
-            with tag('tr'):
+            with tag('tr', klass=benchmark['website']):
                 with tag('td', klass='lgray'):
                     text(rewrite_name(benchmark['name']))
 
@@ -297,6 +311,12 @@ if __name__ == '__main__':
                     with tag('td', klass='ctr', colspan=2):
                         with tag('a', href=benchmark['compile_error']):
                             text('!')
+                    with tag('td', colspan=4, klass='void'):
+                        text('')
+                    with tag('td', klass='void cw hidden'):
+                        text('')
+                    with tag('td', klass='void ew hidden'):
+                        text('')
                     continue
 
                 with tag('td', klass='ctr'):
@@ -311,6 +331,12 @@ if __name__ == '__main__':
                     with tag('td', klass='ctr', colspan=2):
                         with tag('a', href=benchmark['opt_err_file']):
                             text('!')
+                    with tag('td', colspan=2, klass='void'):
+                        text('')
+                    with tag('td', klass='void cw hidden'):
+                        text('')
+                    with tag('td', klass='void ew hidden'):
+                        text('')
                     continue
 
                 with tag('td', klass='ctr'):
@@ -328,17 +354,21 @@ if __name__ == '__main__':
                 with tag('td', klass=f'{benchmark["change"]} ctr'):
                     text(f'{benchmark["counts"][0]} → {benchmark["counts"][1]}')
 
-                with tag('td', klass='ctr cw hidden'):
-                    if 'warn_file' in benchmark.keys():
+                if 'warn_file' in benchmark.keys():
+                    with tag('td', klass='ctr cw hidden'):
                         with tag('a', href=benchmark['warn_file']):
                             text('»')
-                    else:
+                else:
+                    with tag('td', klass='cw hidden void'):
                         text('')
 
-                with tag('td', klass='ctr ew hidden'):
-                    if 'egg_warn_file' in benchmark.keys():
+                if 'egg_warn_file' in benchmark.keys():
+                    with tag('td', klass='ctr ew hidden'):
                         with tag('a', href=benchmark['egg_warn_file']):
                             text('»')
+                else:
+                    with tag('td', klass='ew hidden void'):
+                        text('')
 
     with tag('script', type='text/javascript'):
         doc.asis("""function toggleHidden(s, c) {
