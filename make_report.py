@@ -352,7 +352,9 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
             cell.classList.add('hidden');
         }
     });
-}""")
+        }""")
+
+
 def page_template(content: Callable[[yattag.SimpleDoc], None]):
     doc, tag, text = yattag.Doc().tagtext()
 
@@ -404,4 +406,4 @@ if __name__ == '__main__':
     with (args.output / 'index.html').open('w') as f:
         f.write(yattag.indent(report.getvalue()))
 
-    shutil.move(args.rsrc, args.output)
+    shutil.copytree(args.rsrc, args.output / args.rsrc)
