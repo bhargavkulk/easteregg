@@ -1,15 +1,20 @@
 import argparse
 import difflib
 import json
+import os
 import shutil
+import subprocess
 import sys
+import traceback
+from os.path import isdir
 from pathlib import Path
+from typing import Callable
 
 import yattag
 
 from egglog_runner import run_egglog
 from printegg import Formatter, parse_sexp
-from skp2eegg import compile_json_skp
+from skp2eegg import compile_json_skp, get_reset_warnings
 
 EGG = 'egg'
 JSON = 'json'
@@ -26,57 +31,13 @@ def rewrite_name(string):
     return suite + ' | ' + name
 
 
-def index_template(table):
-    string = """<!DOCTYPE html><html><head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>EasterEgg Report</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-  <style type="text/css">:root{--uchu-gray-raw: 84.68% 0.002 197.12;--uchu-gray: oklch(var(--uchu-gray-raw));--uchu-yellow-raw: 90.92% 0.125 92.56;--uchu-yellow: oklch(var(--uchu-yellow-raw));--uchu-red-raw: 62.73% 0.209 12.37;--uchu-red: oklch(var(--uchu-red-raw));--uchu-green-raw: 79.33% 0.179 145.62;--uchu-green: oklch(var(--uchu-green-raw));}body{margin:40px
-auto;max-width:800px;line-height:1.6;font-size:18px;color:#444;padding:0
-10px}h1,h2,h3{line-height:1.2}.ctr{text-align:center;}th{border:1px solid black;padding:0 5px;}td{border:1px solid black;padding:0 5px;}.green{background-color:var(--uchu-green)}.gray{background-color:var(--uchu-gray)}.red{background-color:var(--uchu-red);color:white}.yellow{background-color:var(--uchu-yellow)}body{font-family:'Public Sans',sans-serif}</style></head>
-  <body><header><h1>EasterEgg Report</h1></header>\n"""
-    string += table
-    string += '</body></html>'
-    return string
+def code_page(string: str, doc: yattag.SimpleDoc):
+    doc, tag, text = doc.tagtext()
+    with tag('pre', style='white-space: pre; overflow: auto;'):
+        text(string)
 
 
-def bench_template(inside):
-    string = """<!DOCTYPE html><html><head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>EasterEgg Report</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-  <style type="text/css">:root{--uchu-gray-raw: 84.68% 0.002 197.12;--uchu-gray: oklch(var(--uchu-gray-raw));--uchu-yellow-raw: 90.92% 0.125 92.56;--uchu-yellow: oklch(var(--uchu-yellow-raw));--uchu-red-raw: 62.73% 0.209 12.37;--uchu-red: oklch(var(--uchu-red-raw));--uchu-green-raw: 79.33% 0.179 145.62;--uchu-green: oklch(var(--uchu-green-raw));}body{margin:40px
-auto;max-width:800px;line-height:1.6;font-size:18px;color:#444;padding:0
-10px}h1,h2,h3{line-height:1.2}.ctr{text-align:center;}td{padding:0 5px;border:1px solid black;}.green{background-color:var(--uchu-green)}.gray{background-color:var(--uchu-gray)}.red{background-color:var(--uchu-red)}.yellow{background-color:var(--uchu-yellow)}body{font-family:'Public Sans',sans-serif}</style></head>
-  <body><pre style="white-space: pre; overflow: auto;">\n"""
-    string += inside
-    string += '</pre></html>'
-    return string
-
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    # benchmarks
-    parser.add_argument('bench', type=Path)
-    # output folder
-    parser.add_argument('output', type=Path)
-
-    args = parser.parse_args()
-
-    if args.output.exists():
-        print('output folder exists, delete before running script', file=sys.stderr)
-        sys.exit(1)
-
-    args.output.mkdir()
-    (args.output / EGG).mkdir()
-    (args.output / JSON).mkdir()
-
+def collate_data(args):
     EGG_FOLDER = args.output / EGG
     JSON_FOLDER = args.output / JSON
 
@@ -92,6 +53,8 @@ if __name__ == '__main__':
         bench_name = benchmark.stem
         data = dict()
         data['name'] = bench_name
+        suite, _ = bench_name.split('__', 1)
+        data['website'] = suite.replace('_', '-').lower()
 
         with benchmark.open('rb') as f:
             skp = json.load(f)
@@ -103,11 +66,11 @@ if __name__ == '__main__':
         egg = None
         try:
             egg = compile_json_skp(skp)
-        except Exception as e:
-            error_msg = str(e)
+        except Exception:
+            tb = traceback.format_exc()
             err_file = args.output / (bench_name + '__NOOPT_ERR.html')
             with err_file.open('w') as f:
-                f.write(bench_template(error_msg))
+                f.write(page_template(lambda d: code_page(tb, d)).getvalue())
             data['compile_error'] = str(err_file).replace('report', '.')
             data['state'] = 0
             benchmarks.append(data)
@@ -116,14 +79,24 @@ if __name__ == '__main__':
 
         assert egg is not None
 
-        egg_file = args.output / (bench_name + '__NOOPT.html')
-        egglog_file = EGG_FOLDER / (bench_name + '.egg')
+        # Collect Warnings
+
+        warnings = get_reset_warnings()
+
+        egg_file: Path = args.output / (bench_name + '__NOOPT.html')
+        warning_file: Path = args.output / (bench_name + '__WARN.txt')
+        egglog_file: Path = EGG_FOLDER / (bench_name + '.egg')
 
         with egg_file.open('w') as f:
-            f.write(bench_template(egg))
+            f.write(page_template(lambda d: code_page(egg, d)).getvalue())
 
         with egglog_file.open('w') as f:
             f.write('(let test ' + egg + ')')
+
+        if len(warnings) != 0:
+            with warning_file.open('w') as f:
+                f.write('\n'.join(warnings) + '\n')
+            data['warn_file'] = str(warning_file.relative_to(args.output.parent))
 
         fmt_egg_file = args.output / (bench_name + '__NOOPT_FMT.html')
         fmt_egg = None
@@ -131,7 +104,7 @@ if __name__ == '__main__':
             formatter.fmt_layer(parse_sexp(egg))
             fmt_egg = formatter.buffer.getvalue()
             formatter.clear()
-            f.write(bench_template(fmt_egg))
+            f.write(page_template(lambda d: code_page(fmt_egg, d)).getvalue())
 
         data['egg_file'] = str(egg_file).replace('report', '.')
         data['fmt_egg_file'] = str(fmt_egg_file).replace('report', '.')
@@ -139,7 +112,8 @@ if __name__ == '__main__':
         # 2. Optimize
         opt_file = args.output / (bench_name + '__OPT.html')
         opt_fmt_file = args.output / (bench_name + '__OPT_FMT.html')
-        opt_err_file = args.output / (bench_name + '__OPT_ERR.html')
+        opt_err_file = args.output / (bench_name + '__OPT_ERR.txt')
+        egg_warn_file = args.output / (bench_name + '__EWARN.txt')
         #    run egglog
         ret_code, opt, stderr = run_egglog(egglog_file)
 
@@ -147,16 +121,19 @@ if __name__ == '__main__':
 
         if ret_code == 0:
             with opt_file.open('w') as f:
-                f.write(bench_template(opt))
+                f.write(page_template(lambda d: code_page(opt, d)).getvalue())
 
             with opt_fmt_file.open('w') as f:
                 formatter.fmt_layer(parse_sexp(opt))
                 fmt_opt = formatter.buffer.getvalue()
                 formatter.clear()
-                f.write(bench_template(fmt_opt))
+                f.write(page_template(lambda d: code_page(fmt_opt, d)).getvalue())
+
+            with egg_warn_file.open('w') as f:
+                f.write(stderr)
         else:
             with opt_err_file.open('w') as f:
-                f.write(bench_template(stderr))
+                f.write(stderr)
             data['opt_err_file'] = str(opt_err_file).replace('report', '.')
             data['state'] = 1
             benchmarks.append(data)
@@ -166,6 +143,7 @@ if __name__ == '__main__':
         assert fmt_opt is not None
         data['opt_file'] = str(opt_file).replace('report', '.')
         data['opt_fmt_file'] = str(opt_fmt_file).replace('report', '.')
+        data['egg_warn_file'] = str(egg_warn_file).replace('report', '.')
 
         # 3. Collect Stats, file names
         #    Count SaveLayers before and after
@@ -210,13 +188,43 @@ if __name__ == '__main__':
     # 5. Sort Report
     benchmarks = sorted(benchmarks, key=lambda d: [p.lower() for p in d['name'].split('__', 1)])
 
+    benchmarks = {
+        'benchmarks': benchmarks,
+        'num_benchmarks': len(benchmarks),
+        'improved': improved,
+        'unchanged': unchanged,
+        'regressed': regressed,
+        'failed': failed,
+    }
+
     # 6. Make Report
     with (args.output / 'report.json').open('w') as f:
-        json.dump({'benchmarks': benchmarks}, f)
+        json.dump(benchmarks, f)
 
-    num_benchmarks = len(benchmarks)
+    return benchmarks
 
-    doc, tag, text = yattag.Doc().tagtext()
+
+def report_table(benchmarks, doc: yattag.SimpleDoc):
+    doc, tag, text = doc.tagtext()
+    num_benchmarks = benchmarks['num_benchmarks']
+    improved = benchmarks['improved']
+    unchanged = benchmarks['unchanged']
+    regressed = benchmarks['regressed']
+    failed = benchmarks['failed']
+
+    with tag('h1'):
+        text('EasterEgg Report')
+
+    if os.path.isdir('.git'):
+        commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+        branch = subprocess.check_output(
+            ['git', 'rev-parse', '--abbrev-ref', 'HEAD'], text=True
+        ).strip()
+        with tag('a', href=f'https://github.com/bhargavkulk/easteregg/tree/{commit}'):
+            text(commit[:8])
+        text(f' on ')
+        with tag('a', href=f'https://github.com/bhargavkulk/easteregg/tree/{branch}'):
+            text(branch)
 
     with tag('p'):
         text('No. of websites ')
@@ -242,7 +250,26 @@ if __name__ == '__main__':
             text('Failed')
         text(f': {failed} / {num_benchmarks}')
 
-    with tag('table', style='white-space: nowrap;border-collapse: collapse;'):
+    with tag('p'):
+        with tag('label'):
+            with tag(
+                'input',
+                type='checkbox',
+                onchange="toggleHidden('cw', this)",
+                style='margin-right: 8px',
+            ):
+                text('Show Compiler Warnings')
+        doc.stag('br')
+        with tag('label'):
+            with tag(
+                'input',
+                type='checkbox',
+                onchange="toggleHidden('ew', this)",
+                style='margin-right: 8px',
+            ):
+                text('Show Egglog Warnings')
+
+    with tag('table', style='white-space: nowrap;'):
         with tag('tr', klass='gray'):
             with tag('th'):
                 text('Benchmark')
@@ -256,8 +283,12 @@ if __name__ == '__main__':
                 text('Diff')
             with tag('th'):
                 text('#SaveLayers')
-        for benchmark in benchmarks:
-            with tag('tr'):
+            with tag('th', klass='cw hidden'):
+                text('CW')
+            with tag('th', klass='ew hidden'):
+                text('EW')
+        for benchmark in benchmarks['benchmarks']:
+            with tag('tr', klass=benchmark['website']):
                 with tag('td', klass='lgray'):
                     text(rewrite_name(benchmark['name']))
 
@@ -270,6 +301,12 @@ if __name__ == '__main__':
                     with tag('td', klass='ctr', colspan=2):
                         with tag('a', href=benchmark['compile_error']):
                             text('!')
+                    with tag('td', colspan=4, klass='void'):
+                        text('')
+                    with tag('td', klass='void cw hidden'):
+                        text('')
+                    with tag('td', klass='void ew hidden'):
+                        text('')
                     continue
 
                 with tag('td', klass='ctr'):
@@ -284,6 +321,12 @@ if __name__ == '__main__':
                     with tag('td', klass='ctr', colspan=2):
                         with tag('a', href=benchmark['opt_err_file']):
                             text('!')
+                    with tag('td', colspan=2, klass='void'):
+                        text('')
+                    with tag('td', klass='void cw hidden'):
+                        text('')
+                    with tag('td', klass='void ew hidden'):
+                        text('')
                     continue
 
                 with tag('td', klass='ctr'):
@@ -300,5 +343,84 @@ if __name__ == '__main__':
 
                 with tag('td', klass=f'{benchmark["change"]} ctr'):
                     text(f'{benchmark["counts"][0]} → {benchmark["counts"][1]}')
-    with (args.output / 'index.html').open('w', encoding='utf-8') as f:
-        f.write(index_template(yattag.indent(doc.getvalue())))
+
+                if 'warn_file' in benchmark.keys():
+                    with tag('td', klass='ctr cw hidden'):
+                        with tag('a', href=benchmark['warn_file']):
+                            text('»')
+                else:
+                    with tag('td', klass='cw hidden void'):
+                        text('')
+
+                if 'egg_warn_file' in benchmark.keys():
+                    with tag('td', klass='ctr ew hidden'):
+                        with tag('a', href=benchmark['egg_warn_file']):
+                            text('»')
+                else:
+                    with tag('td', klass='ew hidden void'):
+                        text('')
+
+    with tag('script', type='text/javascript'):
+        doc.asis("""function toggleHidden(s, c) {
+    document.querySelectorAll(`.${s}`).forEach(cell => {
+        if (c.checked) {
+            cell.classList.remove('hidden');
+        } else {
+            cell.classList.add('hidden');
+        }
+    });
+        }""")
+
+
+def page_template(content: Callable[[yattag.SimpleDoc], None]):
+    doc, tag, text = yattag.Doc().tagtext()
+
+    doc.asis('<!DOCTYPE html>')
+    with tag('html'):
+        with tag('head'):
+            doc.stag('meta', charset='utf-8')
+            doc.stag('meta', name='viewport', content='width=device-width, initial-scale=1')
+            with tag('title'):
+                text('EasterEgg Report')
+            doc.stag('link', rel='preconnect', href='https://fonts.googleapis.com')
+            doc.stag('link', rel='preconnect', href='https://fonts.gstatic.com', crossorigin='')
+            doc.stag(
+                'link',
+                href='https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap',
+                rel='stylesheet',
+            )
+            doc.stag('link', rel='stylesheet', href='rsrc/style.css')
+        with tag('body'):
+            content(doc)
+    return doc
+    #   <style type="text/css">:root{--uchu-light-gray-raw: 95.57% 0.003 286.35;--uchu-light-gray: oklch(var(--uchu-light-gray-raw));--uchu-gray-raw: 84.68% 0.002 197.12;--uchu-gray: oklch(var(--uchu-gray-raw));--uchu-yellow-raw: 90.92% 0.125 92.56;--uchu-yellow: oklch(var(--uchu-yellow-raw));--uchu-red-raw: 62.73% 0.209 12.37;--uchu-red: oklch(var(--uchu-red-raw));--uchu-green-raw: 79.33% 0.179 145.62;--uchu-green: oklch(var(--uchu-green-raw));}body{margin:40px
+    # auto;max-width:800px;line-height:1.6;font-size:18px;color:#444;padding:0
+    # 10px}h1,h2,h3{line-height:1.2}.ctr{text-align:center;}th{border:1px solid black;padding:0 5px;}td{border:1px solid black;padding:0 5px;}.green{background-color:var(--uchu-green)}.gray{background-color:var(--uchu-gray)}.red{background-color:var(--uchu-red);color:white}.lgray{background-color:var(--uchu-light-gray)}.yellow{background-color:var(--uchu-yellow)}body{font-family:'Public Sans',sans-serif}.hidden{display: none;}.void{background-image:repeating-linear-gradient(45deg, #ccc, #ccc 10px, #fff 10px, #fff 20px);}</style></head>
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    # benchmarks
+    parser.add_argument('bench', type=Path)
+    # resources
+    parser.add_argument('rsrc', type=Path)
+    # output folder
+    parser.add_argument('output', type=Path)
+
+    args = parser.parse_args()
+
+    if args.output.exists():
+        print('output folder exists, delete before running script', file=sys.stderr)
+        sys.exit(1)
+
+    args.output.mkdir()
+    (args.output / EGG).mkdir()
+    (args.output / JSON).mkdir()
+
+    benchmarks = collate_data(args)
+    report = page_template(lambda d: report_table(benchmarks, d))
+
+    with (args.output / 'index.html').open('w') as f:
+        f.write(yattag.indent(report.getvalue()))
+
+    shutil.copytree(args.rsrc, args.output / args.rsrc)

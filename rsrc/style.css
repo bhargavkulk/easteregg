@@ -1,0 +1,53 @@
+:root{
+    --uchu-light-gray-raw: 95.57% 0.003 286.35;
+    --uchu-light-gray: oklch(var(--uchu-light-gray-raw));
+    --uchu-gray-raw: 84.68% 0.002 197.12;
+    --uchu-gray: oklch(var(--uchu-gray-raw));
+    --uchu-yellow-raw: 90.92% 0.125 92.56;
+    --uchu-yellow: oklch(var(--uchu-yellow-raw));
+    --uchu-red-raw: 62.73% 0.209 12.37;
+    --uchu-red: oklch(var(--uchu-red-raw));
+    --uchu-green-raw: 79.33% 0.179 145.62;
+    --uchu-green: oklch(var(--uchu-green-raw));
+}
+
+body {
+    margin: 40px auto;
+    max-width: 800px;
+    line-height: 1.6;
+    font-size: 18px;
+    color: #444;
+    padding: 0 10px
+}
+
+h1,h2,h3 {
+    line-height: 1.2
+}
+
+.ctr {
+    text-align: center;
+}
+
+th {
+    border: 1px solid black;
+    padding: 0 5px;
+}
+
+td {
+    border: 1px solid black;
+    padding: 0 5px;
+}
+
+.green { background-color: var(--uchu-green) }
+.gray { background-color: var(--uchu-gray) }
+.red {
+    background-color: var(--uchu-red);
+    color: white
+}
+.lgray { background-color: var(--uchu-light-gray) }
+.yellow { background-color: var(--uchu-yellow) }
+body { font-family: 'Public Sans',sans-serif }
+.hidden { display: none; }
+.void{
+    background-image: repeating-linear-gradient(45deg, #ccc, #ccc 10px, #fff 10px, #fff 20px);
+}

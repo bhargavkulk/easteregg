@@ -1,9 +1,25 @@
 import argparse
 import json
+from contextvars import ContextVar
 from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
+warnings_var: ContextVar[list[str]] = ContextVar('warnings', default=[])
+
+
+def get_reset_warnings():
+    warnings = warnings_var.get()
+    warnings_var.set([])
+    return warnings
+
+
+def warn(msg):
+    warnings = warnings_var.get()
+    warnings.append(msg)
+    warnings_var.set(warnings)
+
 
 I = [[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]]
 
@@ -29,17 +45,18 @@ def radii_to_ltrb(radii):
     return [left, top, right, bottom]
 
 
-# returns paint and blend mode
 def compile_paint(paint_json):
     color = [255, 0, 0, 0]
     blend_mode = 'SrcOver'
     if paint_json is not None:
         color = paint_json.get('color', [0, 0, 0, 0])
         blend_mode = paint_json.get('blendMode', 'SrcOver')
+        if 'blendMode' not in paint_json.keys() and 'color' not in paint_json.keys():
+            warn(f'[WARN] Not a Blend Mode: {[key for key in paint_json.keys()]}')
 
     if blend_mode not in ('Src', 'SrcOver', 'DstIn'):
         blend_mode = 'Other'
-        print(f'[skp2egg] UNKNOWN BLEND MODE {blend_mode}')
+        warn(f'[WARN] Unknown Blend Mode: {blend_mode}')
 
     return (
         '(Paint ' + ' '.join(str(i) for i in color) + ' (' + blend_mode + ')' + ')',
@@ -177,7 +194,7 @@ def compile(commands: list):
     return curr_state.layer
 
 
-def compile_json_skp(skp):
+def compile_json_skp(skp) -> str:
     return compile(skp['commands'])
 
 
@@ -191,13 +208,10 @@ if __name__ == '__main__':
     with args.input.open('rb') as f:
         skp = json.load(f)
 
-    try:
-        eegg = compile_json_skp(skp)
+    eegg = compile_json_skp(skp)
 
-        if args.output:
-            with args.output.open('w') as f:
-                f.write(eegg)
-        else:
-            print(eegg)
-    except Exception as e:
-        print(f'[{args.input.name}]', str(e))
+    if args.output:
+        with args.output.open('w') as f:
+            f.write(eegg)
+    else:
+        print(eegg)

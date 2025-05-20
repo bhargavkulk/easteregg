@@ -2,7 +2,9 @@
           (Src)
           (SrcOver)
           (DstIn)
-          (Other))
+          (Other)
+          (ImageFilter)
+          (OtherFilter))
 
 (datatype Bounds
   (LTRB f64 f64 f64 f64))
