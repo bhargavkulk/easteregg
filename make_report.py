@@ -353,9 +353,6 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
         }
     });
 }""")
-    pass
-
-
 def page_template(content: Callable[[yattag.SimpleDoc], None]):
     doc, tag, text = yattag.Doc().tagtext()
 
