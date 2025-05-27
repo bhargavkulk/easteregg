@@ -48,6 +48,7 @@ def radii_to_ltrb(radii):
 def compile_paint(paint_json):
     color = [255, 0, 0, 0]
     blend_mode = 'SrcOver'
+    warn(f'[INFO] paint: {None if paint_json is None else list(paint_json.keys())}')
     if paint_json is not None:
         color = paint_json.get('color', [0, 0, 0, 0])
         blend_mode = paint_json.get('blendMode', 'SrcOver')
