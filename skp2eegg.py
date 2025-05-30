@@ -61,6 +61,21 @@ def compile_paint(paint):
         if blend_mode not in ('Src', 'SrcOver', 'DstIn'):
             blend_mode = 'Other'
             warn(f'[WARN] Unknown Blend Mode: {blend_mode}')
+        if 'imagefilter' in paint:
+            return (
+                '(ImageFilter ' + '(' + blend_mode + '))',
+                blend_mode,
+            )
+        elif 'colorfilter' in paint:
+            return (
+                '(ColorFilter ' + '(' + blend_mode + '))',
+                blend_mode,
+            )
+        elif 'shader' in paint:
+            return (
+                '(Shader ' + '(' + blend_mode + '))',
+                blend_mode,
+            )
         return (
             '(Color ' + ' '.join(str(i) for i in color) + ' (' + blend_mode + ')' + ')',
             blend_mode,

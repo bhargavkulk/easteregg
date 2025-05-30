@@ -13,7 +13,10 @@
           (M4x4 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64))
 
 (datatype Paint
-  (Color i64 i64 i64 i64 BlendMode))
+  (Color i64 i64 i64 i64 BlendMode)
+  (ImageFilter BlendMode)
+  (ColorFilter BlendMode)
+  (Shader BlendMode))
 
 (datatype ClipOp
   (I)
