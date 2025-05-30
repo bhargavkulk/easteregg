@@ -12,8 +12,8 @@
 (datatype Matrix
           (M4x4 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64))
 
-(datatype SkPaint
-  (Paint i64 i64 i64 i64 BlendMode))
+(datatype Paint
+  (Color i64 i64 i64 i64 BlendMode))
 
 (datatype ClipOp
   (I)
@@ -27,15 +27,15 @@
 (sort Thing)
 (sort Layer)
 
-(constructor Rect (Bounds SkPaint) Thing)
-(constructor Fill (SkPaint) Thing)
-(constructor SaveLayer (SkPaint Layer) Thing)
+(constructor Rect (Bounds Paint) Thing)
+(constructor Fill (Paint) Thing)
+(constructor SaveLayer (Paint Layer) Thing)
 (constructor Clip (ClipBounds Thing) Thing)
-(constructor TextBlob (f64 f64 Bounds SkPaint) Thing)
-(constructor Path (SkPaint) Thing)
-(constructor RRect (Bounds Bounds SkPaint) Thing)
-(constructor Oval (Bounds SkPaint) Thing)
-(constructor ImageRect (Bounds Bounds SkPaint) Thing)
+(constructor TextBlob (f64 f64 Bounds Paint) Thing)
+(constructor Path (Paint) Thing)
+(constructor RRect (Bounds Bounds Paint) Thing)
+(constructor Oval (Bounds Paint) Thing)
+(constructor ImageRect (Bounds Bounds Paint) Thing)
 (constructor Transform (Matrix Thing) Thing)
 
 (constructor Empty () Layer)
@@ -45,11 +45,11 @@
 (rewrite (Blend (SrcOver) bottom
                   (Clip cb
                    (Transform m
-                              (SaveLayer (Paint 255 r g b bm) (Blend (SrcOver) bottom2 draw)))))
+                              (SaveLayer (Color 255 r g b bm) (Blend (SrcOver) bottom2 draw)))))
          (Blend (SrcOver) (Blend (SrcOver) bottom
                            (Clip cb
                             (Transform m
-                                       (SaveLayer (Paint 255 r g b bm) bottom2)))) draw))
+                                       (SaveLayer (Color 255 r g b bm) bottom2)))) draw))
 
 ;; Remove Empty Save Layer
 (rewrite (Blend (SrcOver) bottom

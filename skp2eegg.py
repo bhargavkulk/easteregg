@@ -45,24 +45,46 @@ def radii_to_ltrb(radii):
     return [left, top, right, bottom]
 
 
-def compile_paint(paint_json):
-    color = [255, 0, 0, 0]
-    blend_mode = 'SrcOver'
-    warn(f'[INFO] paint: {None if paint_json is None else list(paint_json.keys())}')
-    if paint_json is not None:
-        color = paint_json.get('color', [0, 0, 0, 0])
-        blend_mode = paint_json.get('blendMode', 'SrcOver')
-        if 'blendMode' not in paint_json.keys() and 'color' not in paint_json.keys():
-            warn(f'[WARN] Not a Blend Mode: {[key for key in paint_json.keys()]}')
+def compile_paint(paint):
+    warn(f'[INFO] paint: {None if paint is None else list(paint.keys())}')
+    if paint is None:
+        color = [255, 0, 0, 0]
+        blend_mode = 'SrcOver'
+        warn(f'[INFO] empty paint')
+        return (
+            '(Color ' + ' '.join(str(i) for i in color) + ' (' + blend_mode + ')' + ')',
+            blend_mode,
+        )
+    else:
+        color = paint.get('color', [255, 0, 0, 0])
+        blend_mode = paint.get('blendMode', 'SrcOver')
+        if blend_mode not in ('Src', 'SrcOver', 'DstIn'):
+            blend_mode = 'Other'
+            warn(f'[WARN] Unknown Blend Mode: {blend_mode}')
+        return (
+            '(Color ' + ' '.join(str(i) for i in color) + ' (' + blend_mode + ')' + ')',
+            blend_mode,
+        )
 
-    if blend_mode not in ('Src', 'SrcOver', 'DstIn'):
-        blend_mode = 'Other'
-        warn(f'[WARN] Unknown Blend Mode: {blend_mode}')
 
-    return (
-        '(Paint ' + ' '.join(str(i) for i in color) + ' (' + blend_mode + ')' + ')',
-        blend_mode,
-    )
+# def compile_paint(paint_json):
+#     color = [255, 0, 0, 0]
+#     blend_mode = 'SrcOver'
+#     warn(f'[INFO] paint: {None if paint_json is None else list(paint_json.keys())}')
+#     if paint_json is not None:
+#         color = paint_json.get('color', [0, 0, 0, 0])
+#         blend_mode = paint_json.get('blendMode', 'SrcOver')
+#         if 'blendMode' not in paint_json.keys() and 'color' not in paint_json.keys():
+#             warn(f'[WARN] Not a Blend Mode: {[key for key in paint_json.keys()]}')
+
+#     if blend_mode not in ('Src', 'SrcOver', 'DstIn'):
+#         blend_mode = 'Other'
+#         warn(f'[WARN] Unknown Blend Mode: {blend_mode}')
+
+#     return (
+#         '(Paint ' + ' '.join(str(i) for i in color) + ' (' + blend_mode + ')' + ')',
+#         blend_mode,
+#     )
 
 
 # Thanks to ChatGPT for reminding me that everything is a reference in python
