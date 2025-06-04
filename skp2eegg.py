@@ -82,22 +82,7 @@ def compile_paint(paint):
         )
 
 
-# def compile_paint(paint_json):
-#     color = [255, 0, 0, 0]
-#     blend_mode = 'SrcOver'
-#     warn(f'[INFO] paint: {None if paint_json is None else list(paint_json.keys())}')
-#     if paint_json is not None:
-#         color = paint_json.get('color', [0, 0, 0, 0])
-#         blend_mode = paint_json.get('blendMode', 'SrcOver')
-#         if 'blendMode' not in paint_json.keys() and 'color' not in paint_json.keys():
-#             warn(f'[WARN] Not a Blend Mode: {[key for key in paint_json.keys()]}')
-
-#     if blend_mode not in ('Src', 'SrcOver', 'DstIn'):
-#         blend_mode = 'Other'
-#         warn(f'[WARN] Unknown Blend Mode: {blend_mode}')
-
-#     return (
-#         '(Paint ' + ' '.join(str(i) for i in color) + ' (' + blend_mode + ')' + ')',
+# (No replacement lines; the commented-out code is removed entirely.)
 #         blend_mode,
 #     )
 
