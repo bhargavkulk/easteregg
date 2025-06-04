@@ -129,8 +129,11 @@ class Formatter:
     def fmt_ltrb(self, ltrb):
         self.write(f'[{ltrb[1]} {ltrb[2]} {ltrb[3]} {ltrb[4]}]')
 
-    def fmt_paint(self, rgba):
-        self.write(f'RGBA({rgba[1]} {rgba[2]} {rgba[3]} {rgba[4]})')
+    def fmt_paint(self, paint):
+        if paint[0] == 'Color':
+            self.write(f'Color({paint[1]} {paint[2]} {paint[3]} {paint[4]})')
+        else:
+            self.write(paint[0])
 
     def clear(self):
         self.buffer = StringIO()

@@ -96,7 +96,7 @@ def collate_data(args):
         if len(warnings) != 0:
             with warning_file.open('w') as f:
                 f.write('\n'.join(warnings) + '\n')
-            data['warn_file'] = str(warning_file.relative_to(args.output.parent))
+            data['warn_file'] = str(warning_file).replace('report', '.')
 
         fmt_egg_file = args.output / (bench_name + '__NOOPT_FMT.html')
         fmt_egg = None
