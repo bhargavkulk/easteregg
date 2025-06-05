@@ -3,6 +3,7 @@ import json
 import subprocess
 import sys
 import tomllib
+from io import StringIO
 from pathlib import Path
 from typing import Any
 
@@ -51,19 +52,24 @@ def dump_skp(flag: bool, urlname: str, url: str, path: Path, outputPath: Path):
     try:
         print(f'[{urlname}] serializing skps to JSON')
         for skp_file in path.glob('*.skp'):
+            print(skp_file)
             result = subprocess.run(
-                ['./skia/out/debug/skp_parser', str(skp_file)],
+                ['./../skia/out/debug/skp_parser', str(skp_file)],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
             if result.returncode != 0:
                 print(f'[ERROR|{urlname}] stderr: {result.stderr.decode()}')
             else:
-                json_data = json.loads(result.stdout.decode())
+                buffer = StringIO(result.stdout.decode())
+                width = buffer.readline()
+                height = buffer.readline()
+                json_data = json.loads(buffer.read())
+                json_data['dim'] = [int(width), int(height)]
                 if find_command(json_data, 'SaveLayer'):
                     print(f'[{urlname}] found "SaveLayer" @ {skp_file.stem}')
                     json_file_name = skp_file.stem + '.json'
-                    json_file_path = outputPath / (urlname + json_file_name)
+                    json_file_path = outputPath / (urlname + '__' + json_file_name)
                     with json_file_path.open('w') as f:
                         json.dump(json_data, f, indent=4)
         print(f'[{urlname}] done')

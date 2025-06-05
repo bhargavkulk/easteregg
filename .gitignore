@@ -11,3 +11,5 @@ opt/
 report/
 __pycache__/
 tmp/
+scripts/flattened/
+*.tar.gz
