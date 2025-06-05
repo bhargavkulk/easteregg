@@ -6,7 +6,6 @@ import shutil
 import subprocess
 import sys
 import traceback
-from os.path import isdir
 from pathlib import Path
 from typing import Callable
 
@@ -78,6 +77,21 @@ def collate_data(args):
             continue
 
         assert egg is not None
+
+        # Check if number of save layers is same
+
+        expected_count = 0
+        for command in skp['commands']:
+            if command['command'] == 'SaveLayer':
+                expected_count += 1
+        actual_count = egg.count('SaveLayer')
+
+        if expected_count != actual_count:
+            data['compile_error'] = f'{expected_count} ≠ {actual_count}'
+            data['state'] = 99
+            benchmarks.append(data)
+            failed += 1
+            continue
 
         # Collect Warnings
 
@@ -301,6 +315,16 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
                     with tag('td', klass='ctr', colspan=2):
                         with tag('a', href=benchmark['compile_error']):
                             text('!')
+                    with tag('td', colspan=4, klass='void'):
+                        text('')
+                    with tag('td', klass='void cw hidden'):
+                        text('')
+                    with tag('td', klass='void ew hidden'):
+                        text('')
+                    continue
+                elif benchmark['state'] == 99:
+                    with tag('td', klass='ctr', colspan=2):
+                        text(benchmark['compile_error'])
                     with tag('td', colspan=4, klass='void'):
                         text('')
                     with tag('td', klass='void cw hidden'):
