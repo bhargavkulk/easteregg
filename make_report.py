@@ -86,6 +86,7 @@ def collate_data(args):
                 expected_count += 1
         actual_count = egg.count('SaveLayer')
 
+        print(f'{bench_name}: {expected_count} -- {actual_count}')
         if expected_count != actual_count:
             data['compile_error'] = f'{expected_count} ≠ {actual_count}'
             data['state'] = 99
