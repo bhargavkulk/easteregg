@@ -1,0 +1,57 @@
+{
+   "version": 1,
+   "commands": [
+      {
+         "command": "DrawRect",
+         "visible": true,
+         "coords": [ 10, 60, 100, 120 ],
+         "paint": {
+            "color": [ 128, 255, 0, 0 ]
+         },
+         "shortDesc": " [10 60 100 120]"
+      },
+      {
+         "command": "SaveLayer",
+         "visible": true
+      },
+      {
+         "command": "DrawRect",
+         "visible": true,
+         "coords": [ 50, 60, 120, 120 ],
+         "paint": {
+            "color": [ 128, 0, 0, 255 ]
+         },
+         "shortDesc": " [50 60 120 120]"
+      },
+      {
+         "command": "SaveLayer",
+         "visible": true
+      },
+      {
+         "command": "DrawRect",
+         "visible": true,
+         "coords": [ 30, 30, 90, 100 ],
+         "paint": {
+            "color": [ 128, 0, 255, 0 ]
+         },
+         "shortDesc": " [30 30 90 100]"
+      },
+      {
+         "command": "DrawRect",
+         "visible": true,
+         "coords": [ 30, 110, 90, 140 ],
+         "paint": {
+            "color": [ 128, 255, 255, 0 ]
+         },
+         "shortDesc": " [30 110 90 140]"
+      },
+      {
+         "command": "Restore",
+         "visible": true
+      },
+      {
+         "command": "Restore",
+         "visible": true
+      }
+   ]
+}

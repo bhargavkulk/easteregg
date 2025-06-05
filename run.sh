@@ -25,4 +25,4 @@ python3 -m venv venv
 
 $(pwd)/venv/bin/python -m pip install playwright sexpdata yattag
 $(pwd)/venv/bin/python -m playwright install
-$(pwd)/venv/bin/python make_report.py bench rsrc report
+$(pwd)/venv/bin/python make_report.py new-bench/json rsrc report
