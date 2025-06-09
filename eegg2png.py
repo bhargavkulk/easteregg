@@ -34,6 +34,7 @@ class Painter:
         if layer[0] == 'Empty':
             pass
         else:
+            print(layer)
             _, _, layer, cmd = layer
             self.paint_layer(layer)
             self.paint_cmd(cmd)
