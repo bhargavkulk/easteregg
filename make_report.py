@@ -324,6 +324,8 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
                 text('Diff')
             with tag('th'):
                 text('#SaveLayers')
+            with tag('th'):
+                text('PNG')
             with tag('th', klass='cw hidden'):
                 text('CW')
             with tag('th', klass='ew hidden'):
@@ -342,7 +344,7 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
                     with tag('td', klass='ctr', colspan=2):
                         with tag('a', href=benchmark['compile_error']):
                             text('!')
-                    with tag('td', colspan=4, klass='void'):
+                    with tag('td', colspan=5, klass='void'):
                         text('')
                     with tag('td', klass='void cw hidden'):
                         text('')
@@ -352,7 +354,7 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
                 elif benchmark['state'] == 99:
                     with tag('td', klass='ctr', colspan=2):
                         text(benchmark['compile_error'])
-                    with tag('td', colspan=4, klass='void'):
+                    with tag('td', colspan=5, klass='void'):
                         text('')
                     with tag('td', klass='void cw hidden'):
                         text('')
@@ -372,7 +374,7 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
                     with tag('td', klass='ctr', colspan=2):
                         with tag('a', href=benchmark['opt_err_file']):
                             text('!')
-                    with tag('td', colspan=2, klass='void'):
+                    with tag('td', colspan=3, klass='void'):
                         text('')
                     with tag('td', klass='void cw hidden'):
                         text('')
@@ -394,6 +396,23 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
 
                 with tag('td', klass=f'{benchmark["change"]} ctr'):
                     text(f'{benchmark["counts"][0]} → {benchmark["counts"][1]}')
+
+                with tag('td', klass='ctr'):
+                    if 'pre_png' in benchmark.keys():
+                        with tag('a', href=benchmark['pre_png']):
+                            text('»')
+                    else:
+                        with tag('a', href=benchmark['pre_error']):
+                            text('!')
+
+                    text('|')
+
+                    if 'post_png' in benchmark.keys():
+                        with tag('a', href=benchmark['post_png']):
+                            text('»')
+                    else:
+                        with tag('a', href=benchmark['post_error']):
+                            text('!')
 
                 if 'warn_file' in benchmark.keys():
                     with tag('td', klass='ctr cw hidden'):
