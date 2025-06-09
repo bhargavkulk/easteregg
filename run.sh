@@ -9,7 +9,7 @@ fi
 
 rm -rf report
 
-pip install uv
+pipx install uv
 # cd skia
 # python3 tools/git-sync-deps
 # python3 bin/fetch-ninja
