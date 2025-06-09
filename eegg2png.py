@@ -79,9 +79,7 @@ class Painter:
         if shape[0] == 'Rect':
             _, ltrb, paint = shape
             self.make_paint(paint)
-            with self.surface as canvas:
-                rect = skia.Rect.MakeLTRB(*(ltrb[1:]))
-                canvas.drawRect(rect, skia.Paint(Color=skia.ColorRED))
+            raise NotImplementedError(shape[0])
         elif shape[0] == 'RRect':
             _, ltrb, radii, paint = shape
             self.make_paint(paint)
@@ -106,9 +104,9 @@ class Painter:
             raise NotImplementedError(shape[0])
         elif shape[0] == 'SaveLayer':
             _, paint, layer = shape
-            self.make_paint(paint)
+            paint = self.make_paint(paint)
             with self.surface as canvas:
-                canvas.saveLayer(None, None)
+                canvas.saveLayer(None, paint)
                 self.paint_layer(layer)
                 canvas.restore()
             # Restore
