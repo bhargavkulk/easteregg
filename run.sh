@@ -9,7 +9,7 @@ fi
 
 rm -rf report
 
-pipx install --verbose uv
+python3 -m pipx install --verbose uv
 # cd skia
 # python3 tools/git-sync-deps
 # python3 bin/fetch-ninja
