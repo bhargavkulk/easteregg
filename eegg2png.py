@@ -113,7 +113,8 @@ def egg_to_png(json, egg, output_file):
     try:
         w, h = json.get('dim', (512, 512))
         painter = Painter(w, h)
-        commands = normalize(egg)
+        data = sx.loads(egg)
+        commands = normalize(data)
         painter.paint_layer(commands)
         painter.to_png(output_file)
         return None
