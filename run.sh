@@ -9,7 +9,6 @@ fi
 
 rm -rf report
 
-python3 -m pipx install --verbose uv
 # cd skia
 # python3 tools/git-sync-deps
 # python3 bin/fetch-ninja
@@ -22,7 +21,8 @@ python3 -m pipx install --verbose uv
 #cargo build
 #cd ..
 
-#python3 -m venv venv
+python3 -m venv venv
+$(pwd)/venv/bin/python -m pip install uv
 
 #$(pwd)/venv/bin/python -m pip install playwright sexpdata yattag skia_python-138.0rc1-cp312-cp312-manylinux_2_28_x86_64.whl
 #$(pwd)/venv/bin/python -m playwright install
