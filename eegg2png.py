@@ -1,5 +1,6 @@
 import argparse
 import json
+import traceback
 from pathlib import Path
 
 import sexpdata as sx
