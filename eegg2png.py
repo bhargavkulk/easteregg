@@ -7,32 +7,118 @@ import sexpdata as sx
 import skia
 
 
-def draw_commands(commands, output_file):
-    """Draws the commands on a skia canvas and saves it as a PNG file."""
-    width, height = 800, 600
-    surface = skia.Surface(width, height)
-    canvas = surface.getCanvas()
-    canvas.clear(skia.ColorWHITE)
+def normalize(sexp):
+    if isinstance(sexp, sx.Symbol):
+        return sexp.value()
+    elif isinstance(sexp, list):
+        return [normalize(item) for item in sexp]
+    else:
+        return sexp
 
-    for command in commands:
-        if command['type'] == 'line':
-            start = command['start']
-            end = command['end']
-            paint = skia.Paint(Color=skia.ColorBLACK, StrokeWidth=2, Style=skia.Paint.kStroke_Style)
-            canvas.drawLine(start[0], start[1], end[0], end[1], paint)
 
-    image = surface.makeImageSnapshot()
-    image.save(output_file, skia.kPNG)
-    print(f'Image saved to {output_file}')
+class Painter:
+    def __init__(self, width: int = 512, height: int = 512):
+        self.width = width
+        self.height = height
+        self.surface = skia.Surface(width, height)
+
+    def to_png(self, output: Path):
+        image = self.surface.makeImageSnapshot()
+        if not image:
+            raise RuntimeError('Failed to create image snapshot')
+        # image.save takes a string not Path objext, so convert to string
+        image.save(str(output), skia.kPNG)
+
+    def paint_layer(self, layer):
+        if layer[0] == 'Empty':
+            pass
+        else:
+            _, _, layer, cmd = layer
+            self.paint_layer(layer)
+            self.paint_cmd(cmd)
+
+    def paint_cmd(self, cmd):
+        if cmd[0] == 'Clip':
+            if cmd[1][0] == 'ClipFull':
+                ...
+            elif cmd[1][0] == 'ClipRect':
+                # do ClipRect
+                ...
+            elif cmd[1][0] == 'ClipRRect':
+                # do ClipRRect
+                ...
+            else:
+                raise ValueError(f'Unknown Clip: {cmd[1][0]}')
+        transform = cmd[-1]
+        _, *matrix, shape = transform
+
+        # do concat Matrix here
+        self.paint_shape(shape)
+
+    def make_paint(self, paint):
+        if paint[0] == 'Color':
+            return skia.Paint(Color=skia.ColorSetARGB(paint[1], paint[2], paint[3], paint[4]))
+        else:
+            raise NotImplementedError(f'Unknown paint type: {paint[0]}')
+
+    def paint_shape(self, shape):
+        if shape[0] == 'Rect':
+            _, ltrb, paint = shape
+            self.make_paint(paint)
+            with self.surface as canvas:
+                rect = skia.Rect.MakeLTRB(*(ltrb[1:]))
+                canvas.drawRect(rect, skia.Paint(Color=skia.ColorRED))
+        elif shape[0] == 'RRect':
+            _, ltrb, radii, paint = shape
+            self.make_paint(paint)
+            raise NotImplementedError(shape[0])
+            # draw RRect
+        elif shape[0] == 'Path':
+            _, paint = shape
+            self.make_paint(paint)
+            raise NotImplementedError(shape[0])
+            # draw Path (How?)
+        elif shape[0] == 'ImageRect':
+            _, src, dst, paint = shape
+            self.make_paint(paint)
+            raise NotImplementedError(shape[0])
+        elif shape[0] == 'Oval':
+            _, ltrb, paint = shape
+            self.make_paint(paint)
+            raise NotImplementedError(shape[0])
+        elif shape[0] == 'TextBlob':
+            _, x, y, ltrb, paint = shape
+            self.make_paint(paint)
+            raise NotImplementedError(shape[0])
+        elif shape[0] == 'SaveLayer':
+            _, paint, layer = shape
+            self.make_paint(paint)
+            # SaveLayer
+            self.paint_layer(layer)
+            # Restore
+            raise NotImplementedError(shape[0])
+        elif shape[0] == 'Fill':
+            _, paint = shape
+            self.make_paint(paint)
+            raise NotImplementedError(shape[0])
+        else:
+            raise ValueError(f'Unknown shape: {shape[0]}')
+
+
+def egg_to_png(json, egg, output_file):
+    """Writes egg file to png at 'output_file'"""
+    try:
+        w, h = json['dim']
+        painter = Painter(w, h)
+        commands = normalize(egg)
+        painter.paint_layer(commands)
+        painter.to_png(output_file)
+        return None
+    except Exception as e:
+        return str(e)
 
 
 if __name__ == '__main__':
-    """cli tool that converts easter egg files into png images
-    Input:
-        - easter egg file in sexp format
-    Output:
-        - png file
-    """
     parser = argparse.ArgumentParser(description='Convert easter egg files to PNG images.')
     parser.add_argument('input', help='Input easter egg file in sexp format')
     parser.add_argument('output', help='Output PNG file')
@@ -45,6 +131,7 @@ if __name__ == '__main__':
     with input_file.open('r') as f:
         data = sx.load(f)
 
-    commands = eegg_to_commands(data)
-
-    draw_commands(commands, output_file)
+    commands = normalize(data)
+    painter = Painter()
+    painter.paint_layer(commands)
+    painter.to_png(output_file)

@@ -11,6 +11,7 @@ from typing import Callable
 
 import yattag
 
+from eegg2png import egg_to_png
 from egglog_runner import run_egglog
 from printegg import Formatter, parse_sexp
 from skp2eegg import compile_json_skp, get_reset_warnings
@@ -196,6 +197,31 @@ def collate_data(args):
             f.write(diff)
 
         data['diff_file'] = str(diff_file).replace('report', '.')
+
+        # Make PNG files
+        # - Make pre opt
+        pre_opt = args.output / (bench_name + '__PRE.png')
+        res1 = egg_to_png(skp, egg, pre_opt)
+
+        # - Make post opt
+        post_opt = args.output / (bench_name + '__POST.png')
+        res2 = egg_to_png(skp, opt, post_opt)
+
+        if res1 is None:
+            data['pre_png'] = str(pre_opt).replace('report', '.')
+        else:
+            pre_error = args.output / (bench_name + '__PRE_ERROR.txt')
+            with pre_error.open('w', encoding='utf-8') as f:
+                f.write(pre_error)
+            data['pre_error'] = str(pre_error).replace('report', '.')
+
+        if res2 is None:
+            data['post_png'] = str(post_opt).replace('report', '.')
+        else:
+            post_error = args.output / (bench_name + '__POST_ERROR.txt')
+            with post_error.open('w', encoding='utf-8') as f:
+                f.write(post_error)
+            data['post_error'] = str(post_error).replace('report', '.')
 
         # 4. Save Stats
         benchmarks.append(data)
