@@ -108,14 +108,15 @@ class Painter:
 def egg_to_png(json, egg, output_file):
     """Writes egg file to png at 'output_file'"""
     try:
-        w, h = json['dim']
+        w, h = json.get('dim', (512, 512))
         painter = Painter(w, h)
         commands = normalize(egg)
         painter.paint_layer(commands)
         painter.to_png(output_file)
         return None
-    except Exception as e:
-        return str(e)
+    except Exception:
+        tb = traceback.format_exc()
+        return str(tb)
 
 
 if __name__ == '__main__':
