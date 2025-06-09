@@ -60,7 +60,18 @@ class Painter:
 
     def make_paint(self, paint):
         if paint[0] == 'Color':
-            return skia.Paint(Color=skia.ColorSetARGB(paint[1], paint[2], paint[3], paint[4]))
+            paint = skia.Paint(Color=skia.ColorSetARGB(paint[1], paint[2], paint[3], paint[4]))
+
+            if paint[5] == 'SrcOver':
+                paint.setBlendMode(skia.BlendMode.kSrcOver)
+            elif paint[5] == 'Src':
+                paint.setBlendMode(skia.BlendMode.kSrc)
+            elif paint[5] == 'DstIn':
+                paint.setBlendMode(skia.BlendMode.kDstIn)
+            elif paint[5] == 'Multiply':
+                paint.setBlendMode(skia.BlendMode.kMultiply)
+            else:
+                raise NotImplementedError(f'blendmode {paint[5]}')
         else:
             raise NotImplementedError(f'Unknown paint type: {paint[0]}')
 
@@ -96,8 +107,10 @@ class Painter:
         elif shape[0] == 'SaveLayer':
             _, paint, layer = shape
             self.make_paint(paint)
-            # SaveLayer
-            self.paint_layer(layer)
+            with self.surface as canvas:
+                canvas.saveLayer(None, None)
+                self.paint_layer(layer)
+                canvas.restore()
             # Restore
             raise NotImplementedError(shape[0])
         elif shape[0] == 'Fill':
