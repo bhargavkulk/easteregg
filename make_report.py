@@ -212,7 +212,7 @@ def collate_data(args):
         else:
             pre_error = args.output / (bench_name + '__PRE_ERROR.txt')
             with pre_error.open('w', encoding='utf-8') as f:
-                f.write(pre_error)
+                f.write(res1)
             data['pre_error'] = str(pre_error).replace('report', '.')
 
         if res2 is None:
@@ -220,7 +220,7 @@ def collate_data(args):
         else:
             post_error = args.output / (bench_name + '__POST_ERROR.txt')
             with post_error.open('w', encoding='utf-8') as f:
-                f.write(post_error)
+                f.write(res2)
             data['post_error'] = str(post_error).replace('report', '.')
 
         # 4. Save Stats
