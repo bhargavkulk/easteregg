@@ -1,0 +1,39 @@
+{
+   "version": 1,
+   "commands": [
+      {
+         "command": "Save",
+         "visible": true
+      },
+      {
+         "command": "Concat44",
+         "visible": true,
+         "matrix": [
+            [ 2, 0, 0, 0 ],
+            [ 0, 0.5, 0, 0 ],
+            [ 0, 0, 1, 0 ],
+            [ 0, 0, 0, 1 ]
+         ]
+      },
+      {
+         "command": "ClipRect",
+         "visible": true,
+         "coords": [ 0, 0, 90, 80 ],
+         "op": "intersect",
+         "antiAlias": false,
+         "shortDesc": " [0 0 90 80]"
+      },
+      {
+         "command": "DrawOval",
+         "visible": true,
+         "coords": [ 40, 40, 160, 160 ],
+         "paint": {
+            "color": [ 128, 0, 0, 255 ]
+         }
+      },
+      {
+         "command": "Restore",
+         "visible": true
+      }
+   ]
+}

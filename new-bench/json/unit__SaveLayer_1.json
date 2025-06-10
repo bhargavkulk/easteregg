@@ -1,0 +1,31 @@
+{
+   "version": 1,
+   "commands": [
+      {
+         "command": "DrawRect",
+         "visible": true,
+         "coords": [ 150, 70, 200, 120 ],
+         "paint": {
+            "color": [ 255, 255, 0, 0 ]
+         },
+         "shortDesc": " [150 70 200 120]"
+      },
+      {
+         "command": "SaveLayer",
+         "visible": true
+      },
+      {
+         "command": "DrawRect",
+         "visible": true,
+         "coords": [ 170, 70, 220, 120 ],
+         "paint": {
+            "color": [ 77, 0, 0, 255 ]
+         },
+         "shortDesc": " [170 70 220 120]"
+      },
+      {
+         "command": "Restore",
+         "visible": true
+      }
+   ]
+}
