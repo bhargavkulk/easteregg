@@ -78,8 +78,10 @@ class Painter:
     def paint_shape(self, shape):
         if shape[0] == 'Rect':
             _, ltrb, paint = shape
-            self.make_paint(paint)
-            raise NotImplementedError(shape[0])
+            paint = self.make_paint(paint)
+            with self.surface as canvas:
+                rect = skia.Rect.MakeLTRB(*(ltrb[1:]))
+                canvas.drawRect(rect, paint)
         elif shape[0] == 'RRect':
             _, ltrb, radii, paint = shape
             self.make_paint(paint)
