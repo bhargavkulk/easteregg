@@ -34,8 +34,6 @@ class Painter:
         if layer[0] == 'Empty':
             pass
         else:
-            for thing in layer:
-                print(thing)
             _, _, layer, cmd = layer
             self.paint_layer(layer)
             self.paint_cmd(cmd)
@@ -64,16 +62,16 @@ class Painter:
                 Color=skia.ColorSetARGB(eegg_paint[1], eegg_paint[2], eegg_paint[3], eegg_paint[4])
             )
 
-            if eegg_paint[5] == 'SrcOver':
+            if eegg_paint[5][0] == 'SrcOver':
                 paint.setBlendMode(skia.BlendMode.kSrcOver)
-            elif eegg_paint[5] == 'Src':
+            elif eegg_paint[5][0] == 'Src':
                 paint.setBlendMode(skia.BlendMode.kSrc)
-            elif eegg_paint[5] == 'DstIn':
+            elif eegg_paint[5][0] == 'DstIn':
                 paint.setBlendMode(skia.BlendMode.kDstIn)
-            elif eegg_paint[5] == 'Multiply':
+            elif eegg_paint[5][0] == 'Multiply':
                 paint.setBlendMode(skia.BlendMode.kMultiply)
             else:
-                raise NotImplementedError(f'blendmode {eegg_paint[5]}')
+                raise NotImplementedError(f'blendmode {eegg_paint[5][0]}')
         else:
             raise NotImplementedError(f'Unknown paint type: {eegg_paint[0]}')
 
