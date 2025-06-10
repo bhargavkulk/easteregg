@@ -58,22 +58,24 @@ class Painter:
         # do concat Matrix here
         self.paint_shape(shape)
 
-    def make_paint(self, paint):
-        if paint[0] == 'Color':
-            paint = skia.Paint(Color=skia.ColorSetARGB(paint[1], paint[2], paint[3], paint[4]))
+    def make_paint(self, eegg_paint):
+        if eegg_paint[0] == 'Color':
+            paint = skia.Paint(
+                Color=skia.ColorSetARGB(eegg_paint[1], eegg_paint[2], eegg_paint[3], eegg_paint[4])
+            )
 
-            if paint[5] == 'SrcOver':
+            if eegg_paint[5] == 'SrcOver':
                 paint.setBlendMode(skia.BlendMode.kSrcOver)
-            elif paint[5] == 'Src':
+            elif eegg_paint[5] == 'Src':
                 paint.setBlendMode(skia.BlendMode.kSrc)
-            elif paint[5] == 'DstIn':
+            elif eegg_paint[5] == 'DstIn':
                 paint.setBlendMode(skia.BlendMode.kDstIn)
-            elif paint[5] == 'Multiply':
+            elif eegg_paint[5] == 'Multiply':
                 paint.setBlendMode(skia.BlendMode.kMultiply)
             else:
-                raise NotImplementedError(f'blendmode {paint[5]}')
+                raise NotImplementedError(f'blendmode {eegg_paint[5]}')
         else:
-            raise NotImplementedError(f'Unknown paint type: {paint[0]}')
+            raise NotImplementedError(f'Unknown paint type: {eegg_paint[0]}')
 
     def paint_shape(self, shape):
         if shape[0] == 'Rect':
