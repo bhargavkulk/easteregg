@@ -439,7 +439,7 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
             cell.classList.add('hidden');
         }
     });
-        }""")
+}""")
 
 
 def page_template(content: Callable[[yattag.SimpleDoc], None]):

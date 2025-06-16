@@ -41,13 +41,13 @@ class Painter:
     def paint_cmd(self, cmd):
         if cmd[0] == 'Clip':
             if cmd[1][0] == 'ClipFull':
-                ...
+                pass
             elif cmd[1][0] == 'ClipRect':
-                # do ClipRect
-                ...
+                rect = skia.Rect.MakeLTRB(*(cmd[1][1][1:]))
+                with self.surface as canvas:
+                    canvas.clipRect(rect)
             elif cmd[1][0] == 'ClipRRect':
-                # do ClipRRect
-                ...
+                raise NotImplementedError('ClipRRect')
             else:
                 raise ValueError(f'Unknown Clip: {cmd[1][0]}')
         transform = cmd[-1]
@@ -57,6 +57,7 @@ class Painter:
         self.paint_shape(shape)
 
     def make_paint(self, eegg_paint):
+        print(eegg_paint)
         if eegg_paint[0] == 'Color':
             paint = skia.Paint(
                 Color=skia.ColorSetARGB(eegg_paint[1], eegg_paint[2], eegg_paint[3], eegg_paint[4])
@@ -72,6 +73,8 @@ class Painter:
                 paint.setBlendMode(skia.BlendMode.kMultiply)
             else:
                 raise NotImplementedError(f'blendmode {eegg_paint[5][0]}')
+
+            return paint
         else:
             raise NotImplementedError(f'Unknown paint type: {eegg_paint[0]}')
 
@@ -98,8 +101,10 @@ class Painter:
             raise NotImplementedError(shape[0])
         elif shape[0] == 'Oval':
             _, ltrb, paint = shape
-            self.make_paint(paint)
-            raise NotImplementedError(shape[0])
+            paint = self.make_paint(paint)
+            with self.surface as canvas:
+                rect = skia.Rect.MakeLTRB(*(ltrb[1:]))
+                canvas.drawOval(rect, paint)
         elif shape[0] == 'TextBlob':
             _, x, y, ltrb, paint = shape
             self.make_paint(paint)
@@ -108,11 +113,9 @@ class Painter:
             _, paint, layer = shape
             paint = self.make_paint(paint)
             with self.surface as canvas:
-                canvas.saveLayer(None, paint)
+                canvas.saveLayer(bounds=None, paint=paint)
                 self.paint_layer(layer)
                 canvas.restore()
-            # Restore
-            raise NotImplementedError(shape[0])
         elif shape[0] == 'Fill':
             _, paint = shape
             self.make_paint(paint)
