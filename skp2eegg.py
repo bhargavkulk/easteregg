@@ -95,6 +95,7 @@ class State:
     layer: str
     is_save_layer: bool
     save_layer: Any
+    save_layer_number: int
 
     def __init__(self):
         self.matrix = I
@@ -120,13 +121,14 @@ def compile(commands: list):
     state_stack = []
     curr_state = State()
 
-    for command_data in commands:
+    for i, command_data in enumerate(commands):
         match command := command_data['command']:
             case 'Save':
                 curr_state.is_save_layer = False
                 state_stack.append(deepcopy(curr_state))
             case 'SaveLayer':
                 curr_state.is_save_layer = True
+                curr_state.save_layer_number = i
                 curr_state.save_layer = command_data
                 state_stack.append(deepcopy(curr_state))
                 curr_state.layer = '(Empty)'
@@ -142,22 +144,25 @@ def compile(commands: list):
                         + old_state.layer
                         + ' '
                         + old_state.wrap_state(
-                            '(SaveLayer ' + paint + ' ' + curr_state.layer + ')',
+                            '(SaveLayer '
+                            + paint
+                            + ' '
+                            + curr_state.layer
+                            + ' '
+                            + str(curr_state.save_layer_number)
+                            + ')',
                         )
                         + ')'
                     )
                     curr_state = old_state
-
-                """
-                old_state.layer = (BlendMode (old_state.layer) (SaveLayer curr_state.layer))
-                """
-
             case 'DrawRect':
                 ltrb = sexp_ltrb(command_data['coords'])
                 paint, blend_mode = compile_paint(command_data.get('paint', None))
                 shape = '(Rect ' + ltrb + ' ' + paint + ')'
                 shape = curr_state.wrap_state(shape)
-                curr_state.layer = f'(Blend ({blend_mode}) ' + curr_state.layer + ' ' + shape + ')'
+                curr_state.layer = (
+                    f'(Blend ({blend_mode}) ' + curr_state.layer + ' ' + shape + ' ' + str(i) + ')'
+                )
             case 'DrawRRect':
                 coords, *radii = command_data['coords']
                 ltrb = sexp_ltrb(coords)
@@ -165,18 +170,24 @@ def compile(commands: list):
                 paint, blend_mode = compile_paint(command_data.get('paint', None))
                 shape = '(RRect ' + ltrb + ' ' + radii + ' ' + paint + ')'
                 shape = curr_state.wrap_state(shape)
-                curr_state.layer = f'(Blend ({blend_mode}) ' + curr_state.layer + ' ' + shape + ')'
+                curr_state.layer = (
+                    f'(Blend ({blend_mode}) ' + curr_state.layer + ' ' + shape + ' ' + str(i) + ')'
+                )
             case 'DrawPath':
                 paint, blend_mode = compile_paint(command_data.get('paint', None))
                 shape = '(Path ' + paint + ')'
                 shape = curr_state.wrap_state(shape)
-                curr_state.layer = f'(Blend ({blend_mode}) ' + curr_state.layer + ' ' + shape + ')'
+                curr_state.layer = (
+                    f'(Blend ({blend_mode}) ' + curr_state.layer + ' ' + shape + ' ' + str(i) + ')'
+                )
             case 'DrawOval':
                 ltrb = sexp_ltrb(command_data['coords'])
                 paint, blend_mode = compile_paint(command_data.get('paint', None))
                 shape = '(Oval ' + ltrb + ' ' + paint + ')'
                 shape = curr_state.wrap_state(shape)
-                curr_state.layer = f'(Blend ({blend_mode}) ' + curr_state.layer + ' ' + shape + ')'
+                curr_state.layer = (
+                    f'(Blend ({blend_mode}) ' + curr_state.layer + ' ' + shape + ' ' + str(i) + ')'
+                )
             case 'ClipRect':
                 ltrb = sexp_ltrb(command_data['coords'])
                 op = '(I)' if command_data['op'] == 'intersect' else '(D)'
@@ -197,19 +208,25 @@ def compile(commands: list):
                 paint, blend_mode = compile_paint(command_data.get('paint', None))
                 shape = '(TextBlob ' + x + ' ' + y + ' ' + ltrb + ' ' + paint + ')'
                 shape = curr_state.wrap_state(shape)
-                curr_state.layer = f'(Blend ({blend_mode}) ' + curr_state.layer + ' ' + shape + ')'
+                curr_state.layer = (
+                    f'(Blend ({blend_mode}) ' + curr_state.layer + ' ' + shape + ' ' + str(i) + ')'
+                )
             case 'DrawPaint':
                 paint, blend_mode = compile_paint(command_data.get('paint', None))
                 shape = '(Fill ' + paint + ')'
                 shape = curr_state.wrap_state(shape)
-                curr_state.layer = f'(Blend ({blend_mode}) ' + curr_state.layer + ' ' + shape + ')'
+                curr_state.layer = (
+                    f'(Blend ({blend_mode}) ' + curr_state.layer + ' ' + shape + ' ' + str(i) + ')'
+                )
             case 'DrawImageRect':
                 src = sexp_ltrb(command_data['src'])
                 dst = sexp_ltrb(command_data['dst'])
                 paint, blend_mode = compile_paint(command_data.get('paint', None))
                 shape = '(ImageRect ' + src + ' ' + dst + ' ' + paint + ')'
                 shape = curr_state.wrap_state(shape)
-                curr_state.layer = f'(Blend ({blend_mode}) ' + curr_state.layer + ' ' + shape + ')'
+                curr_state.layer = (
+                    f'(Blend ({blend_mode}) ' + curr_state.layer + ' ' + shape + ' ' + str(i) + ')'
+                )
             case _:
                 raise Exception(f'Unsupported command: {command}')
 
