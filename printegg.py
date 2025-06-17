@@ -140,15 +140,6 @@ class Formatter:
         self.indent = 0
 
 
-def fmt_layer(layer):
-    """Layer = blend_mode Layer Command"""
-
-    if layer[0] == 'Empty':
-        return 'Empty'
-    else:
-        blend_mode, layer, cmd = layer
-
-
 def normalize(sexp):
     if isinstance(sexp, sx.Symbol):
         return sexp.value()
