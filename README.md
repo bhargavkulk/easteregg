@@ -10,13 +10,13 @@ All the skps along with the converted JSON files will be in `skps`.
 
 # TODO
 
-- [ ] define eastergg in egglog
-- [ ] compile python eastergg objects to egglog
-- [ ] redo all skiaopt work
-- [ ] add the skiaopt test skps to the skps folder
-- [ ] write a json->skp compiler
+- [X] define eastergg in egglog
+- [X] compile python eastergg objects to egglog
+- [X] redo all skiaopt work
+- [X] add the skiaopt test skps to the skps folder
+- [X] write a json->skp compiler
 - [ ] measure memory and performance numbers
-- [ ] increase number of urls to look at
+- [X] increase number of urls to look at
 - [ ] more rewrite rules
 
 # WTF are ImageFilters
