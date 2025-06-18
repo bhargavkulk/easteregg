@@ -17,6 +17,23 @@ def normalize(sexp):
         return sexp
 
 
+def mk_image_filter(json_filter):
+    assert 'name' in json_filter
+
+    name = json_filter['name']
+    values = json_filter['values']
+
+    if name == 'SkMergeImageFilter':
+        # shitty edge case code
+        filter = next((k for k in values if k.startswith('02')), None)
+        # Maybe more, merge takes in list of filters
+
+
+def mk_image_filter_rec(values):
+    filter = next((k for k in values if k.startswith('02')), None)
+    assert filter is not None
+
+
 class Painter:
     def __init__(self, width: int = 512, height: int = 512):
         self.width = width
