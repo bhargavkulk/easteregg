@@ -167,7 +167,7 @@ class Painter:
                     rect = skia.Rect.MakeLTRB(*ltrb[1:])
                     rrect = skia.RRect.MakeEmpty()
                     rrect.setNinePatch(rect, *radii[1:])
-                    canvas.cliprrect(rrect, op)
+                    canvas.clipRRect(rrect, op)
             else:
                 raise valueerror(f'unknown clip: {cmd[1][0]}')
         transform = cmd[-1]
