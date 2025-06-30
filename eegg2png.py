@@ -104,10 +104,10 @@ class Painter:
                 rect = skia.Rect.MakeLTRB(*(cmd[1][1][1:]))
                 op = mk_clip_op(cmd[1][2][0])
                 with self.surface as canvas:
-                    canvas.clipRect(rect, op)
+                    canvas.clipRect(rect, op[0])
             elif cmd[1][0] == 'ClipRRect':
                 _, rect, radii, op = cmd[1]
-                op = mk_clip_op(op)
+                op = mk_clip_op(op[0])
                 with self.surface as canvas:
                     rrect = skia.MakeEmpty()
                     rrect.setNinePatch(rect, *(radii[1:]))
