@@ -120,8 +120,13 @@ def mk_m44(flat):
     if len(flat) != 16:
         raise ValueError(f'Expected 16 elements, got {len(flat)}')
 
-    m = skia.M44.RowMajor(tuple(flat))
-    return m
+    rows = [
+        skia.V4(*flat[0:4]),
+        skia.V4(*flat[4:8]),
+        skia.V4(*flat[8:12]),
+        skia.V4(*flat[12:16]),
+    ]
+    return skia.M44.Rows(*rows)
 
 
 class Painter:
