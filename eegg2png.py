@@ -166,7 +166,7 @@ class Painter:
                 with self.surface as canvas:
                     rect = skia.Rect.MakeLTRB(*ltrb[1:])
                     rrect = skia.RRect.MakeEmpty()
-                    rrect.setninepatch(rect, *radii[1:])
+                    rrect.setNinePatch(rect, *radii[1:])
                     canvas.cliprrect(rrect, op)
             else:
                 raise valueerror(f'unknown clip: {cmd[1][0]}')
