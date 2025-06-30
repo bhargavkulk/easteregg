@@ -96,15 +96,7 @@ class Painter:
                 with self.surface as canvas:
                     canvas.clipRect(rect)
             elif cmd[1][0] == 'ClipRRect':
-                rect = skia.Rect.MakeLTRB(*(cmd[1][1][1:]))
-                r
-            """
-            elif cmd[1][0] == 'ClipRRect':
-                self.write(' ClipRRect ')
-                self.fmt_ltrb(cmd[1][1])
-                self.write(' ')
-                self.fmt_ltrb(cmd[1][2])
-            """
+                raise NotImplementedError(f'ClipRRect')
             else:
                 raise ValueError(f'Unknown Clip: {cmd[1][0]}')
         transform = cmd[-1]
