@@ -107,6 +107,7 @@ class Painter:
                     canvas.clipRect(rect, op)
             elif cmd[1][0] == 'ClipRRect':
                 _, rect, radii, op = cmd[1]
+                print(radii)
                 op = mk_clip_op(op[0])
                 with self.surface as canvas:
                     rrect = skia.RRect.MakeEmpty()
