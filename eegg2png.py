@@ -66,7 +66,7 @@ def mk_image_filter_rec(filter_name, filter):
         blend_mode = skia.BlendMode(blend['01_uint'])
 
 
-def mk_clip_op(clip_op: string):
+def mk_clip_op(clip_op: str):
     if clip_op == 'D':
         return skia.ClipOp.kDifference
     elif clip_op == 'I':
