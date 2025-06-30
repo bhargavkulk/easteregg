@@ -129,46 +129,46 @@ class Painter:
 
     def paint_shape(self, shape):
         if shape[0] == 'Rect':
-            _, ltrb, paint = shape
+            _, ltrb, paint, index = shape
             paint = self.make_paint(paint)
             with self.surface as canvas:
                 rect = skia.Rect.MakeLTRB(*(ltrb[1:]))
                 canvas.drawRect(rect, paint)
         elif shape[0] == 'RRect':
-            _, ltrb, radii, paint = shape
+            _, ltrb, radii, paint, index = shape
             paint = self.make_paint(paint)
             with self.surface as canvas:
                 rrect = skia.MakeEmpty()
                 rrect.setNinePatch(rect, *(radii[1:]))
                 canvas.drawRRect(rrect, paint)
         elif shape[0] == 'Path':
-            _, paint = shape
+            _, paint, index = shape
             self.make_paint(paint)
             raise NotImplementedError(shape[0])
             # draw Path (How?)
         elif shape[0] == 'ImageRect':
-            _, src, dst, paint = shape
+            _, src, dst, paint, index = shape
             # cant draw images yet
             pass
         elif shape[0] == 'Oval':
-            _, ltrb, paint = shape
+            _, ltrb, paint, index = shape
             paint = self.make_paint(paint)
             with self.surface as canvas:
                 rect = skia.Rect.MakeLTRB(*(ltrb[1:]))
                 canvas.drawOval(rect, paint)
         elif shape[0] == 'TextBlob':
-            _, x, y, ltrb, paint = shape
+            _, x, y, ltrb, paint, index = shape
             self.make_paint(paint)
             raise NotImplementedError(shape[0])
         elif shape[0] == 'SaveLayer':
-            _, paint, layer = shape
+            _, paint, layer, index = shape
             paint = self.make_paint(paint)
             with self.surface as canvas:
                 canvas.saveLayer(bounds=None, paint=paint)
                 self.paint_layer(layer)
                 canvas.restore()
         elif shape[0] == 'Fill':
-            _, paint = shape
+            _, paint, index = shape
             self.make_paint(paint)
             raise NotImplementedError(shape[0])
         else:
