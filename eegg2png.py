@@ -116,6 +116,17 @@ def mk_clip_op(clip_op: str):
         raise ValueError(f'unknown clipop {clip_op}')
 
 
+def mk_m44(matrix):
+    if len(flat) != 16:
+        raise ValueError(f'Expected 16 elements, got {len(flat)}')
+
+    m = skia.M44()
+    for r in range(4):
+        for c in range(4):
+            m.setRC(r, c, flat[r * 4 + c])
+    return m
+
+
 class Painter:
     def __init__(self, commands, width: int = 512, height: int = 512):
         self.width = width
@@ -153,14 +164,15 @@ class Painter:
                 with self.surface as canvas:
                     rect = skia.Rect.MakeLTRB(*ltrb[1:])
                     rrect = skia.RRect.MakeEmpty()
-                    rrect.setNinePatch(rect, *radii[1:])
-                    canvas.clipRRect(rrect, op)
+                    rrect.setninepatch(rect, *radii[1:])
+                    canvas.cliprrect(rrect, op)
             else:
-                raise ValueError(f'Unknown Clip: {cmd[1][0]}')
+                raise valueerror(f'unknown clip: {cmd[1][0]}')
         transform = cmd[-1]
-        _, *matrix, shape = transform
-
-        # do concat Matrix here
+        _, matrix, shape = transform
+        matrix = mk_m44(matrix[1:])
+        with self.surface as canvas:
+            canvas.setMatrix(matrix)
         self.paint_shape(shape)
 
     def make_paint(self, eegg_paint):
