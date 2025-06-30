@@ -42,6 +42,44 @@ def mk_image_filter(imagefilter):
         return skia.ImageFilters.Merge([input])
 
 
+import skia
+
+
+def mk_path(drawpath_json):
+    path_data = drawpath_json['path']
+    fill_type = path_data.get('fillType', 'winding')
+
+    if fill_type == 'winding':
+        path = skia.Path()
+        path.setFillType(skia.PathFillType.kWinding)
+    elif fill_type == 'evenOdd':
+        path = skia.Path()
+        path.setFillType(skia.PathFillType.kEvenOdd)
+    else:
+        raise ValueError(f'Unknown fillType: {fill_type}')
+
+    for verb in path_data['verbs']:
+        if isinstance(verb, dict):
+            if 'move' in verb:
+                x, y = verb['move']
+                path.moveTo(x, y)
+            elif 'cubic' in verb:
+                pts = verb['cubic']
+                (x1, y1), (x2, y2), (x3, y3) = pts
+                path.cubicTo(x1, y1, x2, y2, x3, y3)
+            else:
+                raise ValueError(f'Unknown verb key: {verb}')
+        elif isinstance(verb, str):
+            if verb == 'close':
+                path.close()
+            else:
+                raise ValueError(f'Unknown verb string: {verb}')
+        else:
+            raise TypeError(f'Unexpected verb type: {verb}')
+
+    return path
+
+
 def mk_image_filter_rec(filter_name, filter):
     """If `01_bool` is set then the filter is composing another filter"""
 
@@ -76,9 +114,10 @@ def mk_clip_op(clip_op: str):
 
 
 class Painter:
-    def __init__(self, width: int = 512, height: int = 512):
+    def __init__(self, commands, width: int = 512, height: int = 512):
         self.width = width
         self.height = height
+        self.commands = commands
         self.surface = skia.Surface(width, height)
 
     def to_png(self, output: Path):
@@ -160,9 +199,11 @@ class Painter:
                 canvas.drawRRect(rrect, paint)
         elif shape[0] == 'Path':
             _, paint, index = shape
-            self.make_paint(paint)
-            raise NotImplementedError(shape[0])
-            # draw Path (How?)
+            paint = self.make_paint(paint)
+            path_data = self.commands[index]
+            path = mk_path(path_data)
+            with self.surface as canvas:
+                canvas.drawPath(path, paint)
         elif shape[0] == 'ImageRect':
             _, src, dst, paint, index = shape
             # cant draw images yet
@@ -196,7 +237,7 @@ def egg_to_png(json, egg, output_file):
     """Writes egg file to png at 'output_file'"""
     try:
         w, h = json.get('dim', (512, 512))
-        painter = Painter(w, h)
+        painter = Painter(json['commands'], w, h)
         data = sx.loads(egg)
         commands = normalize(data)
         painter.paint_layer(commands)
