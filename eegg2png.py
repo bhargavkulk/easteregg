@@ -120,10 +120,7 @@ def mk_m44(flat):
     if len(flat) != 16:
         raise ValueError(f'Expected 16 elements, got {len(flat)}')
 
-    m = skia.M44()
-    for r in range(4):
-        for c in range(4):
-            m.setRC(r, c, flat[r * 4 + c])
+    m = skia.M44.RowMajor(tuple(flat))
     return m
 
 
