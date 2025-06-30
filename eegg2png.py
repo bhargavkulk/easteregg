@@ -67,6 +67,9 @@ def mk_path(drawpath_json):
                 pts = verb['cubic']
                 (x1, y1), (x2, y2), (x3, y3) = pts
                 path.cubicTo(x1, y1, x2, y2, x3, y3)
+            elif 'line' in verb:
+                x, y = verb['line']
+                path.lineTo(x, y)
             else:
                 raise ValueError(f'Unknown verb key: {verb}')
         elif isinstance(verb, str):
