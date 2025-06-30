@@ -171,7 +171,7 @@ class Painter:
             _, paint, index = shape
             paint = self.make_paint(paint)
             with self.surface as canvas:
-                self.drawPaint(paint)
+                canvas.drawPaint(paint)
         else:
             raise ValueError(f'Unknown shape: {shape[0]}')
 
