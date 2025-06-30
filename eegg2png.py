@@ -169,8 +169,9 @@ class Painter:
                 canvas.restore()
         elif shape[0] == 'Fill':
             _, paint, index = shape
-            self.make_paint(paint)
-            raise NotImplementedError(shape[0])
+            paint = self.make_paint(paint)
+            with self.surface as canvas:
+                self.drawPaint(paint)
         else:
             raise ValueError(f'Unknown shape: {shape[0]}')
 
