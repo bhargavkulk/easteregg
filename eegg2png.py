@@ -107,11 +107,11 @@ class Painter:
                     canvas.clipRect(rect, op)
             elif cmd[1][0] == 'ClipRRect':
                 _, rect, radii, op = cmd[1]
-                print('asdasd-', radii[1:])
                 op = mk_clip_op(op[0])
                 with self.surface as canvas:
+                    rect = skia.Rect.MakeLTRB(*ltrb[1:])
                     rrect = skia.RRect.MakeEmpty()
-                    rrect.setNinePatch(rect, *(radii[1:]))
+                    rrect.setNinePatch(rect, *radii[1:])
                     canvas.drawRRect(rrect, op)
             else:
                 raise ValueError(f'Unknown Clip: {cmd[1][0]}')
@@ -154,6 +154,7 @@ class Painter:
             _, ltrb, radii, paint, index = shape
             paint = self.make_paint(paint)
             with self.surface as canvas:
+                rect = skia.Rect.MakeLTRB(*ltrb[1:])
                 rrect = skia.RRect.MakeEmpty()
                 rrect.setNinePatch(rect, *(radii[1:]))
                 canvas.drawRRect(rrect, paint)
