@@ -30,7 +30,7 @@
 
 (constructor Rect (Bounds Paint i64) Thing)
 (constructor Fill (Paint i64) Thing)
-(constructor SaveLayer (Paint Layer i64) Thing :cost 10)
+(constructor SaveLayer (Paint Layer) Thing :cost 10)
 (constructor Clip (ClipBounds Thing) Thing)
 (constructor TextBlob (f64 f64 Bounds Paint i64) Thing)
 (constructor Path (Paint i64) Thing)
