@@ -109,7 +109,7 @@ class Painter:
                 _, rect, radii, op = cmd[1]
                 op = mk_clip_op(op[0])
                 with self.surface as canvas:
-                    rrect = skia.MakeEmpty()
+                    rrect = skia.RRect.MakeEmpty()
                     rrect.setNinePatch(rect, *(radii[1:]))
                     canvas.drawRRect(rrect, op)
             else:
@@ -153,7 +153,7 @@ class Painter:
             _, ltrb, radii, paint, index = shape
             paint = self.make_paint(paint)
             with self.surface as canvas:
-                rrect = skia.MakeEmpty()
+                rrect = skia.RRect.MakeEmpty()
                 rrect.setNinePatch(rect, *(radii[1:]))
                 canvas.drawRRect(rrect, paint)
         elif shape[0] == 'Path':
