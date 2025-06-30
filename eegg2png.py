@@ -96,7 +96,7 @@ class Painter:
                 with self.surface as canvas:
                     canvas.clipRect(rect)
             elif cmd[1][0] == 'ClipRRect':
-                raise NotImplementedError(f'ClipRRect')
+                raise NotImplementedError(f'ClipRRect {cmd[1]}')
             else:
                 raise ValueError(f'Unknown Clip: {cmd[1][0]}')
         transform = cmd[-1]
