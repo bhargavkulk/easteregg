@@ -3,6 +3,7 @@ import json
 import traceback
 from pathlib import Path
 
+import numpy as np
 import sexpdata as sx
 
 import skia
@@ -17,21 +18,52 @@ def normalize(sexp):
         return sexp
 
 
-def mk_image_filter(json_filter):
-    assert 'name' in json_filter
+FILTER_MODES = {
+    0: skia.FilterMode.kNearest,
+    1: skia.FilterMode.kLinear,
+}
 
-    name = json_filter['name']
-    values = json_filter['values']
+MIPMAP_MODES = {
+    0: skia.MipmapMode.kNone,
+    1: skia.MipmapMode.kNearest,
+    2: skia.MipmapMode.kLinear,
+}
+
+
+def mk_image_filter(imagefilter):
+    name = imagefilter['name']
+    values = imagefilter['values']
 
     if name == 'SkMergeImageFilter':
-        # shitty edge case code
-        filter = next((k for k in values if k.startswith('02')), None)
-        # Maybe more, merge takes in list of filters
+        input_name = next((k for k in values if k[:2] == '02'), None)
+        assert input_name
+        input = values[input_name]
+        input = mk_image_filter_rec(input_name, input)
+        return skia.ImageFilters.Merge([input])
 
 
-def mk_image_filter_rec(values):
-    filter = next((k for k in values if k.startswith('02')), None)
-    assert filter is not None
+def mk_image_filter_rec(filter_name, filter):
+    """If `01_bool` is set then the filter is composing another filter"""
+
+    is_composing = filter['01_bool']
+    input_name = next((k for k in filter if k[:2] == '02'), None)
+    filter = mk_image_filter_rec(input_name, filter[input_name]) if input_name else None
+
+    if filter_name == '02_SkMatrixTransformImageFilter':
+        matrix = filter['03_matrix']
+        matrix = skia.Matrix(np.array(matrix), dtype=float32)
+
+        sampling = filter['04_sampling']
+        filter_mode = skia.FilterMode(sampling['filter'])  # FILTER_MODES[sampling['filter']]
+        mipmap_mode = skia.MipmapMode(sampling['mipmap'])  # MIPMAP_MODES[sampling['mipmap']]
+        sampling_option = skia.SamplingOptions(filter_mode, mipmap_mode)
+
+        return skia.ImageFilters.MatrixTransform(matrix, sampling_options, input=filter)
+    elif filter_name == '02_SkColorFilterImageFilter':
+        # construct the blend_mode color filter
+        blend = filter['03_SkBlendModeColorFilter']
+        color = skia.ColorSetARGB(*blend['00_color'])
+        blend_mode = skia.BlendMode(blend['01_uint'])
 
 
 class Painter:
@@ -64,7 +96,15 @@ class Painter:
                 with self.surface as canvas:
                     canvas.clipRect(rect)
             elif cmd[1][0] == 'ClipRRect':
-                raise NotImplementedError('ClipRRect')
+                rect = skia.Rect.MakeLTRB(*(cmd[1][1][1:]))
+                r
+            """
+            elif cmd[1][0] == 'ClipRRect':
+                self.write(' ClipRRect ')
+                self.fmt_ltrb(cmd[1][1])
+                self.write(' ')
+                self.fmt_ltrb(cmd[1][2])
+            """
             else:
                 raise ValueError(f'Unknown Clip: {cmd[1][0]}')
         transform = cmd[-1]
@@ -104,9 +144,11 @@ class Painter:
                 canvas.drawRect(rect, paint)
         elif shape[0] == 'RRect':
             _, ltrb, radii, paint = shape
-            self.make_paint(paint)
-            raise NotImplementedError(shape[0])
-            # draw RRect
+            paint = self.make_paint(paint)
+            with self.surface as canvas:
+                rrect = skia.MakeEmpty()
+                rrect.setNinePatch(rect, *(radii[1:]))
+                canvas.drawRRect(rrect, paint)
         elif shape[0] == 'Path':
             _, paint = shape
             self.make_paint(paint)
@@ -114,8 +156,8 @@ class Painter:
             # draw Path (How?)
         elif shape[0] == 'ImageRect':
             _, src, dst, paint = shape
-            self.make_paint(paint)
-            raise NotImplementedError(shape[0])
+            # cant draw images yet
+            pass
         elif shape[0] == 'Oval':
             _, ltrb, paint = shape
             paint = self.make_paint(paint)
