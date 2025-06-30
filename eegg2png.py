@@ -158,8 +158,7 @@ class Painter:
                 canvas.drawOval(rect, paint)
         elif shape[0] == 'TextBlob':
             _, x, y, ltrb, paint, index = shape
-            self.make_paint(paint)
-            raise NotImplementedError(shape[0])
+            # cant draw text yet
         elif shape[0] == 'SaveLayer':
             _, paint, layer, index = shape
             paint = self.make_paint(paint)
