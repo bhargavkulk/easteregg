@@ -66,6 +66,15 @@ def mk_image_filter_rec(filter_name, filter):
         blend_mode = skia.BlendMode(blend['01_uint'])
 
 
+def mk_clip_op(clip_op: string):
+    if clip_op == 'D':
+        return skia.ClipOp.kDifference
+    elif clip_op == 'I':
+        return skia.ClipOp.kIntersect
+    else:
+        raise ValueError(f'unknown clipop {clip_op}')
+
+
 class Painter:
     def __init__(self, width: int = 512, height: int = 512):
         self.width = width
@@ -93,10 +102,16 @@ class Painter:
                 pass
             elif cmd[1][0] == 'ClipRect':
                 rect = skia.Rect.MakeLTRB(*(cmd[1][1][1:]))
+                op = mk_clip_op(cmd[1][2][0])
                 with self.surface as canvas:
-                    canvas.clipRect(rect)
+                    canvas.clipRect(rect, op)
             elif cmd[1][0] == 'ClipRRect':
-                raise NotImplementedError(f'ClipRRect {cmd[1]}')
+                _, rect, radii, op = cmd[1]
+                op = mk_clip_op(op)
+                with self.surface as canvas:
+                    rrect = skia.MakeEmpty()
+                    rrect.setNinePatch(rect, *(radii[1:]))
+                    canvas.drawRRect(rrect, op)
             else:
                 raise ValueError(f'Unknown Clip: {cmd[1][0]}')
         transform = cmd[-1]
