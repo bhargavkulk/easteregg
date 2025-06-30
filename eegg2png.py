@@ -116,7 +116,7 @@ def mk_clip_op(clip_op: str):
         raise ValueError(f'unknown clipop {clip_op}')
 
 
-def mk_m44(matrix):
+def mk_m44(flat):
     if len(flat) != 16:
         raise ValueError(f'Expected 16 elements, got {len(flat)}')
 
