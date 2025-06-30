@@ -1,7 +1,0 @@
-import skia
-
-data = skia.MakeFromFilename('./font')
-
-font = skia.Typeface.MakeFromData(data)
-
-print(font)
