@@ -49,12 +49,13 @@ def mk_path(drawpath_json):
     path_data = drawpath_json['path']
     fill_type = path_data.get('fillType', 'winding')
 
+    path = skia.Path()
     if fill_type == 'winding':
-        path = skia.Path()
         path.setFillType(skia.PathFillType.kWinding)
     elif fill_type == 'evenOdd':
-        path = skia.Path()
         path.setFillType(skia.PathFillType.kEvenOdd)
+    elif fill_type == 'inverseWinding':
+        path.setFillType(skia.PathFillType.kInverseWinding)
     else:
         raise ValueError(f'Unknown fillType: {fill_type}')
 
@@ -70,6 +71,14 @@ def mk_path(drawpath_json):
             elif 'line' in verb:
                 x, y = verb['line']
                 path.lineTo(x, y)
+            elif 'quad' in verb:
+                pts = verb['quad']
+                (x1, y1), (x2, y2) = pts
+                path.quadTo(x1, y1, x2, y2)
+            elif 'conic' in verb:
+                pts = verb['conic']
+                (x1, y1), (x2, y2), w = pts
+                path.conicTo(x1, y1, x2, y2, w)
             else:
                 raise ValueError(f'Unknown verb key: {verb}')
         elif isinstance(verb, str):
