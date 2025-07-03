@@ -22,7 +22,10 @@ rm -rf report
 #cd ..
 
 python3 -m venv venv
+$(pwd)/venv/bin/python -m pip install uv
+$(pwd)/venv/bin/python -m uv sync
+$(pwd)/venv/bin/python -m uv run make_report.py new-bench/json rsrc report
 
-$(pwd)/venv/bin/python -m pip install playwright sexpdata yattag
-$(pwd)/venv/bin/python -m playwright install
-$(pwd)/venv/bin/python make_report.py bench rsrc report
+#$(pwd)/venv/bin/python -m pip install playwright sexpdata yattag skia_python-138.0rc1-cp312-cp312-manylinux_2_28_x86_64.whl
+#$(pwd)/venv/bin/python -m playwright install
+#$(pwd)/venv/bin/python make_report.py new-bench/json rsrc report

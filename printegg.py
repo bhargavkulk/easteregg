@@ -68,14 +68,14 @@ class Formatter:
     def fmt_shape(self, shape):
         self.indent_line()
         if shape[0] == 'Rect':
-            _, ltrb, paint = shape
+            _, ltrb, paint, _ = shape
             self.write('Rect ')
             self.fmt_ltrb(ltrb)
             self.write(' ')
             self.fmt_paint(paint)
             self.newline()
         elif shape[0] == 'RRect':
-            _, ltrb, radii, paint = shape
+            _, ltrb, radii, paint, _ = shape
             self.write('RRect ')
             self.fmt_ltrb(ltrb)
             self.write(' ')
@@ -84,12 +84,12 @@ class Formatter:
             self.fmt_paint(paint)
             self.newline()
         elif shape[0] == 'Path':
-            _, paint = shape
+            _, paint, _ = shape
             self.write('Path ')
             self.fmt_paint(paint)
             self.newline()
         elif shape[0] == 'ImageRect':
-            _, src, dst, paint = shape
+            _, src, dst, paint, _ = shape
             self.write('Rect ')
             self.fmt_ltrb(src)
             self.write(' ')
@@ -98,14 +98,14 @@ class Formatter:
             self.fmt_paint(paint)
             self.newline()
         elif shape[0] == 'Oval':
-            _, ltrb, paint = shape
+            _, ltrb, paint, _ = shape
             self.write('Oval ')
             self.fmt_ltrb(ltrb)
             self.write(' ')
             self.fmt_paint(paint)
             self.newline()
         elif shape[0] == 'TextBlob':
-            _, x, y, ltrb, paint = shape
+            _, x, y, ltrb, paint, _ = shape
             self.write('TextBlob ')
             self.write(f'{x} {y} ')
             self.fmt_ltrb(ltrb)
@@ -113,13 +113,13 @@ class Formatter:
             self.fmt_paint(paint)
             self.newline()
         elif shape[0] == 'SaveLayer':
-            _, paint, layer = shape
+            _, paint, layer, _ = shape
             self.write('SaveLayer ')
             self.fmt_paint(paint)
             self.newline()
             self.fmt_layer(layer)
         elif shape[0] == 'Fill':
-            _, paint = shape
+            _, paint, _ = shape
             self.write('Fill ')
             self.fmt_paint(paint)
             self.newline()
@@ -138,15 +138,6 @@ class Formatter:
     def clear(self):
         self.buffer = StringIO()
         self.indent = 0
-
-
-def fmt_layer(layer):
-    """Layer = blend_mode Layer Command"""
-
-    if layer[0] == 'Empty':
-        return 'Empty'
-    else:
-        blend_mode, layer, cmd = layer
 
 
 def normalize(sexp):

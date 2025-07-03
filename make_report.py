@@ -6,13 +6,13 @@ import shutil
 import subprocess
 import sys
 import traceback
-from os.path import isdir
 from pathlib import Path
 from typing import Callable
 
 import yattag
 
-from egglog_runner import run_egglog
+from eegg2png import egg_to_png
+from egglog_runner import run_cmd, run_egglog
 from printegg import Formatter, parse_sexp
 from skp2eegg import compile_json_skp, get_reset_warnings
 
@@ -78,6 +78,22 @@ def collate_data(args):
             continue
 
         assert egg is not None
+
+        # Check if number of save layers is same
+
+        expected_count = 0
+        for command in skp['commands']:
+            if command['command'] == 'SaveLayer':
+                expected_count += 1
+        actual_count = egg.count('SaveLayer')
+
+        print(f'{bench_name}: {expected_count} -- {actual_count}')
+        if expected_count != actual_count:
+            data['compile_error'] = f'{expected_count} ≠ {actual_count}'
+            data['state'] = 99
+            benchmarks.append(data)
+            failed += 1
+            continue
 
         # Collect Warnings
 
@@ -182,6 +198,36 @@ def collate_data(args):
 
         data['diff_file'] = str(diff_file).replace('report', '.')
 
+        # Make PNG files
+        # - Make pre opt
+        pre_opt = args.output / (bench_name + '__PRE.png')
+        res1 = egg_to_png(skp, egg, pre_opt)
+
+        # - Make post opt
+        post_opt = args.output / (bench_name + '__POST.png')
+        res2 = egg_to_png(skp, opt, post_opt)
+
+        if res1 is None:
+            data['pre_png'] = str(pre_opt).replace('report', '.')
+        else:
+            pre_error = args.output / (bench_name + '__PRE_ERROR.txt')
+            with pre_error.open('w', encoding='utf-8') as f:
+                f.write(res1)
+            data['pre_error'] = str(pre_error).replace('report', '.')
+
+        if res2 is None:
+            data['post_png'] = str(post_opt).replace('report', '.')
+        else:
+            post_error = args.output / (bench_name + '__POST_ERROR.txt')
+            with post_error.open('w', encoding='utf-8') as f:
+                f.write(res2)
+            data['post_error'] = str(post_error).replace('report', '.')
+
+        if (res1 is None) and (res2 is None):
+            image_diff = args.output / (bench_name + '__IMG_DIFF.png')
+            ret, stdout, stdin = run_cmd(f'compare {pre_opt} {post_opt} {image_diff}'.split())
+            data['image_diff'] = str(image_diff).replace('report', '.')
+
         # 4. Save Stats
         benchmarks.append(data)
 
@@ -283,6 +329,8 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
                 text('Diff')
             with tag('th'):
                 text('#SaveLayers')
+            with tag('th'):
+                text('PNG')
             with tag('th', klass='cw hidden'):
                 text('CW')
             with tag('th', klass='ew hidden'):
@@ -301,7 +349,17 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
                     with tag('td', klass='ctr', colspan=2):
                         with tag('a', href=benchmark['compile_error']):
                             text('!')
-                    with tag('td', colspan=4, klass='void'):
+                    with tag('td', colspan=5, klass='void'):
+                        text('')
+                    with tag('td', klass='void cw hidden'):
+                        text('')
+                    with tag('td', klass='void ew hidden'):
+                        text('')
+                    continue
+                elif benchmark['state'] == 99:
+                    with tag('td', klass='ctr', colspan=2):
+                        text(benchmark['compile_error'])
+                    with tag('td', colspan=5, klass='void'):
                         text('')
                     with tag('td', klass='void cw hidden'):
                         text('')
@@ -321,7 +379,7 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
                     with tag('td', klass='ctr', colspan=2):
                         with tag('a', href=benchmark['opt_err_file']):
                             text('!')
-                    with tag('td', colspan=2, klass='void'):
+                    with tag('td', colspan=3, klass='void'):
                         text('')
                     with tag('td', klass='void cw hidden'):
                         text('')
@@ -343,6 +401,32 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
 
                 with tag('td', klass=f'{benchmark["change"]} ctr'):
                     text(f'{benchmark["counts"][0]} → {benchmark["counts"][1]}')
+
+                with tag('td', klass='ctr'):
+                    if 'pre_png' in benchmark.keys():
+                        with tag('a', href=benchmark['pre_png']):
+                            text('»')
+                    else:
+                        with tag('a', href=benchmark['pre_error']):
+                            text('!')
+
+                    text('|')
+
+                    if 'post_png' in benchmark.keys():
+                        with tag('a', href=benchmark['post_png']):
+                            text('»')
+                    else:
+                        with tag('a', href=benchmark['post_error']):
+                            text('!')
+
+                    text('|')
+
+                    if 'image_diff' in benchmark.keys():
+                        with tag('a', href=benchmark['image_diff']):
+                            text('»')
+                    else:
+                        with tag('a'):
+                            text('!')
 
                 if 'warn_file' in benchmark.keys():
                     with tag('td', klass='ctr cw hidden'):
@@ -369,7 +453,7 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
             cell.classList.add('hidden');
         }
     });
-        }""")
+}""")
 
 
 def page_template(content: Callable[[yattag.SimpleDoc], None]):

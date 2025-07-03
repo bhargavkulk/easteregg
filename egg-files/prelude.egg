@@ -28,15 +28,15 @@
 (sort Thing)
 (sort Layer)
 
-(constructor Rect (Bounds Paint) Thing)
-(constructor Fill (Paint) Thing)
-(constructor SaveLayer (Paint Layer) Thing)
+(constructor Rect (Bounds Paint i64) Thing)
+(constructor Fill (Paint i64) Thing)
+(constructor SaveLayer (Paint Layer i64) Thing :cost 10)
 (constructor Clip (ClipBounds Thing) Thing)
-(constructor TextBlob (f64 f64 Bounds Paint) Thing)
-(constructor Path (Paint) Thing)
-(constructor RRect (Bounds Bounds Paint) Thing)
-(constructor Oval (Bounds Paint) Thing)
-(constructor ImageRect (Bounds Bounds Paint) Thing)
+(constructor TextBlob (f64 f64 Bounds Paint i64) Thing)
+(constructor Path (Paint i64) Thing)
+(constructor RRect (Bounds Bounds Paint i64) Thing)
+(constructor Oval (Bounds Paint i64) Thing)
+(constructor ImageRect (Bounds Bounds Paint i64) Thing)
 (constructor Transform (Matrix Thing) Thing)
 
 (constructor Empty () Layer)
@@ -46,15 +46,15 @@
 (rewrite (Blend (SrcOver) bottom
                   (Clip cb
                    (Transform m
-                              (SaveLayer (Color 255 r g b bm) (Blend (SrcOver) bottom2 draw)))))
+                              (SaveLayer (Color 255 r g b bm) (Blend (SrcOver) bottom2 draw) number))))
          (Blend (SrcOver) (Blend (SrcOver) bottom
                            (Clip cb
                             (Transform m
-                                       (SaveLayer (Color 255 r g b bm) bottom2)))) draw))
+                                       (SaveLayer (Color 255 r g b bm) bottom2 number)))) draw))
 
 ;; Remove Empty Save Layer
 (rewrite (Blend (SrcOver) bottom
                   (Clip cb
                    (Transform m
-                              (SaveLayer p (Empty)))))
+                              (SaveLayer p (Empty) number))))
          bottom)
