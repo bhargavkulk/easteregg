@@ -29,8 +29,6 @@ The shape can be filled in 2 ways.
 1. Just a straight up color
 2. Or a shader. This generates per pixel colors to fill. It replaces a solid color with complex patterns/gradients etc.
 
-can y
-
 # WTF are ImageFilters
 
 [`skia-python` reference](https://kyamagu.github.io/skia-python/reference/skia.ImageFilters.html)
