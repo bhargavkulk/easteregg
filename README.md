@@ -29,8 +29,6 @@ The shape can be filled in 2 ways.
 1. Just a straight up color
 2. Or a shader. This generates per pixel colors to fill. It replaces a solid color with complex patterns/gradients etc.
 
-can y
-
 # WTF are ImageFilters
 
 [`skia-python` reference](https://kyamagu.github.io/skia-python/reference/skia.ImageFilters.html)
@@ -41,3 +39,147 @@ can y
 | SkMatrixTransformImageFilter | skia.ImageFilters.MatrixTransform |
 | SkColorFilterImageFilter     | skia.ImageFilters.ColorFilter     |
 | SkBlurImageFilter            | skia.ImageFilters.Blur            |
+
+# SaveLayers to look at
+
+Seeing lot of non opaque srcovers savelayers
+- bilibili layer 56
+- duckduckgo 3
+- duckduckgo 6
+- ebay 0, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
+- fandom layer 2
+- instagram layer 0
+
+
+
+## Amazon Layer 5
+```
+ᐊ SrcOver ClipRect [40.0 1281.0 1240.0 1501.0], Mat [...]
+  SaveLayer Color(128 0 0 0)
+  Empty
+  ᐊ SrcOver ClipRRect [41.0 1337.0 84.0 1435.0] [0.0 0.0 2.0 2.0], Mat [...]
+    RRect [40.0 1336.0 85.0 1436.0] [0.0 0.0 3.0 3.0] ColorFilter
+  ᐊ SrcOver ClipRect [40.0 1326.0 95.0 1446.0], Mat [...]
+    RRect [40.0 1336.0 85.0 1436.0] [0.0 0.0 3.0 3.0] Color(255 255 255 255)
+  ᐊ SrcOver ClipRect [40.0 1326.0 95.0 1446.0], Mat [...]
+    Rect [14.0 0.0 27.0 22.0] [54.0 1375.0 67.0 1397.0] Color(255 0 0 0)
+```
+
+## Non SrcOver inside Opaque SaveLayer
+Baidu Layer 0
+```
+ᐊ SrcOver ClipRect [483.0 272.0 745.0 296.0], Mat [...]
+  SaveLayer Color(255 0 0 0)
+  Empty
+  ᐊ SrcOver ClipRect [483.0 272.0 745.0 296.0], Mat [...]
+    Rect [483.0 272.0 745.0 296.0] Color(255 0 0 0)
+  ᐊ DstIn ClipRect [483.0 272.0 745.0 296.0], Mat [...]
+    SaveLayer Color(255 0 0 0)
+    Empty
+    ᐊ SrcOver ClipRect [483.0 272.0 745.0 296.0], Mat [...]
+      TextBlob 482.547 290.0 [-10.6328 -16.0938 262.934 5.19531] Color(255 0 0 0)
+```
+
+## Shader inside DstIn inside OSaveLayer
+Bilibili Layer 5
+```
+ᐊ SrcOver ClipFull, Mat [...]
+  SaveLayer Color(255 0 0 0)
+  Empty
+  ᐊ SrcOver ClipRect [60.0 -133.0 630.0 658.0], Mat [...]
+    Rect [60.0 -133.0 630.0 657.0] Color(255 147 143 124)
+  ᐊ DstIn ClipFull, Mat [...]
+    SaveLayer Color(255 0 0 0)
+    Empty
+    ᐊ SrcOver ClipFull, Mat [...]
+      Rect [60.0 -133.0 630.0 657.0] Shader
+```
+
+How does dstin work with shader?
+
+Seeing lot of opaque save layer -> dsting savelayer
+
+## Another dstin in savelayer
+bilibili 57
+
+```
+ᐊ SrcOver ClipRect [0.0 0.0 20.0 21.0], Mat [...]
+  SaveLayer Color(255 0 0 0)
+  Empty
+  ᐊ SrcOver ClipRect [2.0 1.0 18.0 21.0], Mat [...]
+    Path Color(255 255 255 255)
+  ᐊ SrcOver ClipRect [2.0 1.0 18.0 21.0], Mat [...]
+    Path Color(255 255 255 255)
+  ᐊ DstIn ClipRect [0.0 0.0 20.0 21.0], Mat [...]
+    SaveLayer Color(255 0 0 0)
+    Empty
+    ᐊ SrcOver ClipRect [2.0 1.0 18.0 21.0], Mat [...]
+      Path Color(255 255 255 255)
+```
+
+All of these are opaque dstin savelayers. Cant get this to work in skia fiddle
+
+## Ditto
+canvaas 0
+
+```
+ᐊ SrcOver ClipRect [0.0 0.0 108.0 41.0], Mat [...]
+  SaveLayer Color(255 0 0 0)
+  Empty
+  ᐊ SrcOver ClipRect [-10.0 -10.0 110.0 110.0], Mat [...]
+    Rect [0.0 0.0 100.0 100.0] Shader
+  ᐊ DstIn ClipRect [0.0 0.0 108.0 41.0], Mat [...]
+    SaveLayer Color(255 0 0 0)
+    Empty
+    ᐊ SrcOver ClipRect [-10.0 -10.0 110.0 110.0], Mat [...]
+      SaveLayer ColorFilter
+      Empty
+      ᐊ SrcOver ClipRect [-10.0 -10.0 110.0 110.0], Mat [...]
+        Path Color(255 255 255 255)
+```
+
+## Shaders inside opaque savelayer
+
+```
+ᐊ SrcOver ClipRect [0.0 3239.0 1280.0 3599.0], Mat [...]
+  SaveLayer Color(179 0 0 0)
+  Empty
+  ᐊ SrcOver ClipRect [0.0 3239.0 1280.0 3599.0], Mat [...]
+    SaveLayer Color(255 0 0 0)
+    Empty
+    ᐊ Other ClipRect [0.0 3239.0 1280.0 3599.0], Mat [...]
+      Rect [0.0 0.0 1833.0 1833.0] Shader
+```
+
+## dont still understand image filters
+
+need to recreate in skia fiddle
+
+ebay 2, this file has multiple examples of the above savelayre, (shader inside osavelayer)
+and lot of image filter ones too.
+
+```
+ᐊ SrcOver ClipRect [0.0 0.0 1280.0 360.0], Mat [...]
+  SaveLayer Color(179 0 0 0)
+  Empty
+  ᐊ SrcOver ClipRect [0.0 0.0 1280.0 360.0], Mat [...]
+    SaveLayer Color(255 0 0 0)
+    Empty
+    ᐊ Other ClipRect [0.0 0.0 1280.0 360.0], Mat [...]
+      Rect [0.0 0.0 1833.0 1833.0] Shader
+
+Look below!
+ᐊ SrcOver ClipRect [113.0 99.0 187.0 117.0], Mat [...]
+  SaveLayer ImageFilter
+  Empty
+  ᐊ SrcOver ClipRect [113.0 99.0 187.0 117.0], Mat [...]
+    TextBlob 113.0 113.0 [-2.086 -13.5659 82.5579 3.96207] Color(255 0 0 0)
+```
+
+## Tons of ImageFIlters
+- github 10, 15, 16, 2, 7, 9
+- globo 0, 30, 33
+- google 1
+
+# Reading List
+- Reincarnate / CAD IR semantics
