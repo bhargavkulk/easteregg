@@ -18,6 +18,8 @@ All the skps along with the converted JSON files will be in `skps`.
 - [ ] measure memory and performance numbers
 - [X] increase number of urls to look at
 - [ ] more rewrite rules
+- [ ] define the core set of skia that webpages use
+- [ ] connect that core set of skia directyl to the functions used in the skia api
 
 # Compiling Paints
 Very complicated shit.
