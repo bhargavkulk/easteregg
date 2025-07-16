@@ -21,6 +21,13 @@ All the skps along with the converted JSON files will be in `skps`.
 - [ ] define the core set of skia that webpages use
 - [ ] connect that core set of skia directyl to the functions used in the skia api
 
+# Worries
+
+- Other browsers and applications may use different subsets of skia language.
+
+  Possible answer: So what? Chrome is the biggest user (Maybe Android?????)
+  Google makes it somewhat easy to dump skps from android
+
 # Compiling Paints
 Very complicated shit.
 
@@ -182,6 +189,21 @@ Look below!
 - github 10, 15, 16, 2, 7, 9
 - globo 0, 30, 33
 - google 1
+
+# Skia Chrome
+
+    SkiaChrome ::= DrawCommand | Save | SaveLayer | Restore | ClipCommand
+
+## DrawCommand
+
+```
+DrawCommand ::= DrawRect(Rect, Paint)
+              | DrawRRect(RRect, Paint)
+              | DrawPath(Path, Paint)
+              | DrawTextBlob(TextBlob, x, y, Paint)
+              | DrawPaint(Paint)
+              | DrawImageRect()
+```
 
 # Reading List
 - Reincarnate / CAD IR semantics
