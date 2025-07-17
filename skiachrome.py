@@ -3,8 +3,19 @@ import json
 from pathlib import Path
 
 
+def verify_blend_mode(blend_mode: str):
+    assert blend_mode in {'Src'}, f'Unknown blend mode: {blend_mode}'
+
+
 def verify_paint(paint: dict):
-    pass
+    for key, value in paint.items():
+        match key:
+            case 'color':
+                pass
+            case 'blendMode':
+                verify_blend_mode(value)
+            case _:
+                raise ValueError(f'Unknown paint attribute: {key}')
 
 
 def verify_command(command):
