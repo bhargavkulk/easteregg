@@ -14,6 +14,7 @@ import yattag
 from eegg2png import egg_to_png
 from egglog_runner import run_cmd, run_egglog
 from printegg import Formatter, parse_sexp
+from skiachrome import verify_skp
 from skp2eegg import compile_json_skp, get_reset_warnings
 
 EGG = 'egg'
@@ -61,6 +62,16 @@ def collate_data(args):
 
         shutil.copy(benchmark, JSON_FOLDER / benchmark.name)
         data['json'] = str(JSON_FOLDER / benchmark.name).replace('report', '.')
+
+        # 0. Verify
+        try:
+            verify_skp(skp)
+        except:
+            tb = traceback.format_exc()
+            err_file = args.output / (bench_name + '__VERIFY.html')
+            with err_file.open('w') as f:
+                f.write(page_template(lambda d: code_page(tb, d)).getvalue())
+            data['verify_error'] = str(err_file).replace('report', '.')
 
         # 1. Compile to Egg
         egg = None
@@ -320,6 +331,8 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
             with tag('th'):
                 text('Benchmark')
             with tag('th'):
+                text('SkiaChrome')
+            with tag('th'):
                 text('JSON')
             with tag('th', colspan=2):
                 text('Before')
@@ -343,6 +356,14 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
                 with tag('td', klass='ctr'):
                     with tag('a', href=benchmark['json']):
                         text('»')
+
+                if 'verify_error' in benchmark:
+                    with tag('td', klass='ctr'):
+                        with tag('a', href=benchmark['verify_error']):
+                            text('»')
+                else:
+                    with tag('td', klass='void'):
+                        text('')
 
                 if benchmark['state'] == 0:
                     # compile failed
