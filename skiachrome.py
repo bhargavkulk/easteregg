@@ -17,8 +17,8 @@ def verify_command(command):
             raise ValueError(f'Unknown command: {command["command"]}')
 
 
-def verify_skp(commands: list[dict]):
-    for i, command in enumerate(commands):
+def verify_skp(commands):
+    for i, command in enumerate(commands['commands']):
         if command['command'] in commands:
             try:
                 verify_command(command)
@@ -36,4 +36,4 @@ if __name__ == '__main__':
     with args.input.open('rb') as f:
         skp = json.load(f)
 
-    verify_skp(skp['commands'])
+    verify_skp(skp)
