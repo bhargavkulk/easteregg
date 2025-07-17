@@ -24,10 +24,27 @@ def verify_command(command):
         case 'DrawPaint':
             assert 'paint' in command
             verify_paint(command['paint'])
+        case 'DrawRect':
+            assert 'coords' in command  # location
+            assert 'paint' in command
+            verify_paint(command['paint'])
 
-        case 'Save':
-            # Save has no attributes
+        case 'DrawTextBlob':
+            assert 'x' in command  # location
+            assert 'y' in command
+            assert 'runs' in command  # text data
+            assert 'paint' in command
+            verify_paint(command['paint'])
+        case 'Save' | 'Restore':
+            # save and restore has no attributes
             pass
+        case 'Concat44':
+            # concat44 has only 1 possible attribute
+            assert 'matrix' in command
+        case 'ClipRect':
+            assert 'coords' in command
+            assert 'op' in command
+            assert command['op'] in {'intersect', 'difference'}, command['op']
         case _:
             raise ValueError(f'Unknown command: {command["command"]}')
 
