@@ -3,6 +3,20 @@ import json
 from pathlib import Path
 
 
+def verify_path(path: dict):
+    assert path['fillType'] in {'evenOdd'}, f'Unknown fill type: {path["filltype"]}'
+    assert 'verbs' in path
+    for verb in path['verbs']:
+        if isinstance(verb, dict):
+            # this loop should only run once
+            for key in verb.keys():
+                assert key in {'move', 'cubic', 'line'}, f'Unknown verb: {key}'
+        elif isinstance(verb, str):
+            assert verb == 'close', f'Unknown verb {verb}'
+        else:
+            ValueError('I dont think I should be here')
+
+
 def verify_blend_mode(blend_mode: str):
     assert blend_mode in {'Src'}, f'Unknown blend mode: {blend_mode}'
 
@@ -26,8 +40,13 @@ def verify_command(command):
         case 'DrawPaint':
             assert 'paint' in command
             verify_paint(command['paint'])
-        case 'DrawRect':
+        case 'DrawRect' | 'DrawRRect':
             assert 'coords' in command  # location
+            assert 'paint' in command
+            verify_paint(command['paint'])
+        case 'DrawPath':
+            assert 'path' in command
+            verify_path(command['path'])
             assert 'paint' in command
             verify_paint(command['paint'])
         case 'DrawTextBlob':
