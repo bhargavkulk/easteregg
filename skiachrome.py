@@ -13,6 +13,10 @@ def verify_command(command):
         case 'DrawPaint':
             assert 'paint' in command
             verify_paint(command['paint'])
+
+        case 'Save':
+            # Save has no attributes
+            pass
         case _:
             raise ValueError(f'Unknown command: {command["command"]}')
 
