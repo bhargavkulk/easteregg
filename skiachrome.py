@@ -19,11 +19,10 @@ def verify_command(command):
 
 def verify_skp(commands):
     for i, command in enumerate(commands['commands']):
-        if command['command'] in commands:
-            try:
-                verify_command(command)
-            except Exception as e:
-                raise ValueError(f'Error at {i}: {str(e)}')
+        try:
+            verify_command(command)
+        except Exception as e:
+            raise ValueError(f'Error at {i}: {str(e)}')
 
 
 if __name__ == '__main__':
