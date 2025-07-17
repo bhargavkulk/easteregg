@@ -46,6 +46,11 @@ def verify_command(command):
         case 'Save' | 'Restore':
             # save and restore has no attributes
             pass
+        case 'SaveLayer':
+            assert 'bounds' in command  # bounds are a suggestion, so they mean nothing.
+            # clip is more meaningful
+            assert 'paint' in command
+            verify_paint(command['paint'])
         case 'Concat44':
             # concat44 has only 1 possible attribute
             assert 'matrix' in command
