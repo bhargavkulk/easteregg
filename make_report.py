@@ -331,9 +331,9 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
             with tag('th'):
                 text('Benchmark')
             with tag('th'):
-                text('SkiaChrome')
-            with tag('th'):
                 text('JSON')
+            with tag('th'):
+                text('SkiaChrome')
             with tag('th', colspan=2):
                 text('Before')
             with tag('th', colspan=2):
@@ -360,7 +360,7 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
                 if 'verify_error' in benchmark:
                     with tag('td', klass='ctr'):
                         with tag('a', href=benchmark['verify_error']):
-                            text('»')
+                            text('!')
                 else:
                     with tag('td', klass='void'):
                         text('')
