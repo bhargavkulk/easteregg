@@ -14,7 +14,8 @@ def verify_paint(paint: dict):
                 pass
             case 'blendMode':
                 verify_blend_mode(value)
-            case 'antiAlias'
+            case 'antiAlias':
+                pass
             case _:
                 raise ValueError(f'Unknown paint attribute: {key}')
 
