@@ -14,6 +14,7 @@ def verify_paint(paint: dict):
                 pass
             case 'blendMode':
                 verify_blend_mode(value)
+            case 'antiAlias'
             case _:
                 raise ValueError(f'Unknown paint attribute: {key}')
 
@@ -28,7 +29,6 @@ def verify_command(command):
             assert 'coords' in command  # location
             assert 'paint' in command
             verify_paint(command['paint'])
-
         case 'DrawTextBlob':
             assert 'x' in command  # location
             assert 'y' in command
