@@ -36,6 +36,13 @@ def verify_command(command):
             assert 'runs' in command  # text data
             assert 'paint' in command
             verify_paint(command['paint'])
+        case 'DrawImageRect':
+            assert 'image' in command  # src image
+            assert 'src' in command  # crop size of the image
+            assert 'dst' in command  # dst coords to be mapped to
+            assert 'sampling' in command  # TODO: figure this out
+            assert 'paint' in command
+            verify_paint(command['paint'])
         case 'Save' | 'Restore':
             # save and restore has no attributes
             pass
