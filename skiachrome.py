@@ -49,13 +49,20 @@ def verify_command(command):
         case 'SaveLayer':
             assert 'bounds' in command  # bounds are a suggestion, so they mean nothing.
             # clip is more meaningful
-            assert 'paint' in command
-            verify_paint(command['paint'])
+
+            # paint may not be in savelayer
+            # defaults to black opaque srcover
+            if 'paint' in command:
+                verify_paint(command['paint'])
         case 'Concat44':
             # concat44 has only 1 possible attribute
             assert 'matrix' in command
         case 'ClipRect':
             assert 'coords' in command
+            assert 'op' in command
+            assert command['op'] in {'intersect', 'difference'}, command['op']
+        case 'ClipRRect':
+            assert 'coords' in command  # ltrb and radii
             assert 'op' in command
             assert command['op'] in {'intersect', 'difference'}, command['op']
         case _:
@@ -67,7 +74,7 @@ def verify_skp(commands):
         try:
             verify_command(command)
         except Exception as e:
-            raise ValueError(f'Error at {i}: {str(e)}')
+            raise ValueError(f'Error at {i}: {command["command"]}')
 
 
 if __name__ == '__main__':
