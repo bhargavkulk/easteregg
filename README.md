@@ -190,19 +190,59 @@ Look below!
 - globo 0, 30, 33
 - google 1
 
-# Skia Chrome
+# Ask Pavel
 
-    SkiaChrome ::= DrawCommand | Save | SaveLayer | Restore | ClipCommand
+Not sure what is happening here:
 
-## DrawCommand
-
-```
-DrawCommand ::= DrawRect(Rect, Paint)
-              | DrawRRect(RRect, Paint)
-              | DrawPath(Path, Paint)
-              | DrawTextBlob(TextBlob, x, y, Paint)
-              | DrawPaint(Paint)
-              | DrawImageRect()
+```json
+{
+            "command": "DrawRRect",
+            "visible": true,
+            "coords": [
+                [
+                    40,
+                    1336,
+                    85,
+                    1436
+                ],
+                [
+                    0,
+                    0
+                ],
+                [
+                    3,
+                    3
+                ],
+                [
+                    3,
+                    3
+                ],
+                [
+                    0,
+                    0
+                ]
+            ],
+            "paint": {
+                "antiAlias": true,
+                "blur": {
+                    "sigma": 1.5,
+                    "style": "normal"
+                },
+                "colorfilter": {
+                    "name": "SkBlendModeColorFilter",
+                    "data": "data/41",
+                    "values": {
+                        "00_color": [
+                            1,
+                            0.533333,
+                            0.533333,
+                            0.533333
+                        ],
+                        "01_uint": 5
+                    }
+                }
+            }
+        },
 ```
 
 # Reading List

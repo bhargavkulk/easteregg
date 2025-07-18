@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 def verify_path(path: dict):
-    assert path['fillType'] in {'evenOdd'}, f'Unknown fill type: {path["filltype"]}'
+    assert path['fillType'] in {'evenOdd'}, f'Unknown fill type: {path["fillType"]}'
     assert 'verbs' in path
     for verb in path['verbs']:
         if isinstance(verb, dict):
@@ -18,7 +18,7 @@ def verify_path(path: dict):
 
 
 def verify_blend_mode(blend_mode: str):
-    assert blend_mode in {'Src'}, f'Unknown blend mode: {blend_mode}'
+    assert blend_mode in {'Src', 'DstIn'}, f'Unknown blend mode: {blend_mode}'
 
 
 def verify_paint(paint: dict):
@@ -28,6 +28,46 @@ def verify_paint(paint: dict):
                 pass
             case 'blendMode':
                 verify_blend_mode(value)
+            case 'blur':
+                # use this to make shadows, do a difference clip, to just draw the borders
+
+                # SkPaint blurPaint;
+                # paint.setMaskFilter(SkMaskFilter::MakeBlur(
+                #     kNormal_SkBlurStyle,
+                #     5.0f,  // sigma
+                #     false  // respect CTM
+                # ));
+
+                # Types of blur filters:
+                # kNormal_SkBlurStyle -> 'normal'
+                # kSolid_SkBlurStyle
+                # kOuter_SkBlurStyle
+                # kInner_SkBlurStyle
+
+                assert 'sigma' in value
+                assert 'style' in value
+                assert value['style'] in {'normal'}, f'Unknown blur style: {value["style"]}'
+            case 'style':
+                # fill -> draw inside, DEFAULT
+                # stroke -> draw border
+                # stroke and fill -> draw border and inside
+                assert value in {'stroke'}, f'Unknown draw style: {value}'
+            case 'strokeWidth':
+                # just a number
+                # does nothing if style is fill
+                pass
+            case 'colorfilter':
+                match value['name']:
+                    case 'SkBlendModeColorFilter':
+                        # SkColor grey = SkColorSetARGB(255, 136, 136, 136);
+                        # paint.setColorFilter(SkColorFilters::Blend(grey, SkBlendMode::kSrcIn));
+                        # TODO ask pavel about this weird color filter
+                        # TODO dont really understand diff between this and color/blendmode
+                        assert 'values' in value
+                        assert '00_color' in value['values']  # color
+                        assert '01_uint' in value['values']  # blend mode
+                    case _:
+                        raise ValueError(f'Unknown color filter: {value["name"]}')
             case 'antiAlias':
                 pass
             case _:
@@ -66,7 +106,9 @@ def verify_command(command):
             # save and restore has no attributes
             pass
         case 'SaveLayer':
-            assert 'bounds' in command  # bounds are a suggestion, so they mean nothing.
+            # canvas->saveLayer(Optional[bounds], Optional[paint])
+            # bounds may not be in savelayer
+            # bounds are a suggestion, so they mean nothing.
             # clip is more meaningful
 
             # paint may not be in savelayer
