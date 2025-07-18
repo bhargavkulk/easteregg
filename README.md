@@ -21,6 +21,11 @@ All the skps along with the converted JSON files will be in `skps`.
 - [ ] define the core set of skia that webpages use
 - [ ] connect that core set of skia directyl to the functions used in the skia api
 
+# Skia Important Links
+
+- How does skia serialize stuff? [DebugCanvas.h](https://github.com/google/skia/blob/main/tools/debugger/DrawCommand.cpp)
+- [Shader Serialization](https://github.com/google/skia/blob/main/src/shaders/gradients/SkGradientBaseShader.cpp#L76)
+
 # Worries
 
 - Other browsers and applications may use different subsets of skia language.
@@ -48,7 +53,7 @@ The shape can be filled in 2 ways.
 | SkMatrixTransformImageFilter | skia.ImageFilters.MatrixTransform |
 | SkColorFilterImageFilter     | skia.ImageFilters.ColorFilter     |
 | SkBlurImageFilter            | skia.ImageFilters.Blur            |
-
+ xb
 # SaveLayers to look at
 
 Seeing lot of non opaque srcovers savelayers

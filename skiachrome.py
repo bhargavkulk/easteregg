@@ -3,6 +3,12 @@ import json
 from pathlib import Path
 
 
+def verify_shader(shader: dict):
+    # this function is going to have a very annoying structure
+    # I don't want to write this
+    raise NotImplementedError('Shader')
+
+
 def verify_path(path: dict):
     assert path['fillType'] in {'evenOdd'}, f'Unknown fill type: {path["fillType"]}'
     assert 'verbs' in path
@@ -56,6 +62,22 @@ def verify_paint(paint: dict):
                 # just a number
                 # does nothing if style is fill
                 pass
+            case 'dither':
+                # distribute colors, if the current display does not support
+                # current pixel to be drawn
+                # Chrome seems to enable this for gradients
+                pass
+            case 'shader':
+                # "01_SkLinearGradient": {
+                #     "00_uint" -> flags
+                #     "01_colorArray" -> colors
+                #     "02_byteArray" -> colorspace
+                #     "03_scalarArray" -> paints
+                #     "04_point" -> start
+                #     "05_point" -> end
+                # }
+                verify_shader(value)
+
             case 'colorfilter':
                 match value['name']:
                     case 'SkBlendModeColorFilter':
