@@ -10,7 +10,9 @@ def verify_shader(shader: dict):
 
 
 def verify_path(path: dict):
-    assert path['fillType'] in {'evenOdd'}, f'Unknown fill type: {path["fillType"]}'
+    assert path['fillType'] in {'evenOdd', 'winding', 'inverseWinding'}, (
+        f'Unknown fill type: {path["fillType"]}'
+    )
     assert 'verbs' in path
     for verb in path['verbs']:
         if isinstance(verb, dict):
