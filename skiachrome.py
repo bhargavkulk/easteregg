@@ -18,7 +18,7 @@ def verify_path(path: dict):
         if isinstance(verb, dict):
             # this loop should only run once
             for key in verb.keys():
-                assert key in {'move', 'cubic', 'line'}, f'Unknown verb: {key}'
+                assert key in {'move', 'cubic', 'line', 'conic'}, f'Unknown verb: {key}'
         elif isinstance(verb, str):
             assert verb == 'close', f'Unknown verb {verb}'
         else:
@@ -26,7 +26,7 @@ def verify_path(path: dict):
 
 
 def verify_blend_mode(blend_mode: str):
-    assert blend_mode in {'Src', 'DstIn'}, f'Unknown blend mode: {blend_mode}'
+    assert blend_mode in {'Src', 'DstIn', 'Multiply'}, f'Unknown blend mode: {blend_mode}'
 
 
 def verify_paint(paint: dict):
@@ -64,6 +64,11 @@ def verify_paint(paint: dict):
                 # just a number
                 # does nothing if style is fill
                 pass
+            case 'cap':
+                # setStrokeCap https://api.skia.org/classSkPaint.html#a68e82b3dfce8a3c35413795461794ba6
+                assert value in {'round'}, f'Unknown stroke cap: {value}'
+            case 'strokeJoin':
+                assert value in {'round'}, f'Unknown stroke join: {value}'
             case 'dither':
                 # distribute colors, if the current display does not support
                 # current pixel to be drawn
@@ -149,6 +154,10 @@ def verify_command(command):
         case 'ClipRRect':
             assert 'coords' in command  # ltrb and radii
             assert 'op' in command
+            assert command['op'] in {'intersect', 'difference'}, command['op']
+        case 'ClipPath':
+            assert 'path' in command
+            verify_path(command['path'])
             assert command['op'] in {'intersect', 'difference'}, command['op']
         case _:
             raise ValueError(f'Unknown command: {command["command"]}')
