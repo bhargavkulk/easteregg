@@ -2,6 +2,53 @@ import argparse
 import json
 from pathlib import Path
 
+
+def verify_color_filter(colorfilter: dict):
+    # large composed color filter:
+    # https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/GitHub__layer_10.json
+    # https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/GitHub__layer_9.json
+    # https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/Zoom__layer_11.json
+
+    # matrixcolorfilter
+    # https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/Microsoft_Bing__layer_3.json
+
+    # Not all color filters compose other color filters
+    assert 'name' in colorfilter
+    assert 'data' in colorfilter
+    assert 'values' in colorfilter
+
+    match colorfilter['name']:
+        case 'SkBlendModeColorFilter':
+            # SkColor grey = SkColorSetARGB(255, 136, 136, 136);
+            # paint.setColorFilter(SkColorFilters::Blend(grey, SkBlendMode::kSrcIn));
+            # TODO ask pavel about this weird color filter
+            # TODO dont really understand diff between this and color/blendmode
+            assert 'values' in colorfilter
+            assert '00_color' in colorfilter['values']  # color
+            assert '01_uint' in colorfilter['values']  # blend mode
+            # case 'SkComposeColorFilter': Will go into inner_color_filter
+            #     00_<colorfilter> -> outer colorfilter
+            #     01_<colorfilter> -> inner colorfilter
+            # case 'SkMatrixColorFilter': ICF
+            #     00_scalarArray -> matrix
+            #     01_bool -> is RGBA domain
+            #     02_bool -> is clamped
+            #
+        case 'SkRuntimeColorFilter':
+            # 00_int -> stable key (figure this out)
+            # 01_string -> the runtime function (exists only if 00_int is 0)
+            # 02_bytearray -> funiforms
+            # 03_int -> something i dont get
+
+            # I dont understand how this is constructed
+            assert '00_int' in colorfilter['values']
+            assert '01_string' in colorfilter['values']
+            assert '02_byteArray' in colorfilter['values']
+            assert '03_int' in colorfilter['values']
+        case _:
+            raise ValueError(f'Unknown color filter: {colorfilter["name"]}')
+
+
 # IMPORTANT: If 01_bool is false then all the subsequent indices gets pushed up
 #            by 1
 # "sampling": {
@@ -178,26 +225,27 @@ def verify_paint(paint: dict):
 
                 # matrixcolorfilter
                 # https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/Microsoft_Bing__layer_3.json
-                match value['name']:
-                    case 'SkBlendModeColorFilter':
-                        # SkColor grey = SkColorSetARGB(255, 136, 136, 136);
-                        # paint.setColorFilter(SkColorFilters::Blend(grey, SkBlendMode::kSrcIn));
-                        # TODO ask pavel about this weird color filter
-                        # TODO dont really understand diff between this and color/blendmode
-                        assert 'values' in value
-                        assert '00_color' in value['values']  # color
-                        assert '01_uint' in value['values']  # blend mode
-                    # case 'SkComposeColorFilter': Will go into inner_color_filter
-                    #     00_<colorfilter> -> outer colorfilter
-                    #     01_<colorfilter> -> inner colorfilter
-                    # case 'SkMatrixColorFilter': ICF
-                    #     00_scalarArray -> matrix
-                    #     01_bool -> is RGBA domain
-                    #     02_bool -> is clamped
-                    #
+                verify_color_filter(value['name'])
+                # match value['name']:
+                #     case 'SkBlendModeColorFilter':
+                #         # SkColor grey = SkColorSetARGB(255, 136, 136, 136);
+                #         # paint.setColorFilter(SkColorFilters::Blend(grey, SkBlendMode::kSrcIn));
+                #         # TODO ask pavel about this weird color filter
+                #         # TODO dont really understand diff between this and color/blendmode
+                #         assert 'values' in value
+                #         assert '00_color' in value['values']  # color
+                #         assert '01_uint' in value['values']  # blend mode
+                #     # case 'SkComposeColorFilter': Will go into inner_color_filter
+                #     #     00_<colorfilter> -> outer colorfilter
+                #     #     01_<colorfilter> -> inner colorfilter
+                #     # case 'SkMatrixColorFilter': ICF
+                #     #     00_scalarArray -> matrix
+                #     #     01_bool -> is RGBA domain
+                #     #     02_bool -> is clamped
+                #     #
 
-                    case _:
-                        raise ValueError(f'Unknown color filter: {value["name"]}')
+                #     case _:
+                #         raise ValueError(f'Unknown color filter: {value["name"]}')
             case 'antiAlias':
                 pass
             case 'dashing':
