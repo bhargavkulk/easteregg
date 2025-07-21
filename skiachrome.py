@@ -26,7 +26,11 @@ def verify_path(path: dict):
 
 
 def verify_blend_mode(blend_mode: str):
-    assert blend_mode in {'Src', 'DstIn', 'Multiply', 'Overlay'}, (
+    # SoftLight: https://nightly.cs.washington.edu/reports/easteregg/1753066297:verify:0530860e/Yandex__layer_26__VERIFY.html
+    #            https://nightly.cs.washington.edu/reports/easteregg/1753066297:verify:0530860e/Zen_News__layer_30__VERIFY.html
+    # Overlay: https://nightly.cs.washington.edu/reports/easteregg/1753066297:verify:0530860e/Mail_ru__layer_18__VERIFY.html
+    #          https://nightly.cs.washington.edu/reports/easteregg/1753066297:verify:0530860e/Mail_ru__layer_15__VERIFY.html
+    assert blend_mode in {'Src', 'DstIn', 'Multiply', 'Overlay', 'SoftLight'}, (
         f'Unknown blend mode: {blend_mode}'
     )
 
@@ -71,6 +75,9 @@ def verify_paint(paint: dict):
                 assert value in {'round'}, f'Unknown stroke cap: {value}'
             case 'strokeJoin':
                 assert value in {'round'}, f'Unknown stroke join: {value}'
+            case 'strokeMiter':
+                # https://api.skia.org/classSkPaint.html#a2e767abfeb7795ed251a08b5ed85033f
+                pass
             case 'dither':
                 # distribute colors, if the current display does not support
                 # current pixel to be drawn
@@ -100,6 +107,11 @@ def verify_paint(paint: dict):
                         raise ValueError(f'Unknown color filter: {value["name"]}')
             case 'antiAlias':
                 pass
+            case 'dashing':
+                # dashing only corresponds to SkDashPathEffect
+                # other path effects seem to be serialized under pathEffect
+                assert 'intervals' in value
+                assert 'phase' in value
             case _:
                 raise ValueError(f'Unknown paint attribute: {key}')
 
