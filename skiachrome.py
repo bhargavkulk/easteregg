@@ -6,7 +6,48 @@ from pathlib import Path
 def verify_shader(shader: dict):
     # this function is going to have a very annoying structure
     # I don't want to write this
-    raise NotImplementedError('Shader')
+    assert 'name' in shader
+    assert 'data' in shader
+    assert 'values' in shader
+
+    match shader['name']:
+        case 'SkLocalMatrixShader':
+            # applies a matrix to transform the coordinate space of the matrix
+            # keys are not static, so we need to wack shit
+            for key, value in shader['values']:
+                match key:
+                    case '00_matrix':
+                        # this is the transform matrix
+                        pass
+                    case _ if key.startswith('01'):
+                        inner_shader_name = key.split('_')
+                        verify_inner_shader(inner_shader_name, value)
+                    case _:
+                        raise ValueError(f'Unknown SkLocalMatrixShader key: {key}')
+        case _:
+            raise ValueError(f'Unknown outer shader: {shader["name"]}')
+
+
+def verify_inner_shader(name, shader):
+    match name:
+        case 'SkLinearGradient':
+            # "01_SkLinearGradient": {
+            #     "00_uint" -> flags
+            #     "01_colorArray" -> colors
+            #     "02_byteArray" -> colorspace
+            #     "03_scalarArray" -> paints
+            #     "04_point" -> start
+            #     "05_point" -> end
+            # }
+
+            # I think we may have to reconstruct the flags from diff, see README.md
+
+            assert '00_uint' in shader
+            assert '01_colorArray' in shader
+            assert '02_byteArray' in shader
+            assert '03_scalarArray' in shader
+            assert '04_point' in shader
+            assert '05_point' in shader
 
 
 def verify_path(path: dict):
@@ -84,14 +125,6 @@ def verify_paint(paint: dict):
                 # Chrome seems to enable this for gradients
                 pass
             case 'shader':
-                # "01_SkLinearGradient": {
-                #     "00_uint" -> flags
-                #     "01_colorArray" -> colors
-                #     "02_byteArray" -> colorspace
-                #     "03_scalarArray" -> paints
-                #     "04_point" -> start
-                #     "05_point" -> end
-                # }
                 verify_shader(value)
             case 'colorfilter':
                 match value['name']:
