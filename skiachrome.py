@@ -18,7 +18,7 @@ def verify_path(path: dict):
         if isinstance(verb, dict):
             # this loop should only run once
             for key in verb.keys():
-                assert key in {'move', 'cubic', 'line', 'conic'}, f'Unknown verb: {key}'
+                assert key in {'move', 'cubic', 'line', 'conic', 'quad'}, f'Unknown verb: {key}'
         elif isinstance(verb, str):
             assert verb == 'close', f'Unknown verb {verb}'
         else:
@@ -26,7 +26,9 @@ def verify_path(path: dict):
 
 
 def verify_blend_mode(blend_mode: str):
-    assert blend_mode in {'Src', 'DstIn', 'Multiply'}, f'Unknown blend mode: {blend_mode}'
+    assert blend_mode in {'Src', 'DstIn', 'Multiply', 'Overlay'}, (
+        f'Unknown blend mode: {blend_mode}'
+    )
 
 
 def verify_paint(paint: dict):
@@ -84,7 +86,6 @@ def verify_paint(paint: dict):
                 #     "05_point" -> end
                 # }
                 verify_shader(value)
-
             case 'colorfilter':
                 match value['name']:
                     case 'SkBlendModeColorFilter':
@@ -129,6 +130,15 @@ def verify_command(command):
             assert 'src' in command  # crop size of the image
             assert 'dst' in command  # dst coords to be mapped to
             assert 'sampling' in command  # TODO: figure this out
+            assert 'paint' in command
+            verify_paint(command['paint'])
+        case 'DrawDRRect':
+            assert 'outer' in command  # outer shape
+            assert 'inner' in command  # inner shape
+            assert 'paint' in command
+            verify_paint(command['paint'])
+        case 'DrawOval':
+            assert 'coords' in command
             assert 'paint' in command
             verify_paint(command['paint'])
         case 'Save' | 'Restore':

@@ -250,5 +250,9 @@ Not sure what is happening here:
         },
 ```
 
+# Weird Things
+- https://nightly.cs.washington.edu/reports/easteregg/1752880257:verify:0530860e/json/Pinterest__layer_106.json
+
+
 # Reading List
 - Reincarnate / CAD IR semantics
