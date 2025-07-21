@@ -2,6 +2,48 @@ import argparse
 import json
 from pathlib import Path
 
+# IMPORTANT: If 01_bool is false then all the subsequent indices gets pushed up
+#            by 1
+# "sampling": {
+#     "maxAniso": 0,
+#     "useCubic": false,
+#     "filter": 1,
+#     "mipmap": 2,
+#     "cubic.B": 0,
+#     "cubic.C": 0
+# }
+
+# Complicated image filters:
+# https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/Google_Search__layer_1.json
+# https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/Microsoft_Bing__layer_13.json
+
+
+def verify_image_filter(image_filter: dict):
+    # SkMatrixTransformImageFilter:
+    # | 00_int -> # of input filters
+    # | 01_bool -> # is input null or not
+    # | 02_* -> input filter
+    # | 03_matrix
+    # | 04_sampling
+    raise NotImplementedError('image Filters')
+
+
+def verify_inner_image_filter(name, image_filter):
+    # SkColorFilterImageFilter
+    # | 00_int -> # of input filters
+    # | 01_bool -> # is input null or not
+    # | 02_<image_filter> -> input imamge filter
+    # | 03_<color_filter> -> color filter (make a new inner color filter verifier)
+
+    # SkBlurImageFilter
+    # | 00_int -> # of input filters
+    # | 01_bool -> # is input null or not
+    # | 02_<image_filter> -> input image filter
+    # | 03_scalar -> sigma x
+    # | 04_scalar -> sigma y
+    # | 05_int -> fLegacyTileMode
+    pass
+
 
 def verify_shader(shader: dict):
     # this function is going to have a very annoying structure
@@ -72,6 +114,7 @@ def verify_blend_mode(blend_mode: str):
     #            https://nightly.cs.washington.edu/reports/easteregg/1753066297:verify:0530860e/Zen_News__layer_30__VERIFY.html
     # Overlay: https://nightly.cs.washington.edu/reports/easteregg/1753066297:verify:0530860e/Mail_ru__layer_18__VERIFY.html
     #          https://nightly.cs.washington.edu/reports/easteregg/1753066297:verify:0530860e/Mail_ru__layer_15__VERIFY.html
+    # Plus: https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/GitHub__layer_2__VERIFY.html
     assert blend_mode in {'Src', 'DstIn', 'Multiply', 'Overlay', 'SoftLight'}, (
         f'Unknown blend mode: {blend_mode}'
     )
@@ -128,6 +171,13 @@ def verify_paint(paint: dict):
             case 'shader':
                 verify_shader(value)
             case 'colorfilter':
+                # large composed color filter:
+                # https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/GitHub__layer_10.json
+                # https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/GitHub__layer_9.json
+                # https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/Zoom__layer_11.json
+
+                # matrixcolorfilter
+                # https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/Microsoft_Bing__layer_3.json
                 match value['name']:
                     case 'SkBlendModeColorFilter':
                         # SkColor grey = SkColorSetARGB(255, 136, 136, 136);
@@ -137,6 +187,15 @@ def verify_paint(paint: dict):
                         assert 'values' in value
                         assert '00_color' in value['values']  # color
                         assert '01_uint' in value['values']  # blend mode
+                    # case 'SkComposeColorFilter': Will go into inner_color_filter
+                    #     00_<colorfilter> -> outer colorfilter
+                    #     01_<colorfilter> -> inner colorfilter
+                    # case 'SkMatrixColorFilter': ICF
+                    #     00_scalarArray -> matrix
+                    #     01_bool -> is RGBA domain
+                    #     02_bool -> is clamped
+                    #
+
                     case _:
                         raise ValueError(f'Unknown color filter: {value["name"]}')
             case 'antiAlias':
