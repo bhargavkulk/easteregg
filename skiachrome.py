@@ -15,7 +15,7 @@ def verify_shader(shader: dict):
             # applies a matrix to transform the coordinate space of the matrix
             # keys are not static, so we need to wack shit
             print(shader['values'])
-            for key, value in shader['values']:
+            for key, value in shader['values'].items():
                 match key:
                     case '00_matrix':
                         # this is the transform matrix
