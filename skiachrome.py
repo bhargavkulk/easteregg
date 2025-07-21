@@ -14,6 +14,7 @@ def verify_shader(shader: dict):
         case 'SkLocalMatrixShader':
             # applies a matrix to transform the coordinate space of the matrix
             # keys are not static, so we need to wack shit
+            print(shader['values'])
             for key, value in shader['values']:
                 match key:
                     case '00_matrix':
