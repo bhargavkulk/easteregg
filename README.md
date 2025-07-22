@@ -20,6 +20,7 @@ All the skps along with the converted JSON files will be in `skps`.
 - [ ] more rewrite rules
 - [ ] define the core set of skia that webpages use
 - [ ] connect that core set of skia directyl to the functions used in the skia api
+- [  ] denotational semantics of skia
 
 # Skia Important Links
 
@@ -32,6 +33,8 @@ All the skps along with the converted JSON files will be in `skps`.
 
   Possible answer: So what? Chrome is the biggest user (Maybe Android?????)
   Google makes it somewhat easy to dump skps from android
+
+- do filters affect performance
 
 # Compiling Paints
 Very complicated shit.

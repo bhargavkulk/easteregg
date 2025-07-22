@@ -14,8 +14,8 @@ import yattag
 from eegg2png import egg_to_png
 from egglog_runner import run_cmd, run_egglog
 from printegg import Formatter, parse_sexp
-from skiachrome import verify_skp
 from skp2eegg import compile_json_skp, get_reset_warnings
+from verify import verify_skp
 
 EGG = 'egg'
 JSON = 'json'

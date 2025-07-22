@@ -21,6 +21,7 @@ def verify_color_filter(colorfilter: dict):
         case 'SkBlendModeColorFilter':
             # SkColor grey = SkColorSetARGB(255, 136, 136, 136);
             # paint.setColorFilter(SkColorFilters::Blend(grey, SkBlendMode::kSrcIn));
+
             # TODO ask pavel about this weird color filter
             # TODO dont really understand diff between this and color/blendmode
             assert 'values' in colorfilter
