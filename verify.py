@@ -154,7 +154,7 @@ def verify_path(path: dict):
         elif isinstance(verb, str):
             assert verb == 'close', f'Unknown verb {verb}'
         else:
-            ValueError('I dont think I should be here')
+            raise ValueError('I dont think I should be here')
 
 
 def verify_blend_mode(blend_mode: str):
