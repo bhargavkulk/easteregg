@@ -123,6 +123,13 @@ def verify_shader(shader: dict):
 
 def verify_inner_shader(name, shader):
     match name:
+        case 'SkLinearGradient':
+            assert '00_uint' in shader  # flags
+            assert '01_colorArray' in shader  # colors
+            assert '02_byteArray' in shader  # color space data (all shaders may not have)
+            assert '03_scalarArray' in shader  # points (all shaders may not have)
+            assert '04_point' in shader  # start
+            assert '05_point' in shader  # end
         # case 'SkLinearGradient':
         #     # "01_SkLinearGradient": {
         #     #     "00_uint" -> flags
