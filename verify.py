@@ -73,7 +73,7 @@ def verify_image_filter(image_filter: dict):
     # | 02_* -> input filter
     # | 03_matrix
     # | 04_sampling
-    raise NotImplementedError('image Filters')
+    raise NotImplementedError('image filters')
 
 
 def verify_inner_image_filter(name, image_filter):
