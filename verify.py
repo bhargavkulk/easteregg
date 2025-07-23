@@ -95,6 +95,7 @@ def verify_inner_image_filter(name, image_filter):
 
 
 def verify_shader(shader: dict):
+    print('shader found', shader)
     # this function is going to have a very annoying structure
     # I don't want to write this
     assert 'name' in shader
@@ -140,6 +141,7 @@ def verify_inner_shader(name, shader):
             assert '03_scalarArray' in shader
             assert '04_point' in shader
             assert '05_point' in shader
+        # case "SkPictureShader": WTF IS THIS SHIT
         case _:
             raise ValueError(f'Unknown shader {name}')
 
