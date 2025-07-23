@@ -35,17 +35,18 @@ def verify_color_filter(colorfilter: dict):
             #     01_bool -> is RGBA domain
             #     02_bool -> is clamped
             #
-        # case 'SkRuntimeColorFilter':
-        #     # 00_int -> stable key (figure this out)
-        #     # 01_string -> the runtime function (exists only if 00_int is 0)
-        #     # 02_bytearray -> funiforms
-        #     # 03_int -> something i dont get
+        case 'SkRuntimeColorFilter':
+            # 00_int -> stable key (figure this out)
+            # 01_string -> the runtime function (exists only if 00_int is 0)
+            # 02_bytearray -> funiforms
+            # 03_int -> something i dont get
 
-        #     # I dont understand how this is constructed
-        #     assert '00_int' in colorfilter['values']
-        #     assert '01_string' in colorfilter['values']
-        #     assert '02_byteArray' in colorfilter['values']
-        #     assert '03_int' in colorfilter['values']
+            # Constructed from SkRuntimeEffect::makeColorFilter
+            # the run time language is the SkSL (Skia Shader Language)
+            assert '00_int' in colorfilter['values']
+            assert '01_string' in colorfilter['values']
+            assert '02_byteArray' in colorfilter['values']
+            assert '03_int' in colorfilter['values']
         case _:
             raise ValueError(f'Unknown color filter: {colorfilter["name"]}')
 
