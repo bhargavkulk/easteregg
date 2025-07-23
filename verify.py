@@ -315,6 +315,12 @@ def verify_command(command):
             assert 'coords' in command
             assert 'paint' in command
             verify_paint(command['paint'])
+        case 'DrawPoints':
+            assert 'mode' in command
+            assert command['mode'] in {'lines'}, f'Unknown points mode: {command["mode"]}'
+            assert 'points' in command
+            assert 'paint' in command
+            verify_paint(command['paint'])
         case 'Save' | 'Restore':
             # save and restore has no attributes
             pass
