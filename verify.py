@@ -123,25 +123,25 @@ def verify_shader(shader: dict):
 
 def verify_inner_shader(name, shader):
     match name:
-        case 'SkLinearGradient':
-            # "01_SkLinearGradient": {
-            #     "00_uint" -> flags
-            #     "01_colorArray" -> colors
-            #     "02_byteArray" -> colorspace
-            #     "03_scalarArray" -> paints
-            #     "04_point" -> start
-            #     "05_point" -> end
-            # }
+        # case 'SkLinearGradient':
+        #     # "01_SkLinearGradient": {
+        #     #     "00_uint" -> flags
+        #     #     "01_colorArray" -> colors
+        #     #     "02_byteArray" -> colorspace
+        #     #     "03_scalarArray" -> paints
+        #     #     "04_point" -> start
+        #     #     "05_point" -> end
+        #     # }
 
-            # I think we may have to reconstruct the flags from diff, see README.md
+        #     # I think we may have to reconstruct the flags from diff, see README.md
 
-            assert '00_uint' in shader
-            assert '01_colorArray' in shader
-            assert '02_byteArray' in shader
-            assert '03_scalarArray' in shader
-            assert '04_point' in shader
-            assert '05_point' in shader
-        # case "SkPictureShader": WTF IS THIS SHIT
+        #     assert '00_uint' in shader
+        #     assert '01_colorArray' in shader
+        #     assert '02_byteArray' in shader
+        #     assert '03_scalarArray' in shader
+        #     assert '04_point' in shader
+        #     assert '05_point' in shader
+        # # case "SkPictureShader": WTF IS THIS SHIT
         case _:
             raise ValueError(f'Unknown shader {name}')
 
@@ -222,7 +222,7 @@ def verify_paint(paint: dict):
                 # Chrome seems to enable this for gradients
                 pass
             case 'shader':
-                raise NotImplementedError('fixing shader filter')
+                verify_shader(value)
             case 'colorfilter':
                 # large composed color filter:
                 # https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/GitHub__layer_10.json
