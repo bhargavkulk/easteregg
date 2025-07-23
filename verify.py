@@ -264,8 +264,7 @@ def verify_paint(paint: dict):
                 # matrixcolorfilter
                 # https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/Microsoft_Bing__layer_3.json
                 # verify_color_filter(value)
-                # raise NotImplementedError('fixing color filter')
-                pass
+                raise NotImplementedError('fixing color filter')
             case 'imagefilter':
                 pass
             case 'antiAlias':
