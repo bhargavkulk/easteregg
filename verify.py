@@ -80,7 +80,7 @@ def verify_inner_image_filter(name, image_filter):
     # SkColorFilterImageFilter
     # | 00_int -> # of input filters
     # | 01_bool -> # is input null or not
-    # | 02_<image_filter> -> input imamge filter
+    # | 02_<image_filter> -> input image filter
     # | 03_<color_filter> -> color filter (make a new inner color filter verifier)
 
     # SkBlurImageFilter
