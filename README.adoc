@@ -29,6 +29,10 @@ Bhargav Kulkarni
 ** [ ] Define the denotational semantics of Skia.
 * [ ] Write the paper.
 
+== Semantics
+
+xref:semantics.adoc[]
+
 == Important Skia links
 
 * https://github.com/google/skia/blob/main/tools/debugger/DrawCommand.cpp[DebugCanvas.h] has a bunch of ``toJSON`` methods that describe what Skia serializes to JSON. For some more complicated stuff like Shaders have ``flatten`` methods that are not here but in the files where they are defined.
@@ -112,7 +116,7 @@ file. The serialization is taken care by the `skp_parser` util in skia.
 
 === Compiling Skia
 
-[, bash]
+[source, bash]
 --
 cd skia
 python3 tools/git-sync-deps

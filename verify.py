@@ -139,6 +139,8 @@ def verify_inner_shader(name, shader):
             assert '03_scalarArray' in shader
             assert '04_point' in shader
             assert '05_point' in shader
+        case _:
+            raise ValueError(f'Unknown shader {name}')
 
 
 def verify_path(path: dict):
