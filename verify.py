@@ -13,7 +13,6 @@ def verify_color_filter(colorfilter: dict):
     # https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/Microsoft_Bing__layer_3.json
 
     # Not all color filters compose other color filters
-    print('gndu', colorfilter)
     assert 'name' in colorfilter
     assert 'data' in colorfilter
     assert 'values' in colorfilter
@@ -36,17 +35,17 @@ def verify_color_filter(colorfilter: dict):
             #     01_bool -> is RGBA domain
             #     02_bool -> is clamped
             #
-        case 'SkRuntimeColorFilter':
-            # 00_int -> stable key (figure this out)
-            # 01_string -> the runtime function (exists only if 00_int is 0)
-            # 02_bytearray -> funiforms
-            # 03_int -> something i dont get
+        # case 'SkRuntimeColorFilter':
+        #     # 00_int -> stable key (figure this out)
+        #     # 01_string -> the runtime function (exists only if 00_int is 0)
+        #     # 02_bytearray -> funiforms
+        #     # 03_int -> something i dont get
 
-            # I dont understand how this is constructed
-            assert '00_int' in colorfilter['values']
-            assert '01_string' in colorfilter['values']
-            assert '02_byteArray' in colorfilter['values']
-            assert '03_int' in colorfilter['values']
+        #     # I dont understand how this is constructed
+        #     assert '00_int' in colorfilter['values']
+        #     assert '01_string' in colorfilter['values']
+        #     assert '02_byteArray' in colorfilter['values']
+        #     assert '03_int' in colorfilter['values']
         case _:
             raise ValueError(f'Unknown color filter: {colorfilter["name"]}')
 
@@ -263,8 +262,8 @@ def verify_paint(paint: dict):
 
                 # matrixcolorfilter
                 # https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/Microsoft_Bing__layer_3.json
-                # verify_color_filter(value)
-                raise NotImplementedError('fixing color filter')
+                verify_color_filter(value)
+                # raise NotImplementedError('fixing color filter')
             case 'imagefilter':
                 pass
             case 'antiAlias':
