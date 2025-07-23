@@ -13,6 +13,7 @@ def verify_color_filter(colorfilter: dict):
     # https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/Microsoft_Bing__layer_3.json
 
     # Not all color filters compose other color filters
+    print('gndu', colorfilter)
     assert 'name' in colorfilter
     assert 'data' in colorfilter
     assert 'values' in colorfilter
@@ -111,7 +112,7 @@ def verify_shader(shader: dict):
                         # this is the transform matrix
                         pass
                     case _ if key.startswith('01'):
-                        inner_shader_name = key.split('_')
+                        inner_shader_name = key.split('_')[1]
                         verify_inner_shader(inner_shader_name, value)
                     case _:
                         raise ValueError(f'Unknown SkLocalMatrixShader key: {key}')
