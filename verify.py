@@ -27,14 +27,7 @@ def verify_color_filter(colorfilter: dict):
             assert 'values' in colorfilter
             assert '00_color' in colorfilter['values']  # color
             assert '01_uint' in colorfilter['values']  # blend mode
-            # case 'SkComposeColorFilter': Will go into inner_color_filter
-            #     00_<colorfilter> -> outer colorfilter
-            #     01_<colorfilter> -> inner colorfilter
-            # case 'SkMatrixColorFilter': ICF
-            #     00_scalarArray -> matrix
-            #     01_bool -> is RGBA domain
-            #     02_bool -> is clamped
-            #
+
         case 'SkRuntimeColorFilter':
             # 00_int -> stable key (figure this out)
             # 01_string -> the runtime function (exists only if 00_int is 0)
@@ -49,6 +42,17 @@ def verify_color_filter(colorfilter: dict):
             assert '03_int' in colorfilter['values']
         case _:
             raise ValueError(f'Unknown color filter: {colorfilter["name"]}')
+
+
+# innercolor filter
+# case 'SkComposeColorFilter': Will go into inner_color_filter
+#     00_<colorfilter> -> outer colorfilter
+#     01_<colorfilter> -> inner colorfilter
+# case 'SkMatrixColorFilter': ICF
+#     00_scalarArray -> matrix
+#     01_bool -> is RGBA domain
+#     02_bool -> is clamped
+#
 
 
 # IMPORTANT: If 01_bool is false then all the subsequent indices gets pushed up
@@ -266,7 +270,7 @@ def verify_paint(paint: dict):
                 verify_color_filter(value)
                 # raise NotImplementedError('fixing color filter')
             case 'imagefilter':
-                pass
+                raise NotImplementedError('imagefilters not supported')
             case 'antiAlias':
                 pass
             case 'dashing':
