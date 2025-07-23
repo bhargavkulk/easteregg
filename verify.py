@@ -141,6 +141,24 @@ def verify_inner_shader(name, shader):
                 else:
                     assert '02_point' in shader  # start
                     assert '03_point' in shader  # end
+        case 'SkRadialGradient':
+            assert '00_uint' in shader  # flags
+            assert '01_colorArray' in shader  # colors
+
+            if '02_byteArray' in shader:  # color space data
+                if '03_scalarArray' in shader:  # points
+                    assert '04_point' in shader  # start
+                    assert '05_scalar' in shader  # end
+                else:
+                    assert '03_point' in shader  # start
+                    assert '04_scalar' in shader  # end
+            else:
+                if '02_scalarArray' in shader:  # points
+                    assert '03_point' in shader  # start
+                    assert '04_scalar' in shader  # end
+                else:
+                    assert '02_point' in shader  # start
+                    assert '03_scalar' in shader  # end
 
         # # case "SkPictureShader": WTF IS THIS SHIT
         case _:
