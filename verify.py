@@ -160,7 +160,13 @@ def verify_inner_shader(name, shader):
                     assert '02_point' in shader  # start
                     assert '03_scalar' in shader  # end
 
-        # # case "SkPictureShader": WTF IS THIS SHIT
+        case 'SkPictureShader':
+            # https://api.skia.org/classSkPicture.html#a41f14a3d374444c8b7f3615c175aa107
+            assert '00_int' in shader  # tile x direction
+            assert '01_int' in shader  # tile y direction
+            assert '02_rect' in shader  # cull data
+            assert '03_int' in shader  # tile mode
+            # rest is picture data, not worth specifying
         case _:
             raise ValueError(f'Unknown shader {name}')
 
