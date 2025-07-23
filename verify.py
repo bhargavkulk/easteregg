@@ -73,14 +73,14 @@ def verify_image_filter(image_filter: dict):
     # | 02_* -> input filter
     # | 03_matrix
     # | 04_sampling
-    raise NotImplementedError('image Filters')
+    raise NotImplementedError('image filters')
 
 
 def verify_inner_image_filter(name, image_filter):
     # SkColorFilterImageFilter
     # | 00_int -> # of input filters
     # | 01_bool -> # is input null or not
-    # | 02_<image_filter> -> input imamge filter
+    # | 02_<image_filter> -> input image filter
     # | 03_<color_filter> -> color filter (make a new inner color filter verifier)
 
     # SkBlurImageFilter
@@ -156,7 +156,7 @@ def verify_path(path: dict):
         elif isinstance(verb, str):
             assert verb == 'close', f'Unknown verb {verb}'
         else:
-            ValueError('I dont think I should be here')
+            raise ValueError('I dont think I should be here')
 
 
 def verify_blend_mode(blend_mode: str):
@@ -165,7 +165,7 @@ def verify_blend_mode(blend_mode: str):
     # Overlay: https://nightly.cs.washington.edu/reports/easteregg/1753066297:verify:0530860e/Mail_ru__layer_18__VERIFY.html
     #          https://nightly.cs.washington.edu/reports/easteregg/1753066297:verify:0530860e/Mail_ru__layer_15__VERIFY.html
     # Plus: https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/GitHub__layer_2__VERIFY.html
-    assert blend_mode in {'Src', 'DstIn', 'Multiply', 'Overlay', 'SoftLight'}, (
+    assert blend_mode in {'Src', 'DstIn', 'Multiply', 'Overlay', 'SoftLight', 'Plus'}, (
         f'Unknown blend mode: {blend_mode}'
     )
 
