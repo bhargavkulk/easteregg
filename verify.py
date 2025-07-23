@@ -126,28 +126,22 @@ def verify_inner_shader(name, shader):
         case 'SkLinearGradient':
             assert '00_uint' in shader  # flags
             assert '01_colorArray' in shader  # colors
-            assert '02_byteArray' in shader  # color space data (all shaders may not have)
-            assert '03_scalarArray' in shader  # points (all shaders may not have)
-            assert '04_point' in shader  # start
-            assert '05_point' in shader  # end
-        # case 'SkLinearGradient':
-        #     # "01_SkLinearGradient": {
-        #     #     "00_uint" -> flags
-        #     #     "01_colorArray" -> colors
-        #     #     "02_byteArray" -> colorspace
-        #     #     "03_scalarArray" -> paints
-        #     #     "04_point" -> start
-        #     #     "05_point" -> end
-        #     # }
 
-        #     # I think we may have to reconstruct the flags from diff, see README.md
+            if '02_byteArray' in shader:  # color space data
+                if '03_scalarArray' in shader:  # points
+                    assert '04_point' in shader  # start
+                    assert '05_point' in shader  # end
+                else:
+                    assert '03_point' in shader  # start
+                    assert '04_point' in shader  # end
+            else:
+                if '02_scalarArray' in shader:  # points
+                    assert '03_point' in shader  # start
+                    assert '04_point' in shader  # end
+                else:
+                    assert '02_point' in shader  # start
+                    assert '03_point' in shader  # end
 
-        #     assert '00_uint' in shader
-        #     assert '01_colorArray' in shader
-        #     assert '02_byteArray' in shader
-        #     assert '03_scalarArray' in shader
-        #     assert '04_point' in shader
-        #     assert '05_point' in shader
         # # case "SkPictureShader": WTF IS THIS SHIT
         case _:
             raise ValueError(f'Unknown shader {name}')
