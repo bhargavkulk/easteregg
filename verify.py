@@ -222,7 +222,7 @@ def verify_paint(paint: dict):
                 # Chrome seems to enable this for gradients
                 pass
             case 'shader':
-                verify_shader(value)
+                raise NotImplementedError('fixing shader filter')
             case 'colorfilter':
                 # large composed color filter:
                 # https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/GitHub__layer_10.json
@@ -231,27 +231,8 @@ def verify_paint(paint: dict):
 
                 # matrixcolorfilter
                 # https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/Microsoft_Bing__layer_3.json
-                verify_color_filter(value)
-                # match value['name']:
-                #     case 'SkBlendModeColorFilter':
-                #         # SkColor grey = SkColorSetARGB(255, 136, 136, 136);
-                #         # paint.setColorFilter(SkColorFilters::Blend(grey, SkBlendMode::kSrcIn));
-                #         # TODO ask pavel about this weird color filter
-                #         # TODO dont really understand diff between this and color/blendmode
-                #         assert 'values' in value
-                #         assert '00_color' in value['values']  # color
-                #         assert '01_uint' in value['values']  # blend mode
-                #     # case 'SkComposeColorFilter': Will go into inner_color_filter
-                #     #     00_<colorfilter> -> outer colorfilter
-                #     #     01_<colorfilter> -> inner colorfilter
-                #     # case 'SkMatrixColorFilter': ICF
-                #     #     00_scalarArray -> matrix
-                #     #     01_bool -> is RGBA domain
-                #     #     02_bool -> is clamped
-                #     #
-
-                #     case _:
-                #         raise ValueError(f'Unknown color filter: {value["name"]}')
+                # verify_color_filter(value)
+                raise NotImplementedError('fixing color filter')
             case 'antiAlias':
                 pass
             case 'dashing':
