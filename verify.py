@@ -44,7 +44,7 @@ def verify_color_filter(colorfilter: dict):
             raise ValueError(f'Unknown color filter: {colorfilter["name"]}')
 
 
-# innercolor filter
+# inner_color_filter
 # case 'SkComposeColorFilter': Will go into inner_color_filter
 #     00_<colorfilter> -> outer colorfilter
 #     01_<colorfilter> -> inner colorfilter
@@ -374,3 +374,7 @@ if __name__ == '__main__':
         skp = json.load(f)
 
     verify_skp(skp)
+
+# Local Variables:
+# jinx-local-words: "SkComposeColorFilter SkMatrixColorFilter byteArray colorfilter"
+# End:
