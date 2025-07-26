@@ -198,3 +198,16 @@ https://api.skia.org/classSkCanvas.html#abc79bd478516f398c31ae9f501154184
 ----
 clipPath(canvas, path: Path, op: ClipOp[Int|Diff], doAntiAlias: bool)
 ----
+
+=== Shapes
+
+==== Rectangles
+
+Defined by left, top, right, bottom.
+
+https://api.skia.org/structSkRect.html
+
+[source,]
+----
+sjhckzj
+----
