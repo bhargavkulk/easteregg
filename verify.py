@@ -99,7 +99,6 @@ def verify_inner_image_filter(name, image_filter):
 
 
 def verify_shader(shader: dict):
-    print('shader found', shader)
     # this function is going to have a very annoying structure
     # I don't want to write this
     assert 'name' in shader
@@ -110,7 +109,6 @@ def verify_shader(shader: dict):
         case 'SkLocalMatrixShader':
             # applies a matrix to transform the coordinate space of the matrix
             # keys are not static, so we need to wack shit
-            print(shader['values'])
             for key, value in shader['values'].items():
                 match key:
                     case '00_matrix':
