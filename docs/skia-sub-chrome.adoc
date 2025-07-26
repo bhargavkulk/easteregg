@@ -152,6 +152,11 @@ like it does nothing.
 
 https://api.skia.org/classSkCanvas.html#a41aa2893a587e4a371342d7ff809b0d5
 
+==== Restore
+
+Restores state for <<Save>> and <<SaveLayer>>. Additionally blends new layer
+created by SaveLayer onto the previous layer.
+
 [source]
 ----
 saveLayer(canvas, bounds: Optional[Rect], paint: Optional[Paint])
@@ -200,14 +205,78 @@ clipPath(canvas, path: Path, op: ClipOp[Int|Diff], doAntiAlias: bool)
 ----
 
 === Shapes
-
 ==== Rectangles
 
 Defined by left, top, right, bottom.
 
 https://api.skia.org/structSkRect.html
 
-[source,]
+==== Rounded Rectangles
+
+Rect with 4 radii.
+
+https://api.skia.org/classSkRRect.html
+
+==== Path
+
+Object representing path. The ``fillType`` governs what is filled, if the path
+is closed. The path is constructed by stringing verbs between points. The verbs
+used are:
+
+* move
+* cubic
+* line
+* conic
+* quad
+* close
+
+https://api.skia.org/classSkPath.html
+
+=== Paint
+
+Paint controls how stuff is drawn. It is roughly made of 3 components:
+
+* Fill: defines what is drawn in the shape.
+* Stroke: defines how the boundaries of the shape are drawn.
+* Transform: changes how what is drawn is drawn.
+
+==== Fill
+===== Color
+
+Sets alpha and RGB used when stroking and filling. Skia orders colors as alpha,
+red, blue, green.
+
+https://api.skia.org/classSkPaint.html#a2afde76523eb9fafe22fca89b841e14b
+
+[source]
 ----
-sjhckzj
+paint.setColor(color: [A, R, G, B])
 ----
+
+===== Dither
+
+Distribute colors to emulate other colors if devide does not support .
+
+===== Shader
+
+While color sets a flat color throughout the shape, shaders allow for far more
+control. See <<shader_desc,Shader>> for more details. Color is only used if this
+is nullptr.
+
+https://api.skia.org/classSkPaint.html#ab1fecafb4783c85159f701d195221354
+
+==== Stroke
+
+Stroke only works when the fill style is stroke or stroke and fill. It has the
+following components
+
+* stroke width
+* stroke miter
+* stroke join
+* stroke cap
+* dashing
+
+=== Transform
+==== Color Filter
+==== Image Filter
+==== Blend Mode
