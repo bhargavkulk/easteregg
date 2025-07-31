@@ -7,7 +7,7 @@ import subprocess
 import sys
 import traceback
 from pathlib import Path
-from typing import Callable
+from typing import Any, Callable, final
 
 import yattag
 
@@ -21,11 +21,12 @@ EGG = 'egg'
 JSON = 'json'
 
 
+@final
 class SaneHtmlDiff(difflib.HtmlDiff):
     _legend = ''
 
 
-def rewrite_name(string):
+def rewrite_name(string: str) -> str:
     suite, name = string.split('__', 1)
     name = name.replace('_', ' ')
     suite = suite.replace('_', ' ')
@@ -39,8 +40,9 @@ def code_page(string: str, doc: yattag.SimpleDoc):
 
 
 def collate_data(args):
-    EGG_FOLDER = args.output / EGG
-    JSON_FOLDER = args.output / JSON
+    assert isinstance(args.output, Path)
+    EGG_FOLDER: Path = args.output / EGG
+    JSON_FOLDER: Path = args.output / JSON
 
     benchmarks = []
     improved = 0
@@ -48,11 +50,11 @@ def collate_data(args):
     regressed = 0
     failed = 0
     formatter = Formatter()
-    files = list(args.bench.glob('*.json'))
+    files: list[Path] = list(args.bench.glob('*.json'))
     for i, benchmark in enumerate(files):
         print(f'[{i + 1}/{len(files)}] running ' + str(benchmark))
         bench_name = benchmark.stem
-        data = dict()
+        data: dict[str, Any] = dict()
         data['name'] = bench_name
         suite, _ = bench_name.split('__', 1)
         data['website'] = suite.replace('_', '-').lower()
@@ -60,7 +62,7 @@ def collate_data(args):
         with benchmark.open('rb') as f:
             skp = json.load(f)
 
-        shutil.copy(benchmark, JSON_FOLDER / benchmark.name)
+        _ = shutil.copy(benchmark, JSON_FOLDER / benchmark.name)
         data['json'] = str(JSON_FOLDER / benchmark.name).replace('report', '.')
 
         # 0. Verify

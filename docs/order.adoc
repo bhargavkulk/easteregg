@@ -1,0 +1,115 @@
+= Order of Operations
+
+This document is a collection of https://fiddle.skia.org[skia fiddle] snippets
+that prove the order of operations of the various attributes of ``SkPaint``.
+
+== Known Order
+
+----
+Stroke -> MaskFilter, ImageFilter, ColorFilter -> BlendMode
+----
+
+== Image Filter before Blend Mode
+
+Image Filters and Blend Mode seem to be the final steps in drawing something
+with a paint. It was just unclear which happen before the other. To fix the
+order we use the following snippet:
+
+[source,c++]
+----
+void draw(SkCanvas* canvas) {
+    canvas->clear(SkColors::kTransparent); // Transparent background
+
+    // First Square (Bottom) - Red
+    SkPaint bottomSquarePaint;
+    bottomSquarePaint.setColor(SK_ColorRED);
+    canvas->drawRect(SkRect::MakeXYWH(28, 78, 150, 150), bottomSquarePaint);
+
+    // Second Square (Top) - Blue
+    SkPaint topSquarePaint;
+    topSquarePaint.setColor(SK_ColorBLUE);
+    topSquarePaint.setAlpha(127);
+  	topSquarePaint.setImageFilter(SkImageFilters::Blur(
+        15.0f,
+        15.0f,
+        nullptr
+    ));
+    // Set blend mode to kDstIn: draws destination (red) where it overlaps source (blue)
+    // This effectively clips the red square to the bounds of the blue square.
+    topSquarePaint.setBlendMode(SkBlendMode::kSrcIn);
+    canvas->drawRect(SkRect::MakeXYWH(78, 28, 150, 150), topSquarePaint);
+}
+----
+
+If image filters are applied before blending, then the edges inside the red
+square would be blurred and the the edges created at the intersection would not
+be blurred. This is exactly what happens.
+
+== Mask Filter and Blend Mode
+
+Seems to be the exact same thing as image filters, so they happen before blend
+mode.
+
+[source,c++]
+----
+void draw(SkCanvas* canvas) {
+    canvas->clear(SkColors::kTransparent); // Transparent background
+
+    // First Square (Bottom) - Red
+    SkPaint bottomSquarePaint;
+    bottomSquarePaint.setColor(SK_ColorRED);
+    canvas->drawRect(SkRect::MakeXYWH(28, 78, 150, 150), bottomSquarePaint);
+
+    // Second Square (Top) - Blue
+    SkPaint topSquarePaint;
+    topSquarePaint.setColor(SK_ColorBLUE);
+    topSquarePaint.setBlendMode(SkBlendMode::kSrcIn);
+
+    // Add the Blur MaskFilter to the topSquarePaint
+    // Corrected enum path and direct sigma value.
+    topSquarePaint.setMaskFilter(SkMaskFilter::MakeBlur(
+        SkBlurStyle::kNormal_SkBlurStyle, // Correct enum path
+        5.0f // Direct sigma value (roughly corresponds to a blur radius)
+    ));
+
+    canvas->drawRect(SkRect::MakeXYWH(78, 28, 150, 150), topSquarePaint);
+}
+----
+
+== Color Filters before Blend Mode
+
+Color filters also happen before blend mode. See:
+
+[source,c++]
+----
+void draw(SkCanvas* c) {
+    // Step 1: Fill the entire canvas with opaque red
+    SkPaint redPaint;
+    redPaint.setColor(SK_ColorRED);
+    c->drawRect(SkRect::MakeXYWH(0, 0, 256, 256), redPaint);
+
+    // Step 2: Create a half-opacity blue color
+    SkColor halfBlue = SkColorSetARGB(128, 0, 0, 255);
+
+    // Step 3: Set up the invert color filter (preserve alpha)
+    sk_sp<SkColorFilter> invert = SkColorFilters::Matrix({
+        -1, 0, 0, 0, 1,
+         0,-1, 0, 0, 1,
+         0, 0,-1, 0, 1,
+         0, 0,  0, 1, 0
+    });
+
+    // Step 4: Prepare the paint with the inverted half-blue
+    SkPaint paint;
+    paint.setColor(halfBlue);
+    paint.setColorFilter(invert);
+    paint.setBlendMode(SkBlendMode::kSrcOver);
+
+    // Step 5: Draw the blue rectangle centered (128×128 in middle of 256×256)
+    SkRect center = SkRect::MakeXYWH(64, 64, 128, 128);
+    c->drawRect(center, paint);
+}
+----
+
+If the filter happend after the blend, then the background red color would also
+be inverted. which did not happen.

@@ -42,6 +42,7 @@ xref:semantics.adoc[]
 
 - Do other browsers use a different subset of Skia?
 - Do filters affect performance? Is rearranging a filter worth it?
+- Difference between clips and geometries.
 
 == Compiling Paints
 
