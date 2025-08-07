@@ -32,7 +32,9 @@ Fill = Callable[[Coord], Color]
 
 BlendMode = Callable[[Color, Color], Color]
 
-Paint = tuple[Fill, Stroke, BlendMode]
+MaskFilter = Callable[[Coord], """something???? dunno what"""]
+
+Paint = tuple[Fill, Stroke, BlendMode, MaskFilter]
 
 
 class Layer:
@@ -49,11 +51,15 @@ class Draw(Layer):
     below: Layer
     geometry: Geometry
     paint: Paint
+    clip: Geometry
 
     def __call__(self, coord: Coord) -> Color:
         (fill, stroke, blend_mode) = self.paint
 
-        def buffer(coord: Coord) -> Color:
+        # unsure what thre result of a mask filter is
+        # or how it gets composited onto the color buffer
+
+        def color_buffer(coord: Coord) -> Color:
             extent = stroke(self.geometry)
             if coord in extent:
                 color = fill(coord)
@@ -61,4 +67,14 @@ class Draw(Layer):
             else:
                 return Color(0, 0, 0, 0)
 
-        return blend_mode(self.below(coord), buffer(coord))
+        # mask filtering should go here
+
+        def clipped_buffer(coord: Coord) -> Color:
+            if coord in clip:
+                return color_buffer(coord)
+            else:
+                return Color(0, 0, 0, 0)
+
+        # image filters should go here
+
+        return blend_mode(self.below(coord), clipped_buffer(coord))

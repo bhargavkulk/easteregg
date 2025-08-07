@@ -1,0 +1,181 @@
+
+
+SkiaOpt project:
+
+- [x] Subset of the Skia API
+  - Mechanized (as a verification function)
+  - Covers ~80% of all websites in our data set
+- [x] Lambda_Skia core language
+  - Written down in LaTeX
+- [ ] Mapping to Lambda_Skia
+  - Have to old version, not new one ~~
+- [ ] Denotational semantics
+  - Have drafts? But nothing complete?
+- [ ] Rewrite rules
+  - One for the old version
+- [ ] Proof of correctness
+  - Literally nothing
+
+
+Subset of the Skia API:
+
+- Paint, parameters:
+  Style (StrokeStyle, FillStyle, FillAndStrokeStyle)
+  FillColor
+  Alpha
+  BlendMode
+- DrawX operations (various, we dont care much)
+- SaveLayer / Restore
+- Save/Restore
+- ClipX operations
+
+LambdaSkia:
+
+- Layer
+  - Empty()
+  - Draw(Layer, Geometry, PaintDraw, PaintBlend, Clip)
+  - SaveLayer(Layer, Layer, PaintBlend, Clip)
+- Geometry
+  - Intersect(Geometry, Geometry)
+  - Difference(Geometry, Geometry)
+  - Stroke(Geometry, Width)
+  - FillAndStroke(Geometry, Width)
+- PaintDraw(Style, FillColor)
+- PaintBlend(Alpha, BlendMode)
+
+Mapping:
+
+- Paint directly to Paint(...) objects
+- Canvas state is stack of Layers and Clips
+- DrawX(paint) transforms top Layer L, Clip C to Draw(L, X, paint, C)
+- SaveLayer(paint) ... Restore()
+  pushes Empty() onto layer stack, performs ..., then pops layers Ltop, Lbottom
+  pushes SaveLayer(Lbottom, Ltop, paint, C) with top clip C
+- Save() ... Restore()
+  pushes top clip C, performs ..., pops it
+- ClipX() replaces top clip C with Intersect(C, X) or Difference(C, X) depending on in/out
+
+Denotation:
+
+Layer : Coord -> Color
+- Empty() : \ x -> transparent
+- Draw(L, G, PD, PB, C) : Blend(L, Raster(G, PD), PB, C)
+- SaveLayer(Lb, Lt, PB, C) : Blend(Lb, Lt, PB, C)
+
+Geometry : set[Coord]
+BlendMode : Color -> Color -> Color
+
+Paints are just structural
+
+def Blend(bottom : Layer, top : Layer, (alpha, blend_mode) : PaintBlend, clip : Clip) -> Layer:
+    def output(pt : Coord) -> Color:
+        if pt in clip:
+            return blend_mode(bottom(pt), ApplyAlpha(alpha, top(pt)))
+        else:
+            return bottom(pt)
+    return output
+
+def Raster(shape : Geometry, (style, color) : PaintDraw) -> Layer:
+    shape_2 = stroke(shape, style)
+    def output(pt : Coord) -> Color:
+        if pt in shape_2:
+            return color
+        else:
+            return Transparent
+    return output
+
+Rewrite rules
+
+... bottom
+SaveLayer(Alpha=255, BlendMode=SrcOver)
+... bottom2
+DrawX(BlendMode=SrcOver)
+Restore()
+
+... bottom
+SaveLayer(Alpha=255, BlendMode=SrcOver)
+... bottom2
+Restore()
+DrawX(BlendMode=SrcOver)
+
+
+SaveLayer(bottom, Draw(bottom2, ?shape, ?pd, (?alpha, SrcOver), ?clip), (1.0, SrcOver), ?clip2)
+
+
+Blend(?bottom,
+      Blend(?bottom2, Raster(?shape, ?pd),
+            (?alpha, SrcOver), ?clip)
+      (1.0, SrcOver), ?clip2)
+
+Blend(?bottom,
+      Blend(?bottom2, lambda pt: pd.color if pt in stroke(shape, pd.style) else Transparent,
+            (?alpha, SrcOver), ?clip)
+      (1.0, SrcOver), ?clip2)
+
+Blend(?bottom,
+      lambda coord:
+        bottom2(coord) if coord in clip else
+        SrcOver(bottom2(coord),
+                ApplyAlpha(alpha, pd.color) if coord in stroke(shape, pd.style) else Transparent),
+      (1.0, SrcOver), ?clip2)
+
+Blend(?bottom,
+      lambda coord:
+        SrcOver(bottom2(coord), ApplyAlpha(alpha, pd.color))
+          if coord in stroke(shape, pd.style).intersect(clip) else
+        bottom2(coord),
+      (1.0, SrcOver), ?clip2)
+
+lambda pt:
+  SrcOver(bottom(pt), ApplyAlpha(1.0,
+                                 (lambda coord:
+                                  SrcOver(bottom2(coord), ApplyAlpha(alpha, pd.color))
+                                    if coord in stroke(shape, pd.style).intersect(clip) else
+                                  bottom2(coord))(pt)))
+    if pt in clip2 else
+  bottom(pt)
+
+lambda pt:
+  SrcOver(bottom(pt), SrcOver(bottom2(pt), ApplyAlpha(alpha, pd.color))
+                         if pt in stroke(shape, pd.style).intersect(clip) else
+                       bottom2(pt))
+    if pt in clip2 else
+  bottom(pt)
+
+lambda pt:
+  SrcOver(bottom(pt), SrcOver(bottom2(pt), ApplyAlpha(alpha, pd.color)))
+    if pt in stroke(shape, pd.style).intersect(clip).intersect(clip2) else
+  SrcOver(bottom(pt), bottom2(pt))
+    if pt in clip2 else
+  bottom(pt)
+
+
+Draw(SaveLayer(bottom, bottom2, (1.0, SrcOver), clip2), shape, pd, (alpha, SrcOver), clip)
+
+Blend(Blend(bottom, bottom2, (1.0, SrcOver), clip2),
+      Raster(shape, pd), (alpha, SrcOver), clip)
+
+Blend(lambda pt:
+      SrcOver(bottom(pt), bottom2(pt))
+        if pt in clip2 else
+      bottom(pt),
+      lambda pt: pd.color if pt in stroke(shape, pd.style) else Transparent,
+      (alpha, SrcOver), clip)
+
+lambda pt:
+  ((SrcOver(SrcOver(bottom(pt), bottom2(pt)), ApplyAlpha(alpha, pd.color)))
+    if pt in clip2 else
+   (SrcOver(bottom(pt), ApplyAlpha(alpha, pd.color))))
+    if pt in stroke(shape, pd.style) else
+  (SrcOver(bottom(pt), bottom2(pt))
+    if pt in clip2 else
+  bottom(pt))
+    if pt in clip else
+  SrcOver(bottom(pt), bottom2(pt))
+    if pt in clip2 else
+  bottom(pt)
+
+Lemmas:
+  ApplyAlpha(alpha, Transparent) = Transparent
+  ApplyAlpha(1.0, color) = color
+  SrcOver(color, Transparent) = color
