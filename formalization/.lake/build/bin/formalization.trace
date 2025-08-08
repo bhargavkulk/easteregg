@@ -1,0 +1,18 @@
+{"log":
+ [{"message":
+   ".> MACOSX_DEPLOYMENT_TARGET=99.0 /Users/bhargavkk/.elan/toolchains/leanprover--lean4---v4.21.0/bin/clang -o /Users/bhargavkk/Projects/skia-stuff/easteregg/formalization/formalization/.lake/build/bin/formalization /Users/bhargavkk/Projects/skia-stuff/easteregg/formalization/formalization/.lake/build/ir/Main.c.o.export /Users/bhargavkk/Projects/skia-stuff/easteregg/formalization/formalization/.lake/build/ir/Formalization/Basic.c.o.export /Users/bhargavkk/Projects/skia-stuff/easteregg/formalization/formalization/.lake/build/ir/Formalization.c.o.export -L /Users/bhargavkk/.elan/toolchains/leanprover--lean4---v4.21.0/lib/lean --sysroot /Users/bhargavkk/.elan/toolchains/leanprover--lean4---v4.21.0 -L /Users/bhargavkk/.elan/toolchains/leanprover--lean4---v4.21.0/lib -L /Users/bhargavkk/.elan/toolchains/leanprover--lean4---v4.21.0/lib/libc -fuse-ld=lld -lleancpp -lInit -lStd -lLean -lleanrt -lc++ -lLake -lgmp -luv",
+   "level": "trace"}],
+ "inputs":
+ [["linkObjs",
+   [["/Users/bhargavkk/Projects/skia-stuff/easteregg/formalization/formalization/.lake/build/ir/Main.c.o.export",
+     "6977627925876905649"],
+    ["/Users/bhargavkk/Projects/skia-stuff/easteregg/formalization/formalization/.lake/build/ir/Formalization/Basic.c.o.export",
+     "17729582097391814562"],
+    ["/Users/bhargavkk/Projects/skia-stuff/easteregg/formalization/formalization/.lake/build/ir/Formalization.c.o.export",
+     "11704960177846191043"]]],
+  ["linkLibs", "1723"],
+  ["Lean 4.21.0, commit 6741444a63eec253a7eae7a83f1beb3de015023d",
+   "11123825329739276520"],
+  ["traceArgs: #[]", "1723"],
+  ["arm64-apple-darwin23.6.0", "17616366027971700708"]],
+ "depHash": "16718738335106959255"}

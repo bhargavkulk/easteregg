@@ -1,0 +1,25 @@
+{"log":
+ [{"message":
+   ".> LEAN_PATH=/Users/bhargavkk/Projects/skia-stuff/easteregg/formalization/formalization/.lake/build/lib/lean /Users/bhargavkk/.elan/toolchains/leanprover--lean4---v4.21.0/bin/lean /Users/bhargavkk/Projects/skia-stuff/easteregg/formalization/formalization/Main.lean -R /Users/bhargavkk/Projects/skia-stuff/easteregg/formalization/formalization -o /Users/bhargavkk/Projects/skia-stuff/easteregg/formalization/formalization/.lake/build/lib/lean/Main.olean -i /Users/bhargavkk/Projects/skia-stuff/easteregg/formalization/formalization/.lake/build/lib/lean/Main.ilean -c /Users/bhargavkk/Projects/skia-stuff/easteregg/formalization/formalization/.lake/build/ir/Main.c --json",
+   "level": "trace"}],
+ "inputs":
+ [["Main:deps",
+   [["deps",
+     [["formalization/formalization:extraDep",
+       [["@formalization:extraDep", "1723"]]],
+      ["import oleans",
+       [["Formalization:olean",
+         [["Formalization:deps", "1859682423187934914"],
+          ["/Users/bhargavkk/Projects/skia-stuff/easteregg/formalization/formalization/.lake/build/lib/lean/Formalization.olean",
+           "18175133653048974412"]]]]]]],
+    ["libs",
+     [["import dynlibs", "1723"],
+      ["package external libraries", "1723"],
+      ["module dynlibs", "1723"],
+      ["module plugins", "1723"]]]]],
+  ["Lean 4.21.0, commit 6741444a63eec253a7eae7a83f1beb3de015023d",
+   "11123825329739276520"],
+  ["Module.leanArgs: #[]", "1723"],
+  ["/Users/bhargavkk/Projects/skia-stuff/easteregg/formalization/formalization/Main.lean",
+   "14067858948115909782"]],
+ "depHash": "8138568598711803033"}
