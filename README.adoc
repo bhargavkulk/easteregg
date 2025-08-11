@@ -35,8 +35,14 @@ xref:semantics.adoc[]
 
 == Important Skia links
 
-* https://github.com/google/skia/blob/main/tools/debugger/DrawCommand.cpp[DebugCanvas.h] has a bunch of ``toJSON`` methods that describe what Skia serializes to JSON. For some more complicated stuff like Shaders have ``flatten`` methods that are not here but in the files where they are defined.
-** https://github.com/google/skia/blob/main/src/shaders/SkPictureShader.cpp[SkPictureShader], https://github.com/google/skia/blob/094ac350125ff98b8331697e469230ef1a92e251/src/core/SkPicture.cpp#L314[SkPicture], https://github.com/google/skia/blob/094ac350125ff98b8331697e469230ef1a92e251/src/core/SkPictureData.cpp#L281[SkPictureData] are important references for how ``SkPictureData`` are flattened.
+* https://github.com/google/skia/blob/main/tools/debugger/DrawCommand.cpp[DebugCanvas.h]
+  has a bunch of ``toJSON`` methods that describe what Skia serializes to JSON.
+  For some more complicated stuff like Shaders have ``flatten`` methods that are
+  not here but in the files where they are defined.
+** https://github.com/google/skia/blob/main/src/shaders/SkPictureShader.cpp[SkPictureShader],
+   https://github.com/google/skia/blob/094ac350125ff98b8331697e469230ef1a92e251/src/core/SkPicture.cpp#L314[SkPicture],
+   https://github.com/google/skia/blob/094ac350125ff98b8331697e469230ef1a92e251/src/core/SkPictureData.cpp#L281[SkPictureData]
+   are important references for how ``SkPictureData`` are flattened.
 
 == Things to think about
 
@@ -50,8 +56,9 @@ Very complicated shit. Will be important in formalizing the denotational
 semantics of Skia. Paint is 2 things, how the shape is filled, and how the
 boundaries are drawn. The shape can be filled in 2 ways.
 
-. Just a straight up color
-. Or a shader. This generates per pixel colors to fill. It replaces a solid color with complex patterns/gradients etc.
+* Just a straight up color
+* Or a shader. This generates per pixel colors to fill. It replaces a solid
+  color with complex patterns/gradients etc.
 
 I still need to figure out how filters(both color and image) fit into all of
 this.

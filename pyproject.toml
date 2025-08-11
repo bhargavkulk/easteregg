@@ -13,7 +13,6 @@ dependencies = [
     "skia-python",
     "yattag>=1.16.1",
 ]
-package-mode = false
 
 [tool.ruff]
 line-length = 100
@@ -29,6 +28,9 @@ name = "easteregg"
 version = "0.1.0"
 authors = ["Bhargav Kulkarni <bhargavkishork@gmail.com>"]
 description = "Add your description here"
+
+[tool.uv]
+package-mode = false
 
 [tool.uv.sources]
 skia-python = [

@@ -25,6 +25,8 @@ axiom SrcOver_left_transparent:
   forall c : Color, SrcOver c Transparent = c
 axiom SrcOver_right_transparent :
   forall c : Color, SrcOver Transparent c = c
+axiom SrcOver_associative :
+  forall c₁ c₂ c₃ : Color, SrcOver (SrcOver c₁ c₂) c₃ = SrcOver c₁ (SrcOver c₂ c₃)
 
 -- PaintBlend defines how 2 layers are blended together
 abbrev PaintBlend := (Float × BlendMode)
@@ -89,3 +91,12 @@ theorem lone_draw_inside_opaque_srcover_savelayer
   simp [applyAlpha_opaque]
   simp [EmptyLayer]
   simp [SrcOver_right_transparent]
+
+theorem last_draw_inside_opaque_srcover_savelayer
+  (l₁ l₂ : Layer) (g : Geometry) (pd : PaintDraw) (α : Float) :
+  SaveLayer l₁ (Draw l₂ g pd (α, SrcOver)) (1.0, SrcOver) = Draw (SaveLayer l₁ l₂ (1.0, SrcOver)) g pd (α, SrcOver) := by
+  unfold SaveLayer
+  unfold Draw
+  simp [blend]
+  ext pt
+  simp [applyAlpha_opaque]

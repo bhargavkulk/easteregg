@@ -1,5 +1,3 @@
-
-
 SkiaOpt project:
 
 - [x] Subset of the Skia API
