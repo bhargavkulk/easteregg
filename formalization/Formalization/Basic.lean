@@ -100,3 +100,4 @@ theorem last_draw_inside_opaque_srcover_savelayer
   simp [blend]
   ext pt
   simp [applyAlpha_opaque]
+  simp [SrcOver_associative]
