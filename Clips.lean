@@ -102,3 +102,16 @@ theorem last_draw_inside_opaque_srcover_savelayer
     simp [applyAlpha_opaque]
     simp [SrcOver_associative]
   | false => trivial
+
+theorem last_draw_inside_opaque_srcover_savelayer_2
+  (l₁ l₂ : Layer) (g c : Geometry) (pd : PaintDraw) (α₁ α₂ : Float) :
+  SaveLayer l₁ (Draw l₂ g pd (α₂, SrcOver) c) (α₁, SrcOver) = Draw (SaveLayer l₁ l₂ (α₁, SrcOver)) g pd (α₂, SrcOver) c := by
+  unfold SaveLayer Draw
+  simp [blend]
+  ext pt
+  cases (c pt) with
+  | true =>
+    simp [applyAlpha_opaque]
+    simp [SrcOver_associative]
+
+  | false => trivial
