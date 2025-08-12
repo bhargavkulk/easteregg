@@ -21,6 +21,10 @@ abbrev ColorFilter := Color -> Color
 abbrev PaintDraw := Style × (Point -> Color) × ColorFilter
 
 -- BlendMode blends 2 colors together
+-- These area both easy and annoying to formally prove
+-- so we are just going to leave them as axioms.
+-- If you want to see the example formalization,
+-- see Colors.lean.
 abbrev BlendMode := Color -> Color -> Color
 --- SrcOver is a blend mode: r = s + (1-sa)*d
 axiom SrcOver : BlendMode
