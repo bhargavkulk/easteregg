@@ -4,8 +4,6 @@ open Classical
 def Point : Type := Unit
 
 -- Color := (alpha, red, green, blue)
--- MAYBE: we should encode the algebra of colors
---        so that we dont have to divine blend mode properties from thin air
 def Color : Type := (Float × Float × Float × Float)
 
 def Transparent : Color :=  (0.0, 0.0, 0.0, 0.0)
@@ -45,13 +43,11 @@ axiom applyAlpha_transparent :
 axiom applyAlpha_on_transparent :
   forall a : Float, applyAlpha a Transparent = Transparent
 
-
--- blends two layers together with a blend mode and alpha
-noncomputable def blend  (l₁ l₂ : Layer) (pb: PaintBlend) : Layer :=
+noncomputable def blend  (l₁ l₂ : Layer) (pb: PaintBlend) (clip : Geometry) : Layer :=
   let (α, bm) := pb
-  fun pt => bm (l₁ pt) (applyAlpha α (l₂ pt))
+  fun pt => if (clip pt) then bm (l₁ pt) (applyAlpha α (l₂ pt)) else (l₁ pt)
 
--- rasterizes a geometry into a layer
+  -- rasterizes a geometry into a layer
 noncomputable def raster (shape: Geometry) (paint: PaintDraw) : Layer :=
   let (style, color) := paint
   fun pt => if (style shape) pt then color pt else Transparent
@@ -64,42 +60,45 @@ def EmptyLayer : Layer := (fun _ => Transparent)
 -- l₁ bottom layer
 -- l₂ top layer
 noncomputable def SaveLayer (l₁ l₂ : Layer) (pb : PaintBlend) : Layer :=
-  blend l₁ l₂ pb
+  blend l₁ l₂ pb (fun _ => true)
 
--- first theorem:
--- SaveLayer with empty layer is just the bottom layer
--- TODO: think about pd and pb properly
---       this is only true of trivial savelayers, not anything
-theorem empty_SrcOver_SaveLayer_is_Empty (l : Layer) :
+theorem empty_SrcOver_SaveLayer_is_Empty l:
   SaveLayer l EmptyLayer (1.0, SrcOver) = l := by
   unfold SaveLayer
-  unfold blend
   unfold EmptyLayer
+  simp [blend]
+  ext pt
   simp [applyAlpha_opaque]
   simp [SrcOver_left_transparent]
 
 -- now we define draw
-noncomputable def Draw (l : Layer) (g : Geometry) (pd : PaintDraw) (pb : PaintBlend) : Layer :=
-  blend l (raster g pd) pb
+noncomputable def Draw (l : Layer) (g : Geometry) (pd : PaintDraw) (pb : PaintBlend) (clip : Geometry): Layer :=
+  blend l (raster g pd) pb clip
 
--- single draw inside opaque save layer can be remove out of the layer
 theorem lone_draw_inside_opaque_srcover_savelayer
-  (bottom : Layer) (g : Geometry) (pd : PaintDraw) (α: Float) :
-  SaveLayer bottom (Draw EmptyLayer g pd (α, SrcOver)) (1.0, SrcOver) = Draw bottom g pd (α, SrcOver) := by
+  (bottom : Layer) (g : Geometry) (pd : PaintDraw) (α: Float) (c : Geometry):
+  SaveLayer bottom (Draw EmptyLayer g pd (α, SrcOver) c) (1.0, SrcOver) = Draw bottom g pd (α, SrcOver) c := by
   unfold SaveLayer
   unfold Draw
+  unfold EmptyLayer
   simp [blend]
   ext pt
-  simp [applyAlpha_opaque]
-  simp [EmptyLayer]
-  simp [SrcOver_right_transparent]
+  cases (c pt) with
+  | true =>
+    simp [SrcOver_right_transparent]
+    simp [applyAlpha_opaque]
+  | false =>
+    simp [applyAlpha_on_transparent]
+    simp [SrcOver_left_transparent]
 
 theorem last_draw_inside_opaque_srcover_savelayer
-  (l₁ l₂ : Layer) (g : Geometry) (pd : PaintDraw) (α : Float) :
-  SaveLayer l₁ (Draw l₂ g pd (α, SrcOver)) (1.0, SrcOver) = Draw (SaveLayer l₁ l₂ (1.0, SrcOver)) g pd (α, SrcOver) := by
-  unfold SaveLayer
-  unfold Draw
+  (l₁ l₂ : Layer) (g c : Geometry) (pd : PaintDraw) (α : Float) :
+  SaveLayer l₁ (Draw l₂ g pd (α, SrcOver) c) (1.0, SrcOver) = Draw (SaveLayer l₁ l₂ (1.0, SrcOver)) g pd (α, SrcOver) c := by
+  unfold SaveLayer Draw
   simp [blend]
   ext pt
-  simp [applyAlpha_opaque]
-  simp [SrcOver_associative]
+  cases (c pt) with
+  | true =>
+    simp [applyAlpha_opaque]
+    simp [SrcOver_associative]
+  | false => trivial
