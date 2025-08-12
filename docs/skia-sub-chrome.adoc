@@ -147,7 +147,7 @@ surface before merging with the layer underneath. The attributes of the paint
 applied to the surface are the <<Color,alpha>>, the <<Color_Filter,color
 filter>>, the <<Image_Filter,image filter>> and the <<Blend_Mode,blend mode>>.
 If a paint does not exist, assume a paint with only 100% opacity and ``SrcOver``
-blend mode is used. The saveLayer also takes an optional bounds, but it seems
+blend mode is used. The SaveLayer also takes an optional bounds, but it seems
 like it does nothing.
 
 https://api.skia.org/classSkCanvas.html#a41aa2893a587e4a371342d7ff809b0d5
@@ -261,9 +261,17 @@ Distribute colors to emulate other colors if devide does not support .
 
 While color sets a flat color throughout the shape, shaders allow for far more
 control. See <<shader_desc,Shader>> for more details. Color is only used if this
-is nullptr.
+is nullptr. Each shader is manipulated by a local transform matrix that changes
+the positional drawing of the shader.
 
 https://api.skia.org/classSkPaint.html#ab1fecafb4783c85159f701d195221354
+
+Shaders used most commonly are:
+
+* https://api.skia.org/classSkGradientShader.html#a230773c89f2a19c1fc591b39e100345f[SkLinearGradient]
+* https://api.skia.org/classSkGradientShader.html#a2cbea67b60814926d792fe94734884f3[SkRadialGradient]
+* https://api.skia.org/classSkPicture.html#a41f14a3d374444c8b7f3615c175aa107[SkPictureShader]
+* https://api.skia.org/classSkImage.html#a74353e5b80ca5efdaf51a11755149aba[SkImageShader]
 
 ==== Stroke
 
@@ -278,5 +286,54 @@ following components
 
 === Transform
 ==== Color Filter
+
+When present in a paint, they are called with the "src" colors, and return new
+colors, which are then passed onto the next stage (either ImageFilter or
+Xfermode).
+
+https://api.skia.org/classSkColorFilter.html
+
+Color filters used:
+
+* https://api.skia.org/classSkColorFilters.html#a31feda1011441eed0b7b9fdaf327761c[SkBlendModeColorFilter]:
+  Blends the src color with the filter color according to the filter's blend
+  mode.
+* https://api.skia.org/classSkRuntimeEffect.html#a43aee82e80684bba8fb6bc956da479e8[SkRuntimeColorFilter]:
+  the transform function depends on the run time SkSL function.
+
 ==== Image Filter
+
+If one is installed in the paint, then all drawing occurs as usual, but it is as
+if the drawing happened into an offscreen (before the xfermode is applied). This
+offscreen bitmap will then be handed to the imagefilter, who in turn creates a
+new bitmap which is what will finally be drawn to the device (using the original
+xfermode). Like <<Color_Filter,color filters>>, the local coordinate system of
+the image is first transformed by a matrix.
+
+https://api.skia.org/classSkImageFilter.html
+
+* https://api.skia.org/classSkImageFilters.html#ab662534b2d8336904460db1ec9133284[SkColorFilterImageFilter]:
+  Convert a <<Color_Filter,color filter>> to an image filter
+* https://api.skia.org/classSkImageFilters.html#a9cbc8ef4bef80adda33622b229136f90[SkBlurImageFilter]:
+  Does a gaussian blur across the entire backing bitmap
+
+==== Mask Filter
+
+Only used to do a boundary blur. Looks like easy way to do shadows.
+
+https://api.skia.org/classSkMaskFilter.html#a3296ac72b25762647dff426c9b66bfa0
+
 ==== Blend Mode
+
+Specifies how 2 colors get merged.
+
+https://api.skia.org/SkBlendMode_8h.html#ad96d76accb8ff5f3eafa29b91f7a25f0
+
+Blend modes most used are:
+
+* Src: ``r = s``
+* DstIn: ``r = d * sa``
+* Multiply: ``r = s*(1-da) + d*(1-sa) + s*d``
+* Overlay: multiply or screen, depending on destination
+* SoftLight: lighten or darken, depending on source
+* Plus: ``r = min(s + d, 1)``

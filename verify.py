@@ -44,7 +44,7 @@ def verify_color_filter(colorfilter: dict):
             raise ValueError(f'Unknown color filter: {colorfilter["name"]}')
 
 
-# innercolor filter
+# inner_color_filter
 # case 'SkComposeColorFilter': Will go into inner_color_filter
 #     00_<colorfilter> -> outer colorfilter
 #     01_<colorfilter> -> inner colorfilter
@@ -115,7 +115,7 @@ def verify_shader(shader: dict):
                         # this is the transform matrix
                         pass
                     case _ if key.startswith('01'):
-                        inner_shader_name = key.split('_')[1]
+                        inner_shader_name: str = key.split('_')[1]
                         verify_inner_shader(inner_shader_name, value)
                     case _:
                         raise ValueError(f'Unknown SkLocalMatrixShader key: {key}')
@@ -365,8 +365,8 @@ def verify_skp(commands):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('input', type=Path)
-    parser.add_argument('--output', '-o', type=Path)
+    _ = parser.add_argument('input', type=Path)
+    _ = parser.add_argument('--output', '-o', type=Path)
 
     args = parser.parse_args()
 
@@ -374,3 +374,7 @@ if __name__ == '__main__':
         skp = json.load(f)
 
     verify_skp(skp)
+
+# Local Variables:
+# jinx-local-words: "SkComposeColorFilter SkMatrixColorFilter byteArray colorfilter"
+# End:

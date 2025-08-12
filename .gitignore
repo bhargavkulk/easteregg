@@ -13,3 +13,5 @@ __pycache__/
 tmp/
 scripts/flattened/
 *.tar.gz
+.dir-locals.el
+.lake/
