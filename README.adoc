@@ -9,7 +9,8 @@ Bhargav Kulkarni
 == TODO
 
 * [ ] Define easteregg in egglog.
-** [ ] Might have to redefine this, now that we are formalizing the skia semantics.
+** [ ] Might have to redefine this, now that we are formalizing the skia
+   semantics.
 * [x] Write a ``.skp`` compiler.
 * [ ] Redo all the SkiaOpt work.
 ** [x] All the SkiaOpt unit tests pass.

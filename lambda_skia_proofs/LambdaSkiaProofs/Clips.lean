@@ -14,8 +14,11 @@ abbrev Geometry := Point -> Bool
 -- Style changes the geometry
 abbrev Style := Geometry -> Geometry
 
+-- Color Filters
+abbrev ColorFilter := Color -> Color
+
 -- Paintdraw defines how a geometry is painted
-abbrev PaintDraw := Style × (Point -> Color)
+abbrev PaintDraw := Style × (Point -> Color) × ColorFilter
 
 -- BlendMode blends 2 colors together
 abbrev BlendMode := Color -> Color -> Color
@@ -57,8 +60,8 @@ noncomputable def blend  (l₁ l₂ : Layer) (pb: PaintBlend) (clip : Geometry) 
   -- rasterizes a geometry into a layer
 @[simp]
 noncomputable def raster (shape: Geometry) (paint: PaintDraw) : Layer :=
-  let (style, color) := paint
-  fun pt => if (style shape) pt then color pt else Transparent
+  let (style, color, color_filter) := paint
+  fun pt => if (style shape) pt then color_filter (color pt) else Transparent
 
 -- Now we define layers
 -- Empty()
@@ -91,4 +94,4 @@ theorem last_draw_inside_opaque_srcover_savelayer
   funext pt -- maybe this does not work, with mask filters
             -- and image filters
   simp
-  split <;> simp
+  split <;> rfl
