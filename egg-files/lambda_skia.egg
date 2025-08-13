@@ -1,0 +1,36 @@
+;; Layer      l ::= Empty()
+;;                | SaveLayer(bottom: l, top: l, paint: p)
+;;                | Draw(bottom: l, shape: g, paint: p, clip: g
+;;
+;; Paint      p ::= Paint(fill: f, blend_mode: b)
+;;
+;; Fill       f ::= ARGB(float, float, float, float)
+;;
+;; Blend Mode b ::= SrcOver
+;;
+;; Geometry   g ::= Rect(float, float, float, float)
+
+(datatype Fill
+  (Color f64 f64 f64 f64))
+
+(datatype BlendMode
+  (SrcOver))
+
+(datatype SkPaint
+  (Paint Fill BlendMode))
+
+(datatype Geometry
+  (Full)
+  (Rectangle f64 f64 f64 f64))
+
+(datatype Layer
+  (Empty)
+  (SaveLayer Layer Layer SkPaint)
+  (Draw Layer Geometry SkPaint Geometry))
+
+;; Rewrites in lambda skia
+(rewrite (SaveLayer l1 (Draw l2 g (Paint (Color a2 r2 g2 b2)) c) (Paint (Color 1.0 r1 g1 b1)))
+         (Draw (SaveLayer l1 l2 (Paint (Color 1.0 r1 g1 b1))) g (Paint (Color a2 r2 g2 b2)) c))
+
+(rewrite (SaveLayer l (Empty) (Paint (ARGB 1.0 r1 g1 b1)))
+         l)

@@ -4,11 +4,8 @@ name = "easteregg"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "basedpyright>=1.31.0",
     "playwright>=1.50.0",
     "pyparsing>=3.2.3",
-    "pyright>=1.1.402",
-    "ruff>=0.9.9",
     "sexpdata>=1.0.2",
     "skia-python",
     "yattag>=1.16.1",
@@ -29,11 +26,14 @@ version = "0.1.0"
 authors = ["Bhargav Kulkarni <bhargavkishork@gmail.com>"]
 description = "Add your description here"
 
-[tool.uv]
-package-mode = false
-
 [tool.uv.sources]
 skia-python = [
   { path = "./skia_python-138.0rc1-cp312-cp312-macosx_11_0_arm64.whl", marker = "sys_platform == 'darwin'" },
   { path = "./skia_python-138.0rc1-cp312-cp312-manylinux_2_28_x86_64.whl", marker = "sys_platform == 'linux'" },
+]
+
+[dependency-groups]
+dev = [
+    "pyrefly>=0.28.1",
+    "ruff>=0.12.8",
 ]
