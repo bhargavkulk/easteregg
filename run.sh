@@ -14,7 +14,7 @@ fi
 git clone https://github.com/egraphs-good/egglog/
 
 cd egglog/
-cargo build
+cargo build -Znext-lockfile-bump
 cd ..
 rm -rf report
 
