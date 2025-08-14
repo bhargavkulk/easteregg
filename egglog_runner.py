@@ -16,7 +16,7 @@ def run_cmd(cmd, **kwargs):
 
 
 def run_egglog(egg_file):
-    prelude = Path('./egg-files/prelude.egg')
+    prelude = Path('./egg-files/lambda_skia.egg')
     extraction = Path('./egg-files/extract.egg')
 
     command = (
