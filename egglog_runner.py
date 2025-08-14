@@ -3,7 +3,7 @@ import subprocess
 from pathlib import Path
 
 
-def run_cmd(cmd, **kwargs):
+def run_cmd(cmd, **kwargs) -> tuple[int, str, str]:
     try:
         # Copy the current environment
         # my_env = os.environ.copy()

@@ -21,7 +21,7 @@
 
 (datatype Geometry
   (Full)
-  (Rectangle f64 f64 f64 f64))
+  (Rect f64 f64 f64 f64))
 
 (datatype Layer
   (Empty)
