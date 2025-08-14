@@ -21,7 +21,9 @@
 
 (datatype Geometry
   (Full)
-  (Rect f64 f64 f64 f64))
+  (Rect f64 f64 f64 f64)
+  (Intersect Geometry Geometry)
+  (Difference Geometry Geometry))
 
 (datatype Layer
   (Empty)
