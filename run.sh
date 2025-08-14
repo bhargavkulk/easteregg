@@ -12,6 +12,8 @@ if [ -d egglog ]; then
 fi
 
 git clone https://github.com/egraphs-good/egglog/
+cargo --version
+rust --version
 
 cd egglog/
 cargo build -Znext-lockfile-bump
