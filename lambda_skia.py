@@ -146,7 +146,9 @@ class Empty(Layer):
     """A layer that contains no pixels and serves as the base for all drawing
     operations."""
 
-    pass
+    @override
+    def pretty_print(self, indent_level=0) -> list[tuple[int, str]]:
+        return [(indent_level, 'Empty()')]
 
 
 @dataclass
