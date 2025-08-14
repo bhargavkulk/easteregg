@@ -116,8 +116,12 @@ def compile_to_lambda_skia(commands: list[dict[str, Any]]) -> Layer:
                 coords: list[float] = command_data['coords']
                 op: Literal['intersect'] | Literal['difference'] = command_data['op']
                 mk_clip(Rectangle(*coords), op)
+            case _:
+                raise NotImplementedError(command)
 
     assert len(stack) == 1, 'Unbalanced Save/SaveLayer'
+
+    return stack[-1].layer
 
 
 if __name__ == '__main__':

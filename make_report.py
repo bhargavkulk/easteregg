@@ -11,6 +11,7 @@ from typing import Any, Callable, final
 
 import yattag
 
+from compiler import compile_to_lambda_skia
 from eegg2png import egg_to_png
 from egglog_runner import run_cmd, run_egglog
 from printegg import Formatter, parse_sexp
@@ -78,7 +79,9 @@ def collate_data(args):
         # 1. Compile to Egg
         egg = None
         try:
-            egg = compile_json_skp(skp)
+            # egg = compile_json_skp(skp)
+            lambda_skia_expr = compile_to_lambda_skia(skp['commands'])
+            egg = lambda_skia_expr.sexp()
         except Exception:
             tb = traceback.format_exc()
             err_file = args.output / (bench_name + '__NOOPT_ERR.html')
@@ -130,10 +133,10 @@ def collate_data(args):
         fmt_egg_file = args.output / (bench_name + '__NOOPT_FMT.html')
         fmt_egg = None
         with fmt_egg_file.open('w') as f:
-            formatter.fmt_layer(parse_sexp(egg))
-            fmt_egg = formatter.buffer.getvalue()
-            formatter.clear()
-            f.write(page_template(lambda d: code_page(fmt_egg, d)).getvalue())
+            # formatter.fmt_layer(parse_sexp(egg))
+            fmt_egg = 'NOT YET DONT'  # formatter.buffer.getvalue()
+            # formatter.clear()
+            f.write(page_template(lambda d: code_page(str(fmt_egg), d)).getvalue())
 
         data['egg_file'] = str(egg_file).replace('report', '.')
         data['fmt_egg_file'] = str(fmt_egg_file).replace('report', '.')
@@ -153,10 +156,10 @@ def collate_data(args):
                 f.write(page_template(lambda d: code_page(opt, d)).getvalue())
 
             with opt_fmt_file.open('w') as f:
-                formatter.fmt_layer(parse_sexp(opt))
-                fmt_opt = formatter.buffer.getvalue()
-                formatter.clear()
-                f.write(page_template(lambda d: code_page(fmt_opt, d)).getvalue())
+                # formatter.fmt_layer(parse_sexp(opt))
+                fmt_opt = 'NOTE YET DONE'
+                # formatter.clear()
+                f.write(page_template(lambda d: code_page(str(fmt_opt), d)).getvalue())
 
             with egg_warn_file.open('w') as f:
                 f.write(stderr)
