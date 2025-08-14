@@ -24,4 +24,6 @@ cargo build --manifest-path egglog/Cargo.toml
 python3 -m venv venv
 $(pwd)/venv/bin/python -m pip install uv
 $(pwd)/venv/bin/python -m uv sync
+
+rm -rf report
 $(pwd)/venv/bin/python -m uv run make_report.py new-bench/json rsrc report
