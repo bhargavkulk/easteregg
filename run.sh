@@ -13,6 +13,8 @@ fi
 
 git clone https://github.com/egraphs-good/egglog/
 
+cargo build
+
 rm -rf report
 
 # cd skia
