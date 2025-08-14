@@ -103,7 +103,10 @@ class Intersect(Geometry):
 
     @override
     def pprint(self) -> str:
-        return self.g1.pprint() + ' ∪ ' + self.g2.pprint()
+        if isinstance(self.g1, Full):
+            return self.g2.pprint()
+        else:
+            return self.g1.pprint() + ' ∩ ' + self.g2.pprint()
 
 
 @dataclass
