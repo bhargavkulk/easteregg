@@ -168,7 +168,10 @@ class SaveLayer(Layer):
             res = self.bottom.pretty_print(indent_level)
 
         res.append((indent_level, 'SaveLayer ' + self.paint.pprint() + ':'))
-        res.extend(self.top.pretty_print(indent_level + 1))
+        if isinstance(self.top, Empty):
+            res.append((indent_level + 1, 'Empty()'))
+        else:
+            res.extend(self.top.pretty_print(indent_level + 1))
         return res
 
 
