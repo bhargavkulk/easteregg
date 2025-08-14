@@ -29,8 +29,8 @@
   (Draw Layer Geometry SkPaint Geometry))
 
 ;; Rewrites in lambda skia
-(rewrite (SaveLayer l1 (Draw l2 g (Paint (Color a2 r2 g2 b2)) c) (Paint (Color 1.0 r1 g1 b1) (SrcOver)))
-         (Draw (SaveLayer l1 l2 (Paint (Color 1.0 r1 g1 b1))) g (Paint (Color a2 r2 g2 b2) (SrcOver)) c))
+(rewrite (SaveLayer l1 (Draw l2 g (Paint (Color a2 r2 g2 b2) (SrcOver)) c) (Paint (Color 1.0 r1 g1 b1) (SrcOver)))
+         (Draw (SaveLayer l1 l2 (Paint (Color 1.0 r1 g1 b1) (SrcOver))) g (Paint (Color a2 r2 g2 b2) (SrcOver)) c))
 
 (rewrite (SaveLayer l (Empty) (Paint (Color 1.0 r1 g1 b1) (SrcOver)))
          l)
