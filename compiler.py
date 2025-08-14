@@ -17,7 +17,7 @@ from lambda_skia import (
     Intersect,
     Layer,
     Paint,
-    Rectangle,
+    Rect,
     SaveLayer,
     mk_color,
     pretty_print_layer,
@@ -39,6 +39,15 @@ def warn(msg):
 
 
 I = [[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]]
+
+
+def mm(a, b):
+    result = [[0.0 for _ in range(4)] for _ in range(4)]
+    for i in range(4):
+        for j in range(4):
+            for k in range(4):
+                result[i][j] += a[i][k] * b[k][j]
+    return result
 
 
 @dataclass
@@ -120,11 +129,11 @@ def compile_to_lambda_skia(commands: list[dict[str, Any]]) -> Layer:
                 mk_draw(Full())
             case 'DrawRect':
                 coords: list[float] = command_data['coords']
-                mk_draw(Rectangle(*coords))
+                mk_draw(Rect(*coords))
             case 'ClipRect':
                 coords: list[float] = command_data['coords']
                 op: Literal['intersect'] | Literal['difference'] = command_data['op']
-                mk_clip(Rectangle(*coords), op)
+                mk_clip(Rect(*coords), op)
             case _:
                 raise NotImplementedError(command)
         # print(stack)

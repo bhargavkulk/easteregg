@@ -80,7 +80,7 @@ class Full(Geometry):
 
 
 @dataclass
-class Rectangle(Geometry):
+class Rect(Geometry):
     """A rectangular geometry defined by left, top, right, and bottom
     coordinates."""
 
@@ -195,14 +195,21 @@ class Draw(Layer):
         if not isinstance(self.bottom, Empty):
             res = self.bottom.pretty_print(indent_level)
 
-        cmd = 'Draw ' + self.shape.pprint() + ' ' + self.paint.pprint() + ' ' + self.clip.pprint()
+        cmd = 'Draw ' + self.shape.pprint() + ' Clip[' + self.clip.pprint() + ']'
         res.append((indent_level, cmd))
+        res.append((-1, 'with ' + self.paint.pprint()))
         return res
 
 
 def pretty_print_layer(layer: Layer) -> str:
     output = layer.pretty_print()
     res = ''
+    cur_i = 0
     for i, line in output:
-        res += '  ' * i + line + '\n'
+        if i >= 0:
+            res += '  ' * i + line + '\n'
+            cur_i = i
+        else:
+            res += '  ' * cur_i + line + '\n'
+
     return res
