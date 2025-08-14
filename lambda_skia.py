@@ -1,5 +1,5 @@
 from dataclasses import dataclass, fields
-from typing import Any, Literal
+from typing import Any, Literal, override, reveal_type
 
 # Layer      l ::= Empty()
 #                | SaveLayer(bottom: l, top: l, paint: p)
@@ -50,6 +50,9 @@ class Color(Node):
     g: float
     b: float
 
+    def pprint(self) -> str:
+        return f'Color({int(self.a * 255)}, {int(self.r * 255)}, {int(self.b * 255)}, {int(self.g * 255)})'
+
 
 def mk_color(argb: list[int]):
     return Color(*[i / 255 for i in argb])
@@ -62,12 +65,18 @@ type BlendMode = Literal['(SrcOver)']
 
 @dataclass
 class Geometry(Node):
-    pass
+    def pprint(self) -> str:
+        raise NotImplementedError()
 
 
 @dataclass
 class Full(Geometry):
-    pass
+    """A geometry representing the full clip. Used in conjunction with
+    DrawPaint"""
+
+    @override
+    def pprint(self) -> str:
+        return 'Full()'
 
 
 @dataclass
@@ -80,6 +89,10 @@ class Rectangle(Geometry):
     r: float
     b: float
 
+    @override
+    def pprint(self) -> str:
+        return f'Rectangle({self.l}, {self.t}, {self.r}, {self.b})'
+
 
 @dataclass
 class Intersect(Geometry):
@@ -88,6 +101,10 @@ class Intersect(Geometry):
     g1: Geometry
     g2: Geometry
 
+    @override
+    def pprint(self) -> str:
+        return self.g1.pprint() + ' ∪ ' + self.g2.pprint()
+
 
 @dataclass
 class Difference(Geometry):
@@ -95,6 +112,10 @@ class Difference(Geometry):
 
     g1: Geometry
     g2: Geometry
+
+    @override
+    def pprint(self) -> str:
+        return self.g1.pprint() + ' / ' + self.g2.pprint()
 
 
 @dataclass
@@ -105,12 +126,19 @@ class Paint(Node):
     fill: Fill
     blend_mode: BlendMode
 
+    def pprint(self) -> str:
+        return f'Paint(' + self.fill.pprint() + ', ' + self.blend_mode + ')'
+
 
 class Layer(Node):
     """A drawing surface that can contain pixels and be composited with other
     layers."""
 
-    pass
+    def pretty_print(self, indent_level: int = 0) -> list[tuple[int, str]]:
+        """Pretty-printing a layer, returns a list of tuples of an int and a
+        string. Each element is a line, the string tis content and the integer
+        tells us how nested it is"""
+        raise NotImplementedError()
 
 
 @dataclass
@@ -130,6 +158,19 @@ class SaveLayer(Layer):
     top: Layer
     paint: Paint
 
+    @override
+    def pretty_print(self, indent_level: int = 0) -> list[tuple[int, str]]:
+        # i, self.bottom
+        # i, SaveLayer self.paint
+        # i + 1 self.top
+        res: list[tuple[int, str]] = []
+        if not isinstance(self.bottom, Empty):
+            res = self.bottom.pretty_print(indent_level)
+
+        res.append((indent_level, 'SaveLayer ' + self.paint.pprint() + ':'))
+        res.extend(self.top.pretty_print(indent_level + 1))
+        return res
+
 
 @dataclass
 class Draw(Layer):
@@ -140,3 +181,21 @@ class Draw(Layer):
     shape: Geometry
     paint: Paint
     clip: Geometry
+
+    @override
+    def pretty_print(self, indent_level: int = 0) -> list[tuple[int, str]]:
+        # i, self.bottom
+        # i, Draw()
+        res: list[tuple[int, str]] = []
+        if not isinstance(self.bottom, Empty):
+            res = self.bottom.pretty_print(indent_level)
+
+        cmd = 'Draw ' + self.shape.pprint() + ' ' + self.paint.pprint() + ' ' + self.clip.pprint()
+        res.append((indent_level, cmd))
+        return res
+
+
+def pretty_print_layer(layer: Layer):
+    output = layer.pretty_print()
+    for i, line in output:
+        print('  ' * i + line)

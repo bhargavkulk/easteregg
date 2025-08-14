@@ -20,6 +20,7 @@ from lambda_skia import (
     Rectangle,
     SaveLayer,
     mk_color,
+    pretty_print_layer,
 )
 
 warnings_var: ContextVar[list[str]] = ContextVar('warnings', default=[])
@@ -143,10 +144,10 @@ if __name__ == '__main__':
     with args.input.open('rb') as f:
         skp = json.load(f)
 
-    eegg = compile_to_lambda_skia(skp['commands'])
+    layer = compile_to_lambda_skia(skp['commands'])
 
     if args.output:
         with args.output.open('w') as f:
-            f.write(eegg)
+            f.write(layer)
     else:
-        print(eegg.sexp())
+        print(pretty_print_layer(layer))

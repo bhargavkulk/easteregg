@@ -7,13 +7,14 @@ import subprocess
 import sys
 import traceback
 from pathlib import Path
-from typing import Any, Callable, final
+from typing import Any, Callable, final, reveal_type
 
 import yattag
 
 from compiler import compile_to_lambda_skia
 from eegg2png import egg_to_png
 from egglog_runner import run_cmd, run_egglog
+from lambda_skia import pretty_print_layer
 from printegg import Formatter, parse_sexp
 from skp2eegg import compile_json_skp, get_reset_warnings
 from verify import verify_skp
@@ -133,9 +134,7 @@ def collate_data(args):
         fmt_egg_file = args.output / (bench_name + '__NOOPT_FMT.html')
         fmt_egg = None
         with fmt_egg_file.open('w') as f:
-            # formatter.fmt_layer(parse_sexp(egg))
-            fmt_egg = 'NOT YET DONT'  # formatter.buffer.getvalue()
-            # formatter.clear()
+            fmt_egg = pretty_print_layer(lambda_skia_expr)
             f.write(page_template(lambda d: code_page(str(fmt_egg), d)).getvalue())
 
         data['egg_file'] = str(egg_file).replace('report', '.')
