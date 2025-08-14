@@ -200,7 +200,9 @@ class Draw(Layer):
         return res
 
 
-def pretty_print_layer(layer: Layer):
+def pretty_print_layer(layer: Layer) -> str:
     output = layer.pretty_print()
+    res = ''
     for i, line in output:
-        print('  ' * i + line)
+        res += '  ' * i + line + '\n'
+    return res
