@@ -64,7 +64,8 @@ def compile_paint(json_paint: Optional[dict]) -> Paint:
 def compile_to_lambda_skia(commands: list[dict[str, Any]]) -> Layer:
     """Compiles serialized Skia commands into λSkia"""
     stack: list[State] = [State(Full(), Empty(), False, None)]
-
+    # print(stack)
+    # input()
     for i, command_data in enumerate(commands):
 
         def mk_clip(g: Geometry, op: Literal['intersect'] | Literal['difference']):
@@ -84,11 +85,18 @@ def compile_to_lambda_skia(commands: list[dict[str, Any]]) -> Layer:
 
         match command := command_data['command']:
             case 'Save':
+                # [..., s₁(m, c, l, b, p)]
+                # -->
+                # [..., s₁(m, c, l, b, p), s₂(m, c, l, b, p)]
                 new_state = deepcopy(stack[-1])
                 new_state.is_save_layer = False
                 stack.append(new_state)
             case 'SaveLayer':
+                # given p₁
+                # [..., s₁(m, c, l, b, p₁)]
+                # [..., s₁(m, c, l, b, p₁), s₂(m, c, Empty(), b, p₂)]
                 new_state = deepcopy(stack[-1])
+                new_state.layer = Empty()
                 new_state.is_save_layer = True
                 new_state.paint = compile_paint(command_data.get('paint', None))
                 stack.append(new_state)
@@ -100,7 +108,7 @@ def compile_to_lambda_skia(commands: list[dict[str, Any]]) -> Layer:
                     # -->
                     # [..., s₁(m₁, c₁, SaveLayer(l₁, l₂, p₂), b₁, p₁)]
                     stack[-1].layer = SaveLayer(
-                        bottom=saved_state.layer, top=stack[-1].layer, paint=saved_state.paint
+                        stack[-1].layer, saved_state.layer, saved_state.paint
                     )
                 else:
                     # [..., s₁(m₁, c₁, l₁, b₁, p₁), s₂(m₂, c₂, l₂, True, None)]
@@ -118,7 +126,8 @@ def compile_to_lambda_skia(commands: list[dict[str, Any]]) -> Layer:
                 mk_clip(Rectangle(*coords), op)
             case _:
                 raise NotImplementedError(command)
-
+        # print(stack)
+        # input()
     assert len(stack) == 1, 'Unbalanced Save/SaveLayer'
 
     return stack[-1].layer
@@ -140,4 +149,4 @@ if __name__ == '__main__':
         with args.output.open('w') as f:
             f.write(eegg)
     else:
-        print(eegg)
+        print(eegg.sexp())
