@@ -129,11 +129,11 @@ def compile_to_lambda_skia(commands: list[dict[str, Any]]) -> Layer:
                 mk_draw(Full())
             case 'DrawRect':
                 coords: list[float] = command_data['coords']
-                mk_draw(Rect(*coords))
+                mk_draw(Rect(*[coord / 1.0 for coord in coords]))
             case 'ClipRect':
                 coords: list[float] = command_data['coords']
                 op: Literal['intersect'] | Literal['difference'] = command_data['op']
-                mk_clip(Rect(*coords), op)
+                mk_clip(Rect(*[coord / 1.0 for coord in coords]), op)
             case _:
                 raise NotImplementedError(command)
         # print(stack)
@@ -159,4 +159,6 @@ if __name__ == '__main__':
         with args.output.open('w') as f:
             f.write(layer)
     else:
+        print(layer.sexp())
+        print()
         print(pretty_print_layer(layer))
