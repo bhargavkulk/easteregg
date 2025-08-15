@@ -15,9 +15,7 @@ import yattag
 from egglog_runner import run_cmd, run_egglog
 from lambda_skia import pretty_print_layer
 from parse_sexp import parse_sexp
-from printegg import Formatter
-from skp2eegg import compile_json_skp, get_reset_warnings
-from skp_compiler import compile_skp_to_lskia
+from skp_compiler import compile_skp_to_lskia, get_reset_warnings
 from verify import verify_skp
 
 EGG = 'egg'
