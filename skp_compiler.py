@@ -6,8 +6,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal, Optional, reveal_type
 
-import sexpdata as sx
-
 from lambda_skia import (
     BlendMode,
     Color,
