@@ -25,18 +25,6 @@ from lambda_skia import (
     pretty_print_layer,
 )
 
-type Sexp = str | float | list[Sexp]
-
-
-def normalize(sexp) -> Sexp:
-    if isinstance(sexp, sx.Symbol):
-        return sexp.value()
-    elif isinstance(sexp, list):
-        return [normalize(item) for item in sexp]
-    else:
-        return sexp
-
-
 warnings_var: ContextVar[list[str]] = ContextVar('warnings', default=[])
 
 
