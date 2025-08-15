@@ -9,9 +9,9 @@ import traceback
 from pathlib import Path
 from typing import Any, Callable, final, reveal_type
 
+# todo replace with mako
 import yattag
 
-from eegg2png import egg_to_png
 from egglog_runner import run_cmd, run_egglog
 from lambda_skia import pretty_print_layer
 from parse_sexp import parse_sexp
