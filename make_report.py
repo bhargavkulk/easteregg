@@ -148,7 +148,6 @@ def collate_data(args):
         egg_warn_file = args.output / (bench_name + '__EWARN.txt')
         #    run egglog
         ret_code, opt, stderr = run_egglog(egglog_file)
-        print(ret_code, opt, stderr)
         fmt_opt = None
 
         if ret_code == 0:
@@ -156,8 +155,7 @@ def collate_data(args):
                 f.write(page_template(lambda d: code_page(opt, d)).getvalue())
 
             with opt_fmt_file.open('w') as f:
-                print('gandu')
-                fmt_op = pretty_print_layer(parse_sexp(opt))
+                fmt_opt = pretty_print_layer(parse_sexp(opt))
                 f.write(page_template(lambda d: code_page(str(fmt_opt), d)).getvalue())
 
             with egg_warn_file.open('w') as f:
