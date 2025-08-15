@@ -2,8 +2,6 @@ import argparse
 from io import StringIO
 from pathlib import Path
 
-import sexpdata as sx
-
 
 class Formatter:
     def __init__(self):
@@ -140,17 +138,17 @@ class Formatter:
         self.indent = 0
 
 
-def normalize(sexp):
-    if isinstance(sexp, sx.Symbol):
-        return sexp.value()
-    elif isinstance(sexp, list):
-        return [normalize(item) for item in sexp]
-    else:
-        return sexp
+# def normalize(sexp):
+#     if isinstance(sexp, sx.Symbol):
+#         return sexp.value()
+#     elif isinstance(sexp, list):
+#         return [normalize(item) for item in sexp]
+#     else:
+#         return sexp
 
 
-def parse_sexp(string):
-    return normalize(sx.loads(string))
+# def parse_sexp(string):
+#     return normalize(sx.loads(string))
 
 
 if __name__ == '__main__':
