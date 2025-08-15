@@ -11,12 +11,13 @@ from typing import Any, Callable, final, reveal_type
 
 import yattag
 
-from compiler import compile_to_lambda_skia
 from eegg2png import egg_to_png
 from egglog_runner import run_cmd, run_egglog
 from lambda_skia import pretty_print_layer
-from printegg import Formatter, parse_sexp
+from parse_sexp import parse_sexp
+from printegg import Formatter
 from skp2eegg import compile_json_skp, get_reset_warnings
+from skp_compiler import compile_skp_to_lskia
 from verify import verify_skp
 
 EGG = 'egg'
@@ -81,7 +82,7 @@ def collate_data(args):
         egg = None
         try:
             # egg = compile_json_skp(skp)
-            lambda_skia_expr = compile_to_lambda_skia(skp['commands'])
+            lambda_skia_expr = compile_skp_to_lskia(skp['commands'])
             egg = lambda_skia_expr.sexp()
         except Exception:
             tb = traceback.format_exc()
@@ -155,9 +156,7 @@ def collate_data(args):
                 f.write(page_template(lambda d: code_page(opt, d)).getvalue())
 
             with opt_fmt_file.open('w') as f:
-                # formatter.fmt_layer(parse_sexp(opt))
-                fmt_opt = 'NOTE YET DONE'
-                # formatter.clear()
+                fmt_op = pretty_print_layer(parse_sexp(opt))
                 f.write(page_template(lambda d: code_page(str(fmt_opt), d)).getvalue())
 
             with egg_warn_file.open('w') as f:

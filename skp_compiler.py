@@ -6,6 +6,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal, Optional, reveal_type
 
+import sexpdata as sx
+
 from lambda_skia import (
     BlendMode,
     Color,
@@ -22,6 +24,18 @@ from lambda_skia import (
     mk_color,
     pretty_print_layer,
 )
+
+type Sexp = str | float | list[Sexp]
+
+
+def normalize(sexp) -> Sexp:
+    if isinstance(sexp, sx.Symbol):
+        return sexp.value()
+    elif isinstance(sexp, list):
+        return [normalize(item) for item in sexp]
+    else:
+        return sexp
+
 
 warnings_var: ContextVar[list[str]] = ContextVar('warnings', default=[])
 
@@ -71,7 +85,7 @@ def compile_paint(json_paint: Optional[dict]) -> Paint:
         return Paint(color, blend_mode)
 
 
-def compile_to_lambda_skia(commands: list[dict[str, Any]]) -> Layer:
+def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
     """Compiles serialized Skia commands into λSkia"""
     stack: list[State] = [State(Full(), Empty(), False, None)]
     # print(stack)
@@ -153,7 +167,7 @@ if __name__ == '__main__':
     with args.input.open('rb') as f:
         skp = json.load(f)
 
-    layer = compile_to_lambda_skia(skp['commands'])
+    layer = compile_skp_to_lskia(skp['commands'])
 
     if args.output:
         with args.output.open('w') as f:
