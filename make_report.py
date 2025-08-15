@@ -156,6 +156,7 @@ def collate_data(args):
                 f.write(page_template(lambda d: code_page(opt, d)).getvalue())
 
             with opt_fmt_file.open('w') as f:
+                print('gandu')
                 fmt_op = pretty_print_layer(parse_sexp(opt))
                 f.write(page_template(lambda d: code_page(str(fmt_opt), d)).getvalue())
 
