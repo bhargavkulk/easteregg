@@ -214,33 +214,33 @@ def collate_data(args):
 
         # Make PNG files
         # - Make pre opt
-        pre_opt = args.output / (bench_name + '__PRE.png')
-        res1 = egg_to_png(skp, egg, pre_opt)
+        # pre_opt = args.output / (bench_name + '__PRE.png')
+        # res1 = egg_to_png(skp, egg, pre_opt)
 
         # - Make post opt
-        post_opt = args.output / (bench_name + '__POST.png')
-        res2 = egg_to_png(skp, opt, post_opt)
+        # post_opt = args.output / (bench_name + '__POST.png')
+        # res2 = egg_to_png(skp, opt, post_opt)
 
-        if res1 is None:
-            data['pre_png'] = str(pre_opt).replace('report', '.')
-        else:
-            pre_error = args.output / (bench_name + '__PRE_ERROR.txt')
-            with pre_error.open('w', encoding='utf-8') as f:
-                f.write(res1)
-            data['pre_error'] = str(pre_error).replace('report', '.')
+        # if res1 is None:
+        #     data['pre_png'] = str(pre_opt).replace('report', '.')
+        # else:
+        #     pre_error = args.output / (bench_name + '__PRE_ERROR.txt')
+        #     with pre_error.open('w', encoding='utf-8') as f:
+        #         f.write(res1)
+        #     data['pre_error'] = str(pre_error).replace('report', '.')
 
-        if res2 is None:
-            data['post_png'] = str(post_opt).replace('report', '.')
-        else:
-            post_error = args.output / (bench_name + '__POST_ERROR.txt')
-            with post_error.open('w', encoding='utf-8') as f:
-                f.write(res2)
-            data['post_error'] = str(post_error).replace('report', '.')
+        # if res2 is None:
+        #     data['post_png'] = str(post_opt).replace('report', '.')
+        # else:
+        #     post_error = args.output / (bench_name + '__POST_ERROR.txt')
+        #     with post_error.open('w', encoding='utf-8') as f:
+        #         f.write(res2)
+        #     data['post_error'] = str(post_error).replace('report', '.')
 
-        if (res1 is None) and (res2 is None):
-            image_diff = args.output / (bench_name + '__IMG_DIFF.png')
-            ret, stdout, stdin = run_cmd(f'compare {pre_opt} {post_opt} {image_diff}'.split())
-            data['image_diff'] = str(image_diff).replace('report', '.')
+        # if (res1 is None) and (res2 is None):
+        #     image_diff = args.output / (bench_name + '__IMG_DIFF.png')
+        #     ret, stdout, stdin = run_cmd(f'compare {pre_opt} {post_opt} {image_diff}'.split())
+        #     data['image_diff'] = str(image_diff).replace('report', '.')
 
         # 4. Save Stats
         benchmarks.append(data)
@@ -426,31 +426,32 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
                 with tag('td', klass=f'{benchmark["change"]} ctr'):
                     text(f'{benchmark["counts"][0]} → {benchmark["counts"][1]}')
 
-                with tag('td', klass='ctr'):
-                    if 'pre_png' in benchmark.keys():
-                        with tag('a', href=benchmark['pre_png']):
-                            text('»')
-                    else:
-                        with tag('a', href=benchmark['pre_error']):
-                            text('!')
+                with tag('td', klass='ctr void'):
+                    text('')
+                    # if 'pre_png' in benchmark.keys():
+                    #     with tag('a', href=benchmark['pre_png']):
+                    #         text('»')
+                    # else:
+                    #     with tag('a', href=benchmark['pre_error']):
+                    #         text('!')
 
-                    text('|')
+                    # text('|')
 
-                    if 'post_png' in benchmark.keys():
-                        with tag('a', href=benchmark['post_png']):
-                            text('»')
-                    else:
-                        with tag('a', href=benchmark['post_error']):
-                            text('!')
+                    # if 'post_png' in benchmark.keys():
+                    #     with tag('a', href=benchmark['post_png']):
+                    #         text('»')
+                    # else:
+                    #     with tag('a', href=benchmark['post_error']):
+                    #         text('!')
 
-                    text('|')
+                    # text('|')
 
-                    if 'image_diff' in benchmark.keys():
-                        with tag('a', href=benchmark['image_diff']):
-                            text('»')
-                    else:
-                        with tag('a'):
-                            text('!')
+                    # if 'image_diff' in benchmark.keys():
+                    #     with tag('a', href=benchmark['image_diff']):
+                    #         text('»')
+                    # else:
+                    #     with tag('a'):
+                    #         text('!')
 
                 if 'warn_file' in benchmark.keys():
                     with tag('td', klass='ctr cw hidden'):
