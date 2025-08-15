@@ -148,7 +148,7 @@ def collate_data(args):
         egg_warn_file = args.output / (bench_name + '__EWARN.txt')
         #    run egglog
         ret_code, opt, stderr = run_egglog(egglog_file)
-
+        print(ret_code, opt, stderr)
         fmt_opt = None
 
         if ret_code == 0:
