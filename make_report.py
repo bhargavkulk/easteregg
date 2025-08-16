@@ -50,7 +50,6 @@ def collate_data(args):
     unchanged = 0
     regressed = 0
     failed = 0
-    formatter = Formatter()
     files: list[Path] = list(args.bench.glob('*.json'))
     for i, benchmark in enumerate(files):
         print(f'[{i + 1}/{len(files)}] running ' + str(benchmark))
