@@ -10,9 +10,9 @@ if [ -d egglog ]; then
     rm -rf egglog
 fi
 
-git clone https://github.com/egraphs-good/egglog/
+git clone https://github.com/egraphs-good/egglog/ --quiet
 
-cargo build --manifest-path egglog/Cargo.toml
+cargo build --manifest-path egglog/Cargo.toml --quiet
 
 # cd skia
 # python3 tools/git-sync-deps
