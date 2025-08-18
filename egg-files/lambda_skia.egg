@@ -9,6 +9,9 @@
 ;; Blend Mode b ::= SrcOver
 ;;
 ;; Geometry   g ::= Rect(float, float, float, float)
+;;                | Oval(float, float, float, float)
+;;                | Intersect(left: g, right: g)
+;;                | Difference(left: g, right g)
 
 (datatype Fill
   (Color f64 f64 f64 f64))
@@ -22,6 +25,7 @@
 (datatype Geometry
   (Full)
   (Rect f64 f64 f64 f64)
+  (Oval f64 f64 f64 f64)
   (Intersect Geometry Geometry)
   (Difference Geometry Geometry))
 
