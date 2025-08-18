@@ -30,15 +30,17 @@
   (Intersect Geometry Geometry)
   (Difference Geometry Geometry))
 
+(datatype Transform
+  (Matrix f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64))
+
 (datatype Layer
   (Empty)
   (SaveLayer Layer Layer SkPaint)
   (Draw Layer Geometry SkPaint Geometry Transform))
 
-(datatype Transform
-  (Matrix f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64))
-
-;; Rewrites in lambda skia
+;;----------------
+;; Rewrites Below
+;;----------------
 (rewrite (SaveLayer l1 (Draw l2 g (Paint (Color a2 r2 g2 b2) (SrcOver)) c t) (Paint (Color 1.0 r1 g1 b1) (SrcOver)))
          (Draw (SaveLayer l1 l2 (Paint (Color 1.0 r1 g1 b1) (SrcOver))) g (Paint (Color a2 r2 g2 b2) (SrcOver)) c t))
 
