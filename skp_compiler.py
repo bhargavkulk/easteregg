@@ -20,6 +20,7 @@ from lambda_skia import (
     Paint,
     Rect,
     SaveLayer,
+    Transform,
     mk_color,
     pretty_print_layer,
 )
@@ -39,15 +40,15 @@ def warn(msg):
     warnings_var.set(warnings)
 
 
-I = [[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]]
+I = [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
 
 
 def mm(a, b):
-    result = [[0.0 for _ in range(4)] for _ in range(4)]
+    result = [0.0] * 16
     for i in range(4):
         for j in range(4):
             for k in range(4):
-                result[i][j] += a[i][k] * b[k][j]
+                result[i * 4 + j] += a[i * 4 + k] * b[k * 4 + j]
     return result
 
 
@@ -55,6 +56,7 @@ def mm(a, b):
 class State:
     # matrix: list[float]?
     clip: Geometry
+    transform: list[float]
     layer: Layer
     is_save_layer: bool
     paint: Optional[Paint]  # Only not none, if is_save_layer is True
@@ -72,27 +74,41 @@ def compile_paint(json_paint: Optional[dict]) -> Paint:
         return Paint(color, blend_mode)
 
 
+def compile_transform(transform: Any) -> Transform:
+    print(transform)
+    return Transform([1, 2, 3])
+
+
 def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
     """Compiles serialized Skia commands into λSkia"""
-    stack: list[State] = [State(Full(), Empty(), False, None)]
+    stack: list[State] = [State(Full(), I, Empty(), False, None)]
     # print(stack)
     # input()
     for i, command_data in enumerate(commands):
 
-        def mk_clip(g: Geometry, op: Literal['intersect'] | Literal['difference']):
+        def push_clip(g: Geometry, op: Literal['intersect'] | Literal['difference']):
             # given g and op
             # [..., s(m, c, l, b, p)]
             # -->
             # [..., s(m, op(c, g), l, b, p)]
             stack[-1].clip = (Intersect if op == 'intersect' else Difference)(stack[-1].clip, g)
 
+        def push_transform(m: list[float]):
+            # given m₂
+            # [..., s(m₁, c, l, b, p)]
+            # -->
+            # [..., s(m₁ × m₂, c, l, b, p)]
+            stack[-1].transform = mm(stack[-1].transform, m)
+
         def mk_draw(g: Geometry):
             p = compile_paint(command_data.get('paint', None))
             # given g and p
             # [..., s(m, c, l, b, p')]
             # -->
-            # [..., s(m, c, Draw(l, g, p, c), b, p')]
-            stack[-1].layer = Draw(stack[-1].layer, g, p, stack[-1].clip)
+            # [..., s(m, c, Draw(l, g, p, c, m), b, p')]
+            stack[-1].layer = Draw(
+                stack[-1].layer, g, p, stack[-1].clip, Transform(stack[-1].transform)
+            )
 
         match command := command_data['command']:
             case 'Save':
@@ -137,7 +153,10 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
             case 'ClipRect':
                 coords: list[float] = command_data['coords']
                 op: Literal['intersect'] | Literal['difference'] = command_data['op']
-                mk_clip(Rect(*[coord / 1.0 for coord in coords]), op)
+                push_clip(Rect(*[coord / 1.0 for coord in coords]), op)
+            case 'Concat44':
+                matrix: list[float] = [i for s in command_data['matrix'] for i in s]
+                push_transform(matrix)
             case _:
                 raise NotImplementedError(command)
 

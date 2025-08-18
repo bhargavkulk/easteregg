@@ -54,6 +54,20 @@ class Color(Node):
         return f'Color({int(self.a * 255)}, {int(self.r * 255)}, {int(self.b * 255)}, {int(self.g * 255)})'
 
 
+@dataclass
+class Transform(Node):
+    """4x4 transform matrix"""
+
+    matrix: Any
+
+    @override
+    def sexp(self) -> str:
+        return '(Transform ' + ' '.join([str(i) for i in self.matrix]) + ')'
+
+    def pprint(self) -> str:
+        return 'Mat[...]'
+
+
 def mk_color(argb: list[int]):
     return Color(*[i / 255 for i in argb])
 
@@ -204,6 +218,7 @@ class Draw(Layer):
     shape: Geometry
     paint: Paint
     clip: Geometry
+    transform: Transform
 
     @override
     def pretty_print(self, indent_level: int = 0) -> list[tuple[int, str]]:
@@ -213,9 +228,10 @@ class Draw(Layer):
         if not isinstance(self.bottom, Empty):
             res = self.bottom.pretty_print(indent_level)
 
-        cmd = 'Draw ' + self.shape.pprint() + ' in ' + self.clip.pprint()
-        res.append((indent_level, cmd))
+        res.append((indent_level, 'Draw ' + self.shape.pprint()))
         res.append((indent_level + 1, 'with ' + self.paint.pprint()))
+        res.append((indent_level + 1, 'in ' + self.clip.pprint()))
+        res.append((indent_level + 1, '@ ' + self.transform.pprint()))
         return res
 
 

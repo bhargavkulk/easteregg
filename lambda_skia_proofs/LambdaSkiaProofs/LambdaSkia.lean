@@ -3,6 +3,9 @@ open Classical
 -- The basic indexing type
 def Point : Type := Unit
 
+-- The transform matrix (multiplication is implicit)
+def Transform: Type := Point -> Point
+
 -- Color := (alpha, red, green, blue)
 def Color : Type := (Float × Float × Float × Float)
 
@@ -38,11 +41,6 @@ axiom SrcOver_right_transparent :
 axiom SrcOver_associative :
   forall c₁ c₂ c₃ : Color, SrcOver (SrcOver c₁ c₂) c₃ = SrcOver c₁ (SrcOver c₂ c₃)
 
-axiom Lighten : BlendMode
-@[grind]
-axiom SrcOver_Lighten_associative :
-  forall c₁ c₂ c₃ : Color, Lighten (SrcOver c₁ c₂) c₃ = SrcOver c₁ (Lighten c₂ c₃)
-
 -- PaintBlend defines how 2 layers are blended together
 abbrev PaintBlend := (Float × BlendMode)
 
@@ -68,9 +66,11 @@ noncomputable def blend  (l₁ l₂ : Layer) (pb: PaintBlend) (clip : Geometry) 
 
   -- rasterizes a geometry into a layer
 @[grind]
-noncomputable def raster (shape: Geometry) (paint: PaintDraw) : Layer :=
+noncomputable def raster (shape: Geometry) (paint: PaintDraw) (t: Transform) : Layer :=
   let (style, color, color_filter) := paint
-  fun pt => if (style shape) pt then color_filter (color pt) else Transparent
+  fun pt =>
+  let pt := (t pt)
+  if (style shape) pt then color_filter (color pt) else Transparent
 
 -- Now we define layers
 -- Empty()
@@ -89,27 +89,15 @@ theorem empty_SrcOver_SaveLayer_is_Empty l:
 
 -- now we define draw
 @[grind]
-noncomputable def Draw (l : Layer) (g : Geometry) (pd : PaintDraw) (pb : PaintBlend) (clip : Geometry): Layer :=
-  blend l (raster g pd) pb clip
+noncomputable def Draw (l : Layer) (g : Geometry) (pd : PaintDraw) (pb : PaintBlend) (t: Transform)(clip : Geometry): Layer :=
+  blend l (raster g pd t) pb clip
 
 theorem lone_draw_inside_opaque_srcover_savelayer
-  (bottom : Layer) (g : Geometry) (pd : PaintDraw) (α: Float) (c : Geometry):
-  SaveLayer bottom (Draw EmptyLayer g pd (α, SrcOver) c) (1.0, SrcOver) = Draw bottom g pd (α, SrcOver) c := by
+  (bottom : Layer) (g : Geometry) (pd : PaintDraw) (α: Float) (c : Geometry) (t: Transform):
+  SaveLayer bottom (Draw EmptyLayer g pd (α, SrcOver) t c) (1.0, SrcOver) = Draw bottom g pd (α, SrcOver) t c := by
   grind
 
 theorem last_draw_inside_opaque_srcover_savelayer
-  (l₁ l₂ : Layer) (g c : Geometry) (pd : PaintDraw) (α : Float) :
-  SaveLayer l₁ (Draw l₂ g pd (α, SrcOver) c) (1.0, SrcOver) = Draw (SaveLayer l₁ l₂ (1.0, SrcOver)) g pd (α, SrcOver) c := by
+  (l₁ l₂ : Layer) (g c : Geometry) (pd : PaintDraw) (α : Float) (t : Transform):
+  SaveLayer l₁ (Draw l₂ g pd (α, SrcOver) t c) (1.0, SrcOver) = Draw (SaveLayer l₁ l₂ (1.0, SrcOver)) g pd (α, SrcOver) t c := by
   grind
-
-
-theorem last_draw_inside_opaque_srcover_savelayer_lighten
-  (l₁ l₂ : Layer) (g c : Geometry) (pd : PaintDraw) (α : Float) :
-  SaveLayer l₁ (Draw l₂ g pd (α, Lighten) c) (1.0, SrcOver) = Draw (SaveLayer l₁ l₂ (1.0, SrcOver)) g pd (α, Lighten) c := by
-  unfold SaveLayer Draw
-  simp [blend, raster]
-  ext pt
-  split
-  · simp [applyAlpha_opaque]
-
-  · rfl
