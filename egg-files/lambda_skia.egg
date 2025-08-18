@@ -33,7 +33,7 @@
 (datatype Layer
   (Empty)
   (SaveLayer Layer Layer SkPaint)
-  (Draw Layer Geometry SkPaint Geometry))
+  (Draw Layer Geometry SkPaint Geometry Transform))
 
 (datatype Transform
   (Matrix f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64))
