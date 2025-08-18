@@ -16,6 +16,7 @@ from lambda_skia import (
     Geometry,
     Intersect,
     Layer,
+    Oval,
     Paint,
     Rect,
     SaveLayer,
@@ -130,14 +131,16 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
             case 'DrawRect':
                 coords: list[float] = command_data['coords']
                 mk_draw(Rect(*[coord / 1.0 for coord in coords]))
+            case 'DrawOval':
+                coords: list[float] = command_data['coords']
+                mk_draw(Oval(*[coord / 1.0 for coord in coords]))
             case 'ClipRect':
                 coords: list[float] = command_data['coords']
                 op: Literal['intersect'] | Literal['difference'] = command_data['op']
                 mk_clip(Rect(*[coord / 1.0 for coord in coords]), op)
             case _:
                 raise NotImplementedError(command)
-        # print(stack)
-        # input()
+
     assert len(stack) == 1, 'Unbalanced Save/SaveLayer'
 
     return stack[-1].layer

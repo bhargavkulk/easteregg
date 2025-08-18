@@ -10,6 +10,7 @@ from lambda_skia import (
     Full,
     Intersect,
     Layer,
+    Oval,
     Paint,
     Rect,
     SaveLayer,
@@ -24,6 +25,7 @@ geometry: "(" "Full" ")" -> full
         | "(" "Rect" FLOAT FLOAT FLOAT FLOAT ")" -> rect
         | "(" "Intersect" geometry geometry ")" -> intersect
         | "(" "Difference" geometry geometry ")" -> difference
+        | "(" "Oval" FLOAT FLOAT FLOAT FLOAT ")" -> oval
 
 paint: "(" "Paint" fill blend_mode ")" -> paint
 
@@ -70,6 +72,9 @@ class LambdaSkiaTransformer(Transformer[Any, Layer]):
 
     def draw(self, node):
         return Draw(*node)
+
+    def oval(self, node):
+        return Oval(*node)
 
 
 def parse_sexp(sexp_str: str) -> Layer:
