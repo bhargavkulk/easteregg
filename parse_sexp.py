@@ -14,22 +14,25 @@ from lambda_skia import (
     Paint,
     Rect,
     SaveLayer,
+    Transform,
 )
 
 grammar = """
-layer: "(" "Empty" ")" -> empty
-     | "(" "SaveLayer" layer layer paint ")" -> save_layer
-     | "(" "Draw" layer geometry paint geometry ")" -> draw
+layer: "(Empty" ")" -> empty
+     | "(SaveLayer" layer layer paint ")" -> save_layer
+     | "(Draw" layer geometry paint geometry transform ")" -> draw
 
-geometry: "(" "Full" ")" -> full
-        | "(" "Rect" FLOAT FLOAT FLOAT FLOAT ")" -> rect
-        | "(" "Intersect" geometry geometry ")" -> intersect
-        | "(" "Difference" geometry geometry ")" -> difference
-        | "(" "Oval" FLOAT FLOAT FLOAT FLOAT ")" -> oval
+matrix: "(Matrix" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT ")" -> matrix
 
-paint: "(" "Paint" fill blend_mode ")" -> paint
+geometry: "(Full" ")" -> full
+        | "(Rect" FLOAT FLOAT FLOAT FLOAT ")" -> rect
+        | "(Intersect" geometry geometry ")" -> intersect
+        | "(Difference" geometry geometry ")" -> difference
+        | "(Oval" FLOAT FLOAT FLOAT FLOAT ")" -> oval
 
-fill: "(" "Color" FLOAT FLOAT FLOAT FLOAT ")" -> color
+paint: "(Paint" fill blend_mode ")" -> paint
+
+fill: "(Color" FLOAT FLOAT FLOAT FLOAT ")" -> color
 
 blend_mode: /\([A-Za-z]+\)/
 
@@ -75,6 +78,9 @@ class LambdaSkiaTransformer(Transformer[Any, Layer]):
 
     def oval(self, node):
         return Oval(*node)
+
+    def matrix(self, node):
+        return Transform(node)
 
 
 def parse_sexp(sexp_str: str) -> Layer:
