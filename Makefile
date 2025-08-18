@@ -1,2 +1,2 @@
 nightly:
-	bash run.sh
+	bash ./nightly.sh

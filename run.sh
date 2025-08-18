@@ -4,7 +4,7 @@ set -o pipefail
 
 export PATH=~/.cargo/bin:$PATH
 
-rustup update
+RUSTUP_TERM_COLOR=never rustup update
 
 if [ -d egglog ]; then
     rm -rf egglog
@@ -21,9 +21,6 @@ cargo build --manifest-path egglog/Cargo.toml --quiet
 # ninja -C out/debug dm skp_parser
 # cd ..
 
-python3 -m venv venv
-$(pwd)/venv/bin/python -m pip install uv
-$(pwd)/venv/bin/python -m uv sync
-
 rm -rf report
-$(pwd)/venv/bin/python -m uv run make_report.py new-bench/json rsrc report
+uv sync
+uv run make_report.py bench/json rsrc report

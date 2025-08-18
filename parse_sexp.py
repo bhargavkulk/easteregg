@@ -20,7 +20,7 @@ from lambda_skia import (
 grammar = """
 layer: "(Empty" ")" -> empty
      | "(SaveLayer" layer layer paint ")" -> save_layer
-     | "(Draw" layer geometry paint geometry transform ")" -> draw
+     | "(Draw" layer geometry paint geometry matrix ")" -> draw
 
 matrix: "(Matrix" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT ")" -> matrix
 
@@ -34,7 +34,7 @@ paint: "(Paint" fill blend_mode ")" -> paint
 
 fill: "(Color" FLOAT FLOAT FLOAT FLOAT ")" -> color
 
-blend_mode: /\([A-Za-z]+\)/
+blend_mode: "(" /[A-Za-z]+/ ")"
 
 %import common.FLOAT
 %import common.WS
