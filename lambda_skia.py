@@ -62,7 +62,7 @@ class Transform(Node):
 
     @override
     def sexp(self) -> str:
-        return '(Transform ' + ' '.join([str(i) for i in self.matrix]) + ')'
+        return '(Matrix ' + ' '.join([str(i) for i in self.matrix]) + ')'
 
     def pprint(self) -> str:
         return 'Mat[...]'
