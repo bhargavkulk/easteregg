@@ -74,18 +74,6 @@ class State:
     paint: Optional[Paint]  # Only not none, if is_save_layer is True
 
 
-def compile_paint(json_paint: Optional[dict]) -> Paint:
-    warn(f'[INFO] paint: {list(json_paint.keys()) if json_paint else None}')
-    if json_paint is None:
-        color = Color(1.0, 0.0, 0.0, 0.0)
-        blend_mode: BlendMode = '(SrcOver)'
-        return Paint(color, blend_mode)
-    else:
-        color = mk_color(json_paint.get('color', [255, 0, 0, 0]))
-        blend_mode = '(' + json_paint.get('blendMode', 'SrcOver') + ')'
-        return Paint(color, blend_mode)
-
-
 def compile_transform(transform: Any) -> Transform:
     print(transform)
     return Transform([1, 2, 3])
@@ -98,7 +86,22 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
     # input()
     for i, command_data in enumerate(commands):
 
-        def push_clip(g: Geometry, op: Literal['intersect'] | Literal['difference']):
+        def compile_paint(json_paint: Optional[dict]) -> Paint:
+            warn(f'[INFO] paint: {list(json_paint.keys()) if json_paint else None}')
+            if json_paint is None:
+                color = Color(1.0, 0.0, 0.0, 0.0)
+                blend_mode: BlendMode = '(SrcOver)'
+                return Paint(color, blend_mode)
+            else:
+                for key in json_paint.keys():
+                    if key not in ('color', 'blend_mode'):
+                        raise NotImplementedError(key, i)
+
+                color = mk_color(json_paint.get('color', [255, 0, 0, 0]))
+                blend_mode = '(' + json_paint.get('blendMode', 'SrcOver') + ')'
+                return Paint(color, blend_mode)
+
+        def push_clip(g: Geometry, op: ClipOp):
             # given g and op
             # [..., s(m, c, l, b, p)]
             # -->
@@ -182,7 +185,6 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 raise NotImplementedError(command + ' @ ' + str(i))
 
     assert len(stack) == 1, 'Unbalanced Save/SaveLayer'
-
     return stack[-1].layer
 
 

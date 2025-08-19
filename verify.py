@@ -374,7 +374,3 @@ if __name__ == '__main__':
         skp = json.load(f)
 
     verify_skp(skp)
-
-# Local Variables:
-# jinx-local-words: "SkComposeColorFilter SkMatrixColorFilter byteArray colorfilter"
-# End:
