@@ -159,6 +159,10 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
             case 'DrawRect':
                 coords: list[float] = command_data['coords']
                 mk_draw(Rect(*[coord / 1.0 for coord in coords]))
+            case 'DrawRRect':
+                coords, *radii = command_data['coords']
+                ltrb_radii = radii_to_ltrb(radii)
+                mk_draw(RRect(*([i / 1.0 for i in coords + ltrb_radii])))
             case 'DrawOval':
                 coords: list[float] = command_data['coords']
                 mk_draw(Oval(*[coord / 1.0 for coord in coords]))
@@ -170,12 +174,12 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 coords, *radii = command_data['coords']
                 ltrb_radii = radii_to_ltrb(radii)
                 op: ClipOp = command_data['op']
-                push_clip(RRect(*(coords + ltrb_radii)), op)
+                push_clip(RRect(*([i / 1.0 for i in coords + ltrb_radii])), op)
             case 'Concat44':
                 matrix: list[float] = [i for s in command_data['matrix'] for i in s]
                 push_transform(matrix)
             case _:
-                raise NotImplementedError(command + ' @ ' + i)
+                raise NotImplementedError(command + ' @ ' + str(i))
 
     assert len(stack) == 1, 'Unbalanced Save/SaveLayer'
 
