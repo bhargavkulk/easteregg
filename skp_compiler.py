@@ -19,6 +19,7 @@ from lambda_skia import (
     Oval,
     Paint,
     Rect,
+    RRect,
     SaveLayer,
     Transform,
     mk_color,
@@ -50,6 +51,17 @@ def mm(a, b):
             for k in range(4):
                 result[i * 4 + j] += a[i * 4 + k] * b[k * 4 + j]
     return result
+
+
+def radii_to_ltrb(radii: list[list[float]]) -> list[float]:
+    left = radii[0][0]
+    top = radii[0][1]
+    right = radii[1][0]
+    bottom = radii[2][1]
+    return [left, top, right, bottom]
+
+
+type ClipOp = Literal['intersect'] | Literal['difference']
 
 
 @dataclass
@@ -152,13 +164,18 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 mk_draw(Oval(*[coord / 1.0 for coord in coords]))
             case 'ClipRect':
                 coords: list[float] = command_data['coords']
-                op: Literal['intersect'] | Literal['difference'] = command_data['op']
+                op: ClipOp = command_data['op']
                 push_clip(Rect(*[coord / 1.0 for coord in coords]), op)
+            case 'ClipRRect':
+                coords, *radii = command_data['coords']
+                ltrb_radii = radii_to_ltrb(radii)
+                op: ClipOp = command_data['op']
+                push_clip(RRect(*(coords + ltrb_radii)), op)
             case 'Concat44':
                 matrix: list[float] = [i for s in command_data['matrix'] for i in s]
                 push_transform(matrix)
             case _:
-                raise NotImplementedError(command)
+                raise NotImplementedError(command + ' @ ' + i)
 
     assert len(stack) == 1, 'Unbalanced Save/SaveLayer'
 

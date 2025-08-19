@@ -105,7 +105,25 @@ class Rect(Geometry):
 
     @override
     def pprint(self) -> str:
-        return f'Rectangle({self.l}, {self.t}, {self.r}, {self.b})'
+        return f'Rect({self.l}, {self.t}, {self.r}, {self.b})'
+
+
+@dataclass
+class RRect(Geometry):
+    """A rounded rectangular geometry defined by extent and radii"""
+
+    l: float
+    t: float
+    r: float
+    b: float
+    lr: float
+    tr: float
+    rr: float
+    br: float
+
+    @override
+    def pprint(self) -> str:
+        return f'RRect({self.l}, {self.t}, {self.r}, {self.b}, {self.lr}, {self.tr}, {self.rr}, {self.br})'
 
 
 @dataclass
