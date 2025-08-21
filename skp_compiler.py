@@ -74,11 +74,6 @@ class State:
     paint: Optional[Paint]  # Only not none, if is_save_layer is True
 
 
-def compile_transform(transform: Any) -> Transform:
-    print(transform)
-    return Transform([1, 2, 3])
-
-
 def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
     """Compiles serialized Skia commands into λSkia"""
     stack: list[State] = [State(Full(), I, Empty(), False, None)]
@@ -94,7 +89,7 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 return Paint(color, blend_mode)
             else:
                 for key in json_paint.keys():
-                    if key not in ('color', 'blend_mode'):
+                    if key not in ('color', 'blendMode', 'antiAlias'):
                         raise NotImplementedError(key, i)
 
                 color = mk_color(json_paint.get('color', [255, 0, 0, 0]))
@@ -166,9 +161,6 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 coords, *radii = command_data['coords']
                 ltrb_radii = radii_to_ltrb(radii)
                 mk_draw(RRect(*([i / 1.0 for i in coords + ltrb_radii])))
-            case 'DrawOval':
-                coords: list[float] = command_data['coords']
-                mk_draw(Oval(*[coord / 1.0 for coord in coords]))
             case 'ClipRect':
                 coords: list[float] = command_data['coords']
                 op: ClipOp = command_data['op']

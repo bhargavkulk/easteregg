@@ -127,21 +127,6 @@ class RRect(Geometry):
 
 
 @dataclass
-class Oval(Geometry):
-    """A elliptical geometry defined by left, top, right, and bottom
-    coordinates."""
-
-    l: float
-    t: float
-    r: float
-    b: float
-
-    @override
-    def pprint(self) -> str:
-        return f'Oval({self.l}, {self.t}, {self.r}, {self.b})'
-
-
-@dataclass
 class Intersect(Geometry):
     """A geometry that represents the intersection of two or more geometries."""
 
