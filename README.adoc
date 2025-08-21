@@ -1,6 +1,12 @@
 = EasterEgg
 Bhargav Kulkarni
 
+== Requirements
+
+`uv`
+
+Rust only needed on nightly
+
 == Reading List
 
 - https://cnandi.com/docs/icfp18-cr.pdf[ReIncarnate]: CAD semantics
