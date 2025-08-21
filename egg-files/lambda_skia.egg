@@ -1,0 +1,48 @@
+;; Layer      l ::= Empty()
+;;                | SaveLayer(bottom: l, top: l, paint: p)
+;;                | Draw(bottom: l, shape: g, paint: p, clip: g, transform: t)
+;;
+;; Paint      p ::= Paint(fill: f, blend_mode: b)
+;;
+;; Fill       f ::= ARGB(float, float, float, float)
+;;
+;; Blend Mode b ::= SrcOver
+;;
+;; Geometry   g ::= Rect(float, float, float, float)
+;;                | Oval(float, float, float, float)
+;;                | Intersect(left: g, right: g)
+;;                | Difference(left: g, right g)
+;; Transform  t ::= Matrix(float * 16)
+
+(datatype Fill
+  (Color f64 f64 f64 f64))
+
+(datatype BlendMode
+  (SrcOver))
+
+(datatype SkPaint
+  (Paint Fill BlendMode))
+
+(datatype Geometry
+  (Full)
+  (Rect f64 f64 f64 f64)
+  (Oval f64 f64 f64 f64)
+  (Intersect Geometry Geometry)
+  (Difference Geometry Geometry))
+
+(datatype Transform
+  (Matrix f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64))
+
+(datatype Layer
+  (Empty)
+  (SaveLayer Layer Layer SkPaint)
+  (Draw Layer Geometry SkPaint Geometry Transform))
+
+;;----------------
+;; Rewrites Below
+;;----------------
+(rewrite (SaveLayer l1 (Draw l2 g (Paint (Color a2 r2 g2 b2) (SrcOver)) c t) (Paint (Color 1.0 r1 g1 b1) (SrcOver)))
+         (Draw (SaveLayer l1 l2 (Paint (Color 1.0 r1 g1 b1) (SrcOver))) g (Paint (Color a2 r2 g2 b2) (SrcOver)) c t))
+
+(rewrite (SaveLayer l (Empty) (Paint (Color 1.0 r1 g1 b1) (SrcOver)))
+         l)

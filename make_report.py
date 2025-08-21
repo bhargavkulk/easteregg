@@ -1,3 +1,4 @@
+# pyrefly: ignore-errors
 import argparse
 import difflib
 import json
@@ -7,14 +8,15 @@ import subprocess
 import sys
 import traceback
 from pathlib import Path
-from typing import Any, Callable, final
+from typing import Any, Callable, final, reveal_type
 
+# todo replace with mako
 import yattag
 
-from eegg2png import egg_to_png
 from egglog_runner import run_cmd, run_egglog
-from printegg import Formatter, parse_sexp
-from skp2eegg import compile_json_skp, get_reset_warnings
+from lambda_skia import pretty_print_layer
+from parse_sexp import parse_sexp
+from skp_compiler import compile_skp_to_lskia, get_reset_warnings
 from verify import verify_skp
 
 EGG = 'egg'
@@ -49,7 +51,6 @@ def collate_data(args):
     unchanged = 0
     regressed = 0
     failed = 0
-    formatter = Formatter()
     files: list[Path] = list(args.bench.glob('*.json'))
     for i, benchmark in enumerate(files):
         print(f'[{i + 1}/{len(files)}] running ' + str(benchmark))
@@ -78,7 +79,9 @@ def collate_data(args):
         # 1. Compile to Egg
         egg = None
         try:
-            egg = compile_json_skp(skp)
+            # egg = compile_json_skp(skp)
+            lambda_skia_expr = compile_skp_to_lskia(skp['commands'])
+            egg = lambda_skia_expr.sexp()
         except Exception:
             tb = traceback.format_exc()
             err_file = args.output / (bench_name + '__NOOPT_ERR.html')
@@ -130,10 +133,8 @@ def collate_data(args):
         fmt_egg_file = args.output / (bench_name + '__NOOPT_FMT.html')
         fmt_egg = None
         with fmt_egg_file.open('w') as f:
-            formatter.fmt_layer(parse_sexp(egg))
-            fmt_egg = formatter.buffer.getvalue()
-            formatter.clear()
-            f.write(page_template(lambda d: code_page(fmt_egg, d)).getvalue())
+            fmt_egg = pretty_print_layer(lambda_skia_expr)
+            f.write(page_template(lambda d: code_page(str(fmt_egg), d)).getvalue())
 
         data['egg_file'] = str(egg_file).replace('report', '.')
         data['fmt_egg_file'] = str(fmt_egg_file).replace('report', '.')
@@ -145,7 +146,6 @@ def collate_data(args):
         egg_warn_file = args.output / (bench_name + '__EWARN.txt')
         #    run egglog
         ret_code, opt, stderr = run_egglog(egglog_file)
-
         fmt_opt = None
 
         if ret_code == 0:
@@ -153,10 +153,8 @@ def collate_data(args):
                 f.write(page_template(lambda d: code_page(opt, d)).getvalue())
 
             with opt_fmt_file.open('w') as f:
-                formatter.fmt_layer(parse_sexp(opt))
-                fmt_opt = formatter.buffer.getvalue()
-                formatter.clear()
-                f.write(page_template(lambda d: code_page(fmt_opt, d)).getvalue())
+                fmt_opt = pretty_print_layer(parse_sexp(opt))
+                f.write(page_template(lambda d: code_page(str(fmt_opt), d)).getvalue())
 
             with egg_warn_file.open('w') as f:
                 f.write(stderr)
@@ -213,33 +211,33 @@ def collate_data(args):
 
         # Make PNG files
         # - Make pre opt
-        pre_opt = args.output / (bench_name + '__PRE.png')
-        res1 = egg_to_png(skp, egg, pre_opt)
+        # pre_opt = args.output / (bench_name + '__PRE.png')
+        # res1 = egg_to_png(skp, egg, pre_opt)
 
         # - Make post opt
-        post_opt = args.output / (bench_name + '__POST.png')
-        res2 = egg_to_png(skp, opt, post_opt)
+        # post_opt = args.output / (bench_name + '__POST.png')
+        # res2 = egg_to_png(skp, opt, post_opt)
 
-        if res1 is None:
-            data['pre_png'] = str(pre_opt).replace('report', '.')
-        else:
-            pre_error = args.output / (bench_name + '__PRE_ERROR.txt')
-            with pre_error.open('w', encoding='utf-8') as f:
-                f.write(res1)
-            data['pre_error'] = str(pre_error).replace('report', '.')
+        # if res1 is None:
+        #     data['pre_png'] = str(pre_opt).replace('report', '.')
+        # else:
+        #     pre_error = args.output / (bench_name + '__PRE_ERROR.txt')
+        #     with pre_error.open('w', encoding='utf-8') as f:
+        #         f.write(res1)
+        #     data['pre_error'] = str(pre_error).replace('report', '.')
 
-        if res2 is None:
-            data['post_png'] = str(post_opt).replace('report', '.')
-        else:
-            post_error = args.output / (bench_name + '__POST_ERROR.txt')
-            with post_error.open('w', encoding='utf-8') as f:
-                f.write(res2)
-            data['post_error'] = str(post_error).replace('report', '.')
+        # if res2 is None:
+        #     data['post_png'] = str(post_opt).replace('report', '.')
+        # else:
+        #     post_error = args.output / (bench_name + '__POST_ERROR.txt')
+        #     with post_error.open('w', encoding='utf-8') as f:
+        #         f.write(res2)
+        #     data['post_error'] = str(post_error).replace('report', '.')
 
-        if (res1 is None) and (res2 is None):
-            image_diff = args.output / (bench_name + '__IMG_DIFF.png')
-            ret, stdout, stdin = run_cmd(f'compare {pre_opt} {post_opt} {image_diff}'.split())
-            data['image_diff'] = str(image_diff).replace('report', '.')
+        # if (res1 is None) and (res2 is None):
+        #     image_diff = args.output / (bench_name + '__IMG_DIFF.png')
+        #     ret, stdout, stdin = run_cmd(f'compare {pre_opt} {post_opt} {image_diff}'.split())
+        #     data['image_diff'] = str(image_diff).replace('report', '.')
 
         # 4. Save Stats
         benchmarks.append(data)
@@ -425,31 +423,32 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
                 with tag('td', klass=f'{benchmark["change"]} ctr'):
                     text(f'{benchmark["counts"][0]} → {benchmark["counts"][1]}')
 
-                with tag('td', klass='ctr'):
-                    if 'pre_png' in benchmark.keys():
-                        with tag('a', href=benchmark['pre_png']):
-                            text('»')
-                    else:
-                        with tag('a', href=benchmark['pre_error']):
-                            text('!')
+                with tag('td', klass='ctr void'):
+                    text('')
+                    # if 'pre_png' in benchmark.keys():
+                    #     with tag('a', href=benchmark['pre_png']):
+                    #         text('»')
+                    # else:
+                    #     with tag('a', href=benchmark['pre_error']):
+                    #         text('!')
 
-                    text('|')
+                    # text('|')
 
-                    if 'post_png' in benchmark.keys():
-                        with tag('a', href=benchmark['post_png']):
-                            text('»')
-                    else:
-                        with tag('a', href=benchmark['post_error']):
-                            text('!')
+                    # if 'post_png' in benchmark.keys():
+                    #     with tag('a', href=benchmark['post_png']):
+                    #         text('»')
+                    # else:
+                    #     with tag('a', href=benchmark['post_error']):
+                    #         text('!')
 
-                    text('|')
+                    # text('|')
 
-                    if 'image_diff' in benchmark.keys():
-                        with tag('a', href=benchmark['image_diff']):
-                            text('»')
-                    else:
-                        with tag('a'):
-                            text('!')
+                    # if 'image_diff' in benchmark.keys():
+                    #     with tag('a', href=benchmark['image_diff']):
+                    #         text('»')
+                    # else:
+                    #     with tag('a'):
+                    #         text('!')
 
                 if 'warn_file' in benchmark.keys():
                     with tag('td', klass='ctr cw hidden'):

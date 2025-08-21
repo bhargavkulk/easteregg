@@ -1,3 +1,4 @@
+# pyrefly: ignore-errors
 from dataclasses import dataclass
 from typing import Callable
 

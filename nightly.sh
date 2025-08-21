@@ -21,6 +21,9 @@ cargo build --manifest-path egglog/Cargo.toml --quiet
 # ninja -C out/debug dm skp_parser
 # cd ..
 
+python3 -m venv venv
+$(pwd)/venv/bin/python -m pip install uv
+$(pwd)/venv/bin/python -m uv sync
+
 rm -rf report
-uv sync
-uv run make_report.py bench/json rsrc report
+$(pwd)/venv/bin/python -m uv run make_report.py bench/json rsrc report

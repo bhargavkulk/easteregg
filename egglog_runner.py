@@ -3,7 +3,7 @@ import subprocess
 from pathlib import Path
 
 
-def run_cmd(cmd, **kwargs):
+def run_cmd(cmd, **kwargs) -> tuple[int, str, str]:
     try:
         # Copy the current environment
         # my_env = os.environ.copy()
@@ -16,7 +16,7 @@ def run_cmd(cmd, **kwargs):
 
 
 def run_egglog(egg_file):
-    prelude = Path('./egg-files/prelude.egg')
+    prelude = Path('./egg-files/lambda_skia.egg')
     extraction = Path('./egg-files/extract.egg')
 
     command = (
