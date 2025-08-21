@@ -16,7 +16,6 @@ from lambda_skia import (
     Geometry,
     Intersect,
     Layer,
-    Oval,
     Paint,
     Rect,
     RRect,

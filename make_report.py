@@ -1,3 +1,4 @@
+# pyrefly: ignore-errors
 import argparse
 import difflib
 import json

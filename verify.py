@@ -213,6 +213,7 @@ def verify_paint(paint: dict):
             case 'color':
                 pass
             case 'blendMode':
+                assert isinstance(value, str)
                 verify_blend_mode(value)
             case 'blur':
                 # use this to make shadows, do a difference clip, to just draw the borders
@@ -229,7 +230,7 @@ def verify_paint(paint: dict):
                 # kSolid_SkBlurStyle
                 # kOuter_SkBlurStyle
                 # kInner_SkBlurStyle
-
+                assert isinstance(value, dict)
                 assert 'sigma' in value
                 assert 'style' in value
                 assert value['style'] in {'normal'}, f'Unknown blur style: {value["style"]}'
@@ -256,6 +257,7 @@ def verify_paint(paint: dict):
                 # Chrome seems to enable this for gradients
                 pass
             case 'shader':
+                assert isinstance(value, dict)
                 verify_shader(value)
             case 'colorfilter':
                 # large composed color filter:
@@ -265,6 +267,7 @@ def verify_paint(paint: dict):
 
                 # matrixcolorfilter
                 # https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/Microsoft_Bing__layer_3.json
+                assert isinstance(value, dict)
                 verify_color_filter(value)
                 # raise NotImplementedError('fixing color filter')
             case 'imagefilter':
