@@ -1,3 +1,4 @@
+import traceback
 from pathlib import Path
 from typing import Any
 
@@ -9,6 +10,24 @@ import lambda_skia as ast
 BLEND_MODES = {
     '(SrcOver)': skia.BlendMode.kSrcOver,
 }
+
+
+def mk_paint(paint: ast.Paint):
+    skpaint = skia.Paint()
+
+    # Add Fill
+    if isinstance(paint.fill, ast.Color):
+        skpaint.setColor4f(skia.Color4f(paint.fill.r, paint.fill.g, paint.fill.g, paint.fill.a))
+    else:
+        raise NotImplementedError(f'{type(paint.fill)} fill is not supported')
+
+    # Add Blend Mode
+    if paint.blend_mode in BLEND_MODES.keys():
+        skpaint.setBlendMode(BLEND_MODES[paint.blend_mode])
+    else:
+        raise NotImplementedError(f'{paint.blend_mode[1:-1]} blend mode is not supported')
+
+    return skpaint
 
 
 class Renderer:
@@ -29,10 +48,11 @@ class Renderer:
         """Recursively render a layer tree to the canvas."""
         match layer:
             case ast.SaveLayer(bottom, top, paint):
+                raise NotImplementedError('SaveLayer absent for now')
                 self.render_layer(bottom)
 
                 # TODO: convert Paint to skia.Paint
-                # TODO: determine bounds for saveLayer
+                skpaint = mk_paint(paint)
 
                 self.render_layer(top)
                 self.canvas.restore()
@@ -44,23 +64,31 @@ class Renderer:
 
                 # TODO: convert Transform to matrix and set
                 # TODO: convert Paint to skia.Paint
+                skpaint = mk_paint(paint)
 
-                self.clip_geometry(clip)
-                self.render_geometry(shape, paint)
+                # self.clip_geometry(clip)
+                print('still need to do the damn thing')
+                self.render_geometry(shape, skpaint)
 
                 self.canvas.restore()
+            case _:
+                # Empty()
+                pass
 
-    def render_geometry(self, geometry: ast.Geometry, paint: ast.Paint) -> None:
+    def render_geometry(self, geometry: ast.Geometry, skpaint) -> None:
         """Execute drawing commands for the given geometry."""
         match geometry:
             case ast.Full():
-                # TODO: implement full geometry rendering
+                self.canvas.drawPaint(skpaint)
                 pass
             case ast.Rect(left, top, right, bottom):
-                # TODO: implement rect rendering
+                # TODO: drawRect
+                self.canvas.drawRect(skia.Rect.MakeLTRB(left, top, right, bottom), skpaint)
                 pass
             case ast.Intersect(_, _) | ast.Difference(_, _):
-                pass
+                raise ValueError(
+                    f'Geometry operator {type(geometry)} not allowed as a draw geometry'
+                )
             case _:
                 raise NotImplementedError(f'Geometry type {type(geometry)} not implemented')
 
@@ -81,7 +109,6 @@ class Renderer:
 
         match geometry:
             case ast.Full():
-                # TODO: implement full clipping
                 pass
             case ast.Intersect(left_geo, right_geo):
                 self.clip_geometry(left_geo)
@@ -91,3 +118,16 @@ class Renderer:
                 apply_clip_geometry(right_geo, skia.ClipOp.kDifference)
             case _:
                 raise ValueError(f'Invalid geometry type {type(geometry)} for clipping')
+
+
+def egg_to_png(json, layer, output_file):
+    """Writes egg file to png at 'output_file'"""
+    try:
+        w, h = json.get('dim', (512, 512))
+        renderer = Renderer(w, h)
+        renderer.render_layer(layer)
+        renderer.to_png(output_file)
+        return None
+    except Exception:
+        tb = traceback.format_exc()
+        return str(tb)
