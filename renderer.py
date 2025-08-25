@@ -49,24 +49,18 @@ class Renderer:
         match layer:
             case ast.SaveLayer(bottom, top, paint):
                 self.render_layer(bottom)
-
                 skpaint = mk_paint(paint)
                 self.canvas.saveLayer(paint=skpaint)
                 self.render_layer(top)
                 self.canvas.restore()
-
             case ast.Draw(bottom, shape, paint, clip, transform):
                 self.render_layer(bottom)
-
                 self.canvas.save()
-
+                self.clip_geometry(clip)
                 # TODO: convert Transform to matrix and set
+                print('still need to do the damn transform')
                 skpaint = mk_paint(paint)
-
-                # self.clip_geometry(clip)
-                print('still need to do the damn clip and transform')
                 self.render_geometry(shape, skpaint)
-
                 self.canvas.restore()
             case _:
                 # Empty()
@@ -79,7 +73,6 @@ class Renderer:
                 self.canvas.drawPaint(skpaint)
                 pass
             case ast.Rect(left, top, right, bottom):
-                # TODO: drawRect
                 self.canvas.drawRect(skia.Rect.MakeLTRB(left, top, right, bottom), skpaint)
                 pass
             case ast.Intersect(_, _) | ast.Difference(_, _):
@@ -97,8 +90,7 @@ class Renderer:
                 case ast.Full():
                     raise ValueError('Full geometry should not appear in apply_clip_geometry')
                 case ast.Rect(left, top, right, bottom):
-                    # TODO: implement rect clipping with clip_op
-                    pass
+                    self.canvas.clipRect(skia.Rect.MakeLTRB(left, top, right, bottom), clip_op)
                 case _:
                     raise ValueError(
                         f'Invalid geometry type {type(geometry)} for apply_clip_geometry'
