@@ -48,12 +48,10 @@ class Renderer:
         """Recursively render a layer tree to the canvas."""
         match layer:
             case ast.SaveLayer(bottom, top, paint):
-                raise NotImplementedError('SaveLayer absent for now')
                 self.render_layer(bottom)
 
-                # TODO: convert Paint to skia.Paint
                 skpaint = mk_paint(paint)
-
+                self.canvas.saveLayer(paint=skpaint)
                 self.render_layer(top)
                 self.canvas.restore()
 
@@ -63,11 +61,10 @@ class Renderer:
                 self.canvas.save()
 
                 # TODO: convert Transform to matrix and set
-                # TODO: convert Paint to skia.Paint
                 skpaint = mk_paint(paint)
 
                 # self.clip_geometry(clip)
-                print('still need to do the damn thing')
+                print('still need to do the damn clip and transform')
                 self.render_geometry(shape, skpaint)
 
                 self.canvas.restore()
