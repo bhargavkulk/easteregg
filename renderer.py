@@ -17,7 +17,7 @@ def mk_paint(paint: ast.Paint):
 
     # Add Fill
     if isinstance(paint.fill, ast.Color):
-        skpaint.setColor4f(skia.Color4f(paint.fill.r, paint.fill.g, paint.fill.g, paint.fill.a))
+        skpaint.setColor4f(skia.Color4f(paint.fill.r, paint.fill.g, paint.fill.b, paint.fill.a))
     else:
         raise NotImplementedError(f'{type(paint.fill)} fill is not supported')
 
