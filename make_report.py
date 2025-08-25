@@ -424,32 +424,31 @@ def report_table(benchmarks, doc: yattag.SimpleDoc):
                 with tag('td', klass=f'{benchmark["change"]} ctr'):
                     text(f'{benchmark["counts"][0]} → {benchmark["counts"][1]}')
 
-                with tag('td', klass='ctr void'):
-                    text('')
-                    # if 'pre_png' in benchmark.keys():
-                    #     with tag('a', href=benchmark['pre_png']):
-                    #         text('»')
-                    # else:
-                    #     with tag('a', href=benchmark['pre_error']):
-                    #         text('!')
+                with tag('td', klass='ctr'):
+                    if 'pre_png' in benchmark.keys():
+                        with tag('a', href=benchmark['pre_png']):
+                            text('»')
+                    else:
+                        with tag('a', href=benchmark['pre_error']):
+                            text('!')
 
-                    # text('|')
+                    text('|')
 
-                    # if 'post_png' in benchmark.keys():
-                    #     with tag('a', href=benchmark['post_png']):
-                    #         text('»')
-                    # else:
-                    #     with tag('a', href=benchmark['post_error']):
-                    #         text('!')
+                    if 'post_png' in benchmark.keys():
+                        with tag('a', href=benchmark['post_png']):
+                            text('»')
+                    else:
+                        with tag('a', href=benchmark['post_error']):
+                            text('!')
 
-                    # text('|')
+                    text('|')
 
-                    # if 'image_diff' in benchmark.keys():
-                    #     with tag('a', href=benchmark['image_diff']):
-                    #         text('»')
-                    # else:
-                    #     with tag('a'):
-                    #         text('!')
+                    if 'image_diff' in benchmark.keys():
+                        with tag('a', href=benchmark['image_diff']):
+                            text('»')
+                    else:
+                        with tag('a'):
+                            text('!')
 
                 if 'warn_file' in benchmark.keys():
                     with tag('td', klass='ctr cw hidden'):
