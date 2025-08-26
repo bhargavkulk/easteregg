@@ -71,10 +71,10 @@ class Renderer:
         match geometry:
             case ast.Full():
                 self.canvas.drawPaint(skpaint)
-                pass
             case ast.Rect(left, top, right, bottom):
                 self.canvas.drawRect(skia.Rect.MakeLTRB(left, top, right, bottom), skpaint)
-                pass
+            case ast.Oval(left, top, right, bottom):
+                self.canvas.drawOval(skia.Rect.MakeLTRB(left, top, right, bottom), skpaint)
             case ast.Intersect(_, _) | ast.Difference(_, _):
                 raise ValueError(
                     f'Geometry operator {type(geometry)} not allowed as a draw geometry'

@@ -109,21 +109,18 @@ class Rect(Geometry):
 
 
 @dataclass
-class RRect(Geometry):
-    """A rounded rectangular geometry defined by extent and radii"""
+class Oval(Geometry):
+    """A rectangular geometry defined by left, top, right, and bottom
+    coordinates."""
 
     l: float
     t: float
     r: float
     b: float
-    lr: float
-    tr: float
-    rr: float
-    br: float
 
     @override
     def pprint(self) -> str:
-        return f'RRect({self.l}, {self.t}, {self.r}, {self.b}, {self.lr}, {self.tr}, {self.rr}, {self.br})'
+        return f'Oval({self.l}, {self.t}, {self.r}, {self.b})'
 
 
 @dataclass

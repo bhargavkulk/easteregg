@@ -16,9 +16,9 @@ from lambda_skia import (
     Geometry,
     Intersect,
     Layer,
+    Oval,
     Paint,
     Rect,
-    RRect,
     SaveLayer,
     Transform,
     mk_color,
@@ -156,6 +156,9 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
             case 'DrawRect':
                 coords: list[float] = command_data['coords']
                 mk_draw(Rect(*[coord / 1.0 for coord in coords]))
+            case 'DrawOval':
+                coords: list[float] = command_data['coords']
+                mk_draw(Oval(*[coord / 1.0 for coord in coords]))
             case 'DrawRRect':
                 coords, *radii = command_data['coords']
                 ltrb_radii = radii_to_ltrb(radii)
