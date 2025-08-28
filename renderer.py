@@ -10,8 +10,8 @@ import lambda_skia as ast
 BLEND_MODES = {
     '(SrcOver)': skia.BlendMode.kSrcOver,
     '(DstIn)': skia.BlendMode.kDstIn,
-    '(SoftLight)': skia.BlendMode.SoftLight,
-    '(Src)': skia.BlendMode.Src,
+    '(SoftLight)': skia.BlendMode.kSoftLight,
+    '(Src)': skia.BlendMode.kSrc,
 }
 
 
