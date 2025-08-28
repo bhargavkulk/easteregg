@@ -21,8 +21,10 @@
 
 (datatype BlendMode
   (SrcOver)
+  ;; No formal axioms for the below blend modes
   (DstIn)
-  (SoftLight))
+  (SoftLight)
+  (Src))
 
 (datatype SkPaint
   (Paint Fill BlendMode i64))
