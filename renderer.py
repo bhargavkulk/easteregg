@@ -6,6 +6,7 @@ import skia  # pyrefly: ignore
 
 # https://github.com/bhargavkulk/easteregg/blob/9646d8c2fcc2e90c01b5a74745f574a5bf9de58a/eegg2png.py
 import lambda_skia as ast
+from lambda_skia import RRect
 
 BLEND_MODES = {
     '(SrcOver)': skia.BlendMode.kSrcOver,
@@ -57,8 +58,7 @@ class Renderer:
                 self.render_layer(bottom)
                 self.canvas.save()
                 self.clip_geometry(clip)
-                # TODO: convert Transform to matrix and set
-                print('still need to do the damn transform')
+                self.transform(transform)
                 skpaint = mk_paint(paint)
                 self.render_geometry(shape, skpaint)
                 self.canvas.restore()
@@ -73,6 +73,11 @@ class Renderer:
                 self.canvas.drawPaint(skpaint)
             case ast.Rect(left, top, right, bottom):
                 self.canvas.drawRect(skia.Rect.MakeLTRB(left, top, right, bottom), skpaint)
+            case ast.RRect(l, t, r, b, rl, rt, rr, rb):
+                rect = skia.Rect.MakeLTRB(l, t, r, b)
+                rrect = skia.RRect.MakeEmpty()
+                rrect.setNinePatch(rect, rl, rt, rr, rb)
+                self.canvas.drawRRect(rrect, skpaint)
             case ast.Oval(left, top, right, bottom):
                 self.canvas.drawOval(skia.Rect.MakeLTRB(left, top, right, bottom), skpaint)
             case ast.Intersect(_, _) | ast.Difference(_, _):
@@ -87,10 +92,13 @@ class Renderer:
 
         def apply_clip_geometry(geometry: ast.Geometry, clip_op) -> None:
             match geometry:
-                case ast.Full():
-                    raise ValueError('Full geometry should not appear in apply_clip_geometry')
                 case ast.Rect(left, top, right, bottom):
                     self.canvas.clipRect(skia.Rect.MakeLTRB(left, top, right, bottom), clip_op)
+                case ast.RRect(l, t, r, b, rl, rt, rr, rb):
+                    rect = skia.Rect.MakeLTRB(l, t, r, b)
+                    rrect = skia.RRect.MakeEmpty()
+                    rrect.setNinePatch(rect, rl, rt, rr, rb)
+                    self.canvas.clipRRect(rrect, clip_op)
                 case _:
                     raise ValueError(
                         f'Invalid geometry type {type(geometry)} for apply_clip_geometry'
@@ -108,6 +116,17 @@ class Renderer:
             case _:
                 raise ValueError(f'Invalid geometry type {type(geometry)} for clipping')
 
+    def transform(self, transform: ast.Transform):
+        m44 = transform.matrix
+        rows = [
+            skia.V4(*m44[0:4]),
+            skia.V4(*m44[4:8]),
+            skia.V4(*m44[8:12]),
+            skia.V4(*m44[12:16]),
+        ]
+        skia_m44 = skia.M44.Rows(*rows)
+        self.canvas.setMatrix(skia_m44)
+
 
 def egg_to_png(json, layer, output_file):
     """Writes egg file to png at 'output_file'"""
@@ -116,7 +135,7 @@ def egg_to_png(json, layer, output_file):
         renderer = Renderer(w, h)
         renderer.render_layer(layer)
         renderer.to_png(output_file)
-        return None
+        return
     except Exception:
         tb = traceback.format_exc()
         return str(tb)

@@ -101,6 +101,7 @@ def verify_inner_image_filter(name, image_filter):
 def verify_shader(shader: dict):
     # this function is going to have a very annoying structure
     # I don't want to write this
+    assert False, 'searching for shader'
     assert 'name' in shader
     assert 'data' in shader
     assert 'values' in shader
@@ -341,7 +342,6 @@ def verify_command(command):
                 verify_paint(command['paint'])
         case 'Concat44':
             # concat44 has only 1 possible attribute
-            assert False, 'looking for transform'
             assert 'matrix' in command
         case 'ClipRect':
             assert 'coords' in command

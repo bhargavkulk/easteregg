@@ -19,6 +19,7 @@ from lambda_skia import (
     Oval,
     Paint,
     Rect,
+    RRect,
     SaveLayer,
     Transform,
     mk_color,

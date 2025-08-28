@@ -13,11 +13,10 @@ from lambda_skia import (
     Oval,
     Paint,
     Rect,
+    RRect,
     SaveLayer,
     Transform,
 )
-
-# | "(RRect" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT ")" -> rrect #
 
 grammar = """
 layer: "(Empty)" -> empty
@@ -28,6 +27,7 @@ matrix: "(Matrix" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FL
 
 geometry: "(Full)" -> full
         | "(Rect" FLOAT FLOAT FLOAT FLOAT ")" -> rect
+        | "(RRect" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT ")" -> rrect
         | "(Oval" FLOAT FLOAT FLOAT FLOAT ")" -> oval
         | "(Intersect" geometry geometry ")" -> intersect
         | "(Difference" geometry geometry ")" -> difference
@@ -62,6 +62,9 @@ class LambdaSkiaTransformer(Transformer[Any, Layer]):
 
     def rect(self, node):
         return Rect(*node)
+
+    def rrect(self, node):
+        return RRect(*node)
 
     def oval(self, node):
         return Oval(*node)

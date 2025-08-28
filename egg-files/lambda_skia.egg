@@ -4,7 +4,7 @@
 ;;
 ;; Paint      p ::= Paint(fill: f, blend_mode: b)
 ;;
-;; Fill       f ::= ARGB(float, float, float, float)
+;; Fill       f ::= Color(float, float, float, float)
 ;;
 ;; Blend Mode b ::= SrcOver
 ;;
@@ -12,6 +12,7 @@
 ;;                | Oval(float, float, float, float)
 ;;                | Intersect(left: g, right: g)
 ;;                | Difference(left: g, right g)
+;;
 ;; Transform  t ::= Matrix(float * 16)
 
 (datatype Fill
@@ -26,6 +27,7 @@
 (datatype Geometry
   (Full)
   (Rect f64 f64 f64 f64)
+  (RRect f64 f64 f64 f64 f64 f64 f64 f64)
   (Oval f64 f64 f64 f64)
   (Intersect Geometry Geometry)
   (Difference Geometry Geometry))

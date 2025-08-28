@@ -3,7 +3,7 @@ from typing import Any, Literal, override, reveal_type
 
 # Layer      l ::= Empty()
 #                | SaveLayer(bottom: l, top: l, paint: p)
-#                | Draw(bottom: l, shape: g, paint: p, clip: g
+#                | Draw(bottom: l, shape: g, paint: p, clip: g)
 #
 # Paint      p ::= Paint(fill: f, blend_mode: b)
 #
@@ -58,7 +58,7 @@ class Color(Node):
 class Transform(Node):
     """4x4 transform matrix"""
 
-    matrix: Any
+    matrix: list[float]
 
     @override
     def sexp(self) -> str:
@@ -106,6 +106,26 @@ class Rect(Geometry):
     @override
     def pprint(self) -> str:
         return f'Rect({self.l}, {self.t}, {self.r}, {self.b})'
+
+
+@dataclass
+class RRect(Geometry):
+    """A rectangular geometry defined by left, top, right, and bottom
+    coordinates, and the radii."""
+
+    l: float
+    t: float
+    r: float
+    b: float
+
+    rl: float
+    rt: float
+    rr: float
+    rb: float
+
+    @override
+    def pprint(self) -> str:
+        return f'RRect({self.l}, {self.t}, {self.r}, {self.b}, {self.rl}, {self.rt}, {self.rr}, {self.rb})'
 
 
 @dataclass
