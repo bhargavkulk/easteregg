@@ -164,6 +164,9 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 coords, *radii = command_data['coords']
                 ltrb_radii = radii_to_ltrb(radii)
                 mk_draw(RRect(*([i / 1.0 for i in coords + ltrb_radii])))
+            case 'DrawTextBlob':
+                # skip for now
+                pass
             case 'ClipRect':
                 coords: list[float] = command_data['coords']
                 op: ClipOp = command_data['op']
