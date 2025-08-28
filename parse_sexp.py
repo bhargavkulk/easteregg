@@ -40,7 +40,8 @@ fill: "(Color" FLOAT FLOAT FLOAT FLOAT ")" -> color
 
 blend_mode: "(" /[A-Za-z]+/ ")"
 
-%import common.FLOAT
+FLOAT: /-?\d+\.\d+/
+
 %import common.INT
 %import common.WS
 %ignore WS
