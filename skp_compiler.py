@@ -16,6 +16,7 @@ from lambda_skia import (
     Geometry,
     Intersect,
     Layer,
+    LinearGradient,
     Oval,
     Paint,
     Rect,
@@ -77,8 +78,7 @@ class State:
 def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
     """Compiles serialized Skia commands into λSkia"""
     stack: list[State] = [State(Full(), I, Empty(), False, None)]
-    # print(stack)
-    # input()
+
     for i, command_data in enumerate(commands):
 
         def compile_paint(json_paint: Optional[dict]) -> Paint:
@@ -89,11 +89,20 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 return Paint(color, blend_mode, i)
             else:
                 for key in json_paint.keys():
-                    if key not in ('color', 'blendMode', 'antiAlias', 'dither'):
+                    if key not in ('shader', 'color', 'blendMode', 'antiAlias', 'dither'):
                         raise NotImplementedError(key, i)
 
                 color = mk_color(json_paint.get('color', [255, 0, 0, 0]))
+                if 'shader' in json_paint.keys():
+                    # replace flat color with shader
+                    # So the shader is inside SkLocalMatrixShader
+                    inner_shader = json_paint['shader']['values']
+
+                    if '01_SkLinearGradient' in inner_shader:
+                        color = LinearGradient()
+
                 blend_mode = '(' + json_paint.get('blendMode', 'SrcOver') + ')'
+
                 return Paint(color, blend_mode, i)
 
         def push_clip(g: Geometry, op: ClipOp):

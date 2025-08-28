@@ -10,6 +10,7 @@ from lambda_skia import (
     Full,
     Intersect,
     Layer,
+    LinearGradient,
     Oval,
     Paint,
     Rect,
@@ -35,6 +36,7 @@ geometry: "(Full)" -> full
 paint: "(Paint" fill blend_mode INT ")" -> paint
 
 fill: "(Color" FLOAT FLOAT FLOAT FLOAT ")" -> color
+    | "(LinearGradient)" -> linear_gradient
 
 blend_mode: "(" /[A-Za-z]+/ ")"
 
@@ -57,6 +59,9 @@ class LambdaSkiaTransformer(Transformer[Any, Layer]):
 
     def color(self, node):
         return Color(*node)
+
+    def linear_gradient(self, node):
+        return LinearGradient()
 
     def paint(self, node):
         return Paint(*node)

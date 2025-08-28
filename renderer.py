@@ -17,10 +17,11 @@ def mk_paint(paint: ast.Paint):
     skpaint = skia.Paint()
 
     # Add Fill
-    if isinstance(paint.fill, ast.Color):
-        skpaint.setColor4f(skia.Color4f(paint.fill.r, paint.fill.g, paint.fill.b, paint.fill.a))
-    else:
-        raise NotImplementedError(f'{type(paint.fill)} fill is not supported')
+    match paint.fill:
+        case ast.Color(a, r, g, b):
+            skpaint.setColor4f(skia.Color4f(r, g, b, a))
+        case _:
+            raise NotImplementedError(f'{type(paint.fill)} fill is not supported')
 
     # Add Blend Mode
     if paint.blend_mode in BLEND_MODES.keys():

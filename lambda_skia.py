@@ -55,6 +55,14 @@ class Color(Node):
 
 
 @dataclass
+class LinearGradient(Node):
+    """Linear gradient shader"""
+
+    def pprint(self) -> str:
+        return f'LinearGradient'
+
+
+@dataclass
 class Transform(Node):
     """4x4 transform matrix"""
 

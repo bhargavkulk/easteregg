@@ -16,6 +16,7 @@
 ;; Transform  t ::= Matrix(float * 16)
 
 (datatype Fill
+  (LinearGradient)
   (Color f64 f64 f64 f64))
 
 (datatype BlendMode
