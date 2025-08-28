@@ -32,13 +32,14 @@ geometry: "(Full)" -> full
         | "(Intersect" geometry geometry ")" -> intersect
         | "(Difference" geometry geometry ")" -> difference
 
-paint: "(Paint" fill blend_mode ")" -> paint
+paint: "(Paint" fill blend_mode INT ")" -> paint
 
 fill: "(Color" FLOAT FLOAT FLOAT FLOAT ")" -> color
 
 blend_mode: "(" /[A-Za-z]+/ ")"
 
 %import common.FLOAT
+%import common.INT
 %import common.WS
 %ignore WS
 """
@@ -47,6 +48,9 @@ blend_mode: "(" /[A-Za-z]+/ ")"
 class LambdaSkiaTransformer(Transformer[Any, Layer]):
     def FLOAT(self, node):
         return float(node)
+
+    def INT(self, node):
+        return int(node)
 
     def blend_mode(self, node):
         return '(' + str(node[0]) + ')'

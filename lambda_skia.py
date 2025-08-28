@@ -177,6 +177,7 @@ class Paint(Node):
 
     fill: Fill
     blend_mode: BlendMode
+    index: int  # This points to the skia command that uses this paint in the skp
 
     def pprint(self) -> str:
         return f'Paint(' + self.fill.pprint() + ', ' + self.blend_mode + ')'

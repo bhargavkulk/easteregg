@@ -22,7 +22,7 @@
   (SrcOver))
 
 (datatype SkPaint
-  (Paint Fill BlendMode))
+  (Paint Fill BlendMode i64))
 
 (datatype Geometry
   (Full)
