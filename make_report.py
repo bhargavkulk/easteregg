@@ -77,7 +77,7 @@ def collate_data(args):
                 f.write(page_template(lambda d: code_page(tb, d)).getvalue())
             data['verify_error'] = str(err_file).replace('report', '.')
 
-        # 1. Compile to Egg
+        # 1. Compile to Lambda Skia
         egg = None
         try:
             # egg = compile_json_skp(skp)

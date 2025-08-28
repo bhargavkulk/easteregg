@@ -6,7 +6,6 @@ import skia  # pyrefly: ignore
 
 # https://github.com/bhargavkulk/easteregg/blob/9646d8c2fcc2e90c01b5a74745f574a5bf9de58a/eegg2png.py
 import lambda_skia as ast
-from lambda_skia import RRect
 
 BLEND_MODES = {
     '(SrcOver)': skia.BlendMode.kSrcOver,
