@@ -20,7 +20,9 @@
   (Color f64 f64 f64 f64))
 
 (datatype BlendMode
-  (SrcOver))
+  (SrcOver)
+  (DstIn)
+  (SoftLight))
 
 (datatype SkPaint
   (Paint Fill BlendMode i64))
