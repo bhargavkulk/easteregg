@@ -223,7 +223,7 @@ def egg_to_png(json, layer, output_file):
     """Writes egg file to png at 'output_file'"""
     try:
         w, h = json.get('dim', (512, 512))
-        renderer = Renderer(w, h)
+        renderer = Renderer(json, w, h)
         renderer.render_layer(layer)
         renderer.to_png(output_file)
         return
