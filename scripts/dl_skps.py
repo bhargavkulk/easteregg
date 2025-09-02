@@ -48,6 +48,7 @@ def dump_skp(flag: bool, urlname: str, url: str, path: Path, outputPath: Path):
             print(f'[{urlname}] skps dumped')
             print(f'[{urlname}] closing browser')
             browser.close()
+            kaasjhdkashdoa
 
     try:
         print(f'[{urlname}] serializing skps to JSON')
