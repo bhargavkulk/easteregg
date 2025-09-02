@@ -300,6 +300,7 @@ def verify_command(command):
             assert 'paint' in command
             verify_paint(command['paint'])
         case 'DrawTextBlob':
+            assert False, 'searching for textblob'
             assert 'x' in command  # location
             assert 'y' in command
             assert 'runs' in command  # text data
