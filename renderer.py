@@ -42,7 +42,7 @@ class Renderer:
                 skpaint.setColor4f(skia.Color4f(r, g, b, a))
             case ast.LinearGradient():
                 # fetch the gradient from the paint from the skp directly
-                json_shader: dict = self.skp_json['commands'][paint.index]['shader']
+                json_shader: dict = self.skp_json['commands'][paint.index]['paint']['shader']
 
                 # get the matrix
                 flat_matrix = [float(x) for row in json_shader['00_matrix'] for x in row]
