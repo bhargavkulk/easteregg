@@ -78,7 +78,7 @@ class Renderer:
                                 [float(point) for point in points],
                                 tile_mode,
                                 flags,
-                                flat_matrix,
+                                matrix,
                             )
                         )
 
@@ -93,7 +93,7 @@ class Renderer:
                                 None,
                                 tile_mode,
                                 flags,
-                                flat_matrix,
+                                matrix,
                             )
                         )
                 else:
@@ -108,7 +108,7 @@ class Renderer:
                                 [float(point) for point in points],
                                 tile_mode,
                                 flags,
-                                flat_matrix,
+                                matrix,
                             )
                         )
                     else:
@@ -121,7 +121,7 @@ class Renderer:
                                 None,
                                 tile_mode,
                                 flags,
-                                flat_matrix,
+                                matrix,
                             )
                         )
                 pass
