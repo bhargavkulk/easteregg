@@ -45,7 +45,7 @@ class Renderer:
                 json_shader: dict = self.skp_json['commands'][paint.index]['paint']['shader']
 
                 # get the matrix
-                flat_matrix = [float(x) for row in json_shader['00_matrix'] for x in row]
+                flat_matrix = [float(x) for row in json_shader['values']['00_matrix'] for x in row]
                 assert len(flat_matrix) == 9
                 matrix = skia.Matrix()
                 matrix.set9(flat_matrix)
