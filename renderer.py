@@ -15,23 +15,8 @@ BLEND_MODES = {
 }
 
 
-def mk_paint(paint: ast.Paint):
-    skpaint = skia.Paint()
-
-    # Add Fill
-    match paint.fill:
-        case ast.Color(a, r, g, b):
-            skpaint.setColor4f(skia.Color4f(r, g, b, a))
-        case _:
-            raise NotImplementedError(f'{type(paint.fill)} fill is not supported')
-
-    # Add Blend Mode
-    if paint.blend_mode in BLEND_MODES.keys():
-        skpaint.setBlendMode(BLEND_MODES[paint.blend_mode])
-    else:
-        raise NotImplementedError(f'{paint.blend_mode[1:-1]} blend mode is not supported')
-
-    return skpaint
+def extract_tile_mode(flags: int) -> int:
+    return (flags >> 8) & 0xF
 
 
 class Renderer:
@@ -47,6 +32,109 @@ class Renderer:
             raise RuntimeError('Failed to create image snapshot')
         # image.save takes a string not Path objext, so convert to string
         image.save(str(output), skia.kPNG)
+
+    def mk_paint(self, paint: ast.Paint):
+        skpaint = skia.Paint()
+
+        # Add Fill
+        match paint.fill:
+            case ast.Color(a, r, g, b):
+                skpaint.setColor4f(skia.Color4f(r, g, b, a))
+            case ast.LinearGradient():
+                # fetch the gradient from the paint from the skp directly
+                json_shader: dict = self.skp_json['commands'][paint.index]['shader']
+
+                # get the matrix
+                flat_matrix = [float(x) for row in json_shader['00_matrix'] for x in row]
+                assert len(flat_matrix) == 9
+                matrix = skia.Matrix()
+                matrix.set9(flat_matrix)
+
+                # get the parts of the shader
+                json_lgshader: dict = json_shader['values']['01_LinearGradientShader']
+                flags: int = json_lgshader['00_uint']
+                tile_mode = skia.TileMode(extract_tile_mode(flags))
+
+                # COLORS ALWAYS ARGB, but skia.Color4f needs RGBA order
+                colors: list[int] = []
+                for json_color in json_lgshader['01_colorArray']:
+                    colors.append(
+                        int(
+                            skia.Color4f(json_color[1], json_color[2], json_color[3], json_color[0])
+                        )
+                    )
+
+                if '02_byteArray' in json_lgshader:  # color space data
+                    # we dont use this
+                    if '03_scalarArray' in json_lgshader:  # points
+                        points: list[float] = json_lgshader['03_scalarArray']
+                        start = skia.Point(*json_lgshader['04_point'])
+                        end = skia.Point(*json_lgshader['05_point'])
+
+                        skpaint.setShader(
+                            skia.GradientShader.MakeLinear(
+                                [start, end],
+                                colors,
+                                [float(point) for point in points],
+                                tile_mode,
+                                flags,
+                                flat_matrix,
+                            )
+                        )
+
+                    else:
+                        start = skia.Point(*json_lgshader['03_point'])
+                        end = skia.Point(*json_lgshader['04_point'])
+
+                        skpaint.setShader(
+                            skia.GradientShader.MakeLinear(
+                                [start, end],
+                                colors,
+                                None,
+                                tile_mode,
+                                flags,
+                                flat_matrix,
+                            )
+                        )
+                else:
+                    if '02_scalarArray' in json_lgshader:  # points
+                        points: list[float] = json_lgshader['02_scalarArray']
+                        start = skia.Point(*json_lgshader['03_point'])
+                        end = skia.Point(*json_lgshader['04_point'])
+                        skpaint.setShader(
+                            skia.GradientShader.MakeLinear(
+                                [start, end],
+                                colors,
+                                [float(point) for point in points],
+                                tile_mode,
+                                flags,
+                                flat_matrix,
+                            )
+                        )
+                    else:
+                        start = skia.Point(*json_lgshader['02_point'])
+                        end = skia.Point(*json_lgshader['03_point'])
+                        skpaint.setShader(
+                            skia.GradientShader.MakeLinear(
+                                [start, end],
+                                colors,
+                                None,
+                                tile_mode,
+                                flags,
+                                flat_matrix,
+                            )
+                        )
+                pass
+            case _:
+                raise NotImplementedError(f'{type(paint.fill)} fill is not supported')
+
+        # Add Blend Mode
+        if paint.blend_mode in BLEND_MODES.keys():
+            skpaint.setBlendMode(BLEND_MODES[paint.blend_mode])
+        else:
+            raise NotImplementedError(f'{paint.blend_mode[1:-1]} blend mode is not supported')
+
+        return skpaint
 
     def render_layer(self, layer: ast.Layer) -> None:
         """Recursively render a layer tree to the canvas."""
