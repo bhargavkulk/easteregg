@@ -51,7 +51,7 @@ class Renderer:
                 matrix.set9(flat_matrix)
 
                 # get the parts of the shader
-                json_lgshader: dict = json_shader['values']['01_LinearGradientShader']
+                json_lgshader: dict = json_shader['values']['01_SkLinearGradient']
                 flags: int = json_lgshader['00_uint']
                 tile_mode = skia.TileMode(extract_tile_mode(flags))
 
