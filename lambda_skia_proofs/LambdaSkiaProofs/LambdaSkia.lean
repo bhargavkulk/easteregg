@@ -106,3 +106,5 @@ theorem last_draw_inside_opaque_srcover_savelayer
   (l₁ l₂ : Layer) (g c : Geometry) (pd : PaintDraw) (α : Float) (t : Transform):
   SaveLayer l₁ (Draw l₂ g pd (α, SrcOver) t c) (1.0, SrcOver) = Draw (SaveLayer l₁ l₂ (1.0, SrcOver)) g pd (α, SrcOver) t c := by
   grind
+
+  --a sd asd
