@@ -141,7 +141,7 @@ class Renderer:
         match layer:
             case ast.SaveLayer(bottom, top, paint):
                 self.render_layer(bottom)
-                skpaint = mk_paint(paint)
+                skpaint = self.mk_paint(paint)
                 self.canvas.saveLayer(paint=skpaint)
                 self.render_layer(top)
                 self.canvas.restore()
@@ -150,7 +150,7 @@ class Renderer:
                 self.canvas.save()
                 self.clip_geometry(clip)
                 self.transform(transform)
-                skpaint = mk_paint(paint)
+                skpaint = self.mk_paint(paint)
                 self.render_geometry(shape, skpaint)
                 self.canvas.restore()
             case _:
