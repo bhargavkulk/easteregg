@@ -58,4 +58,4 @@
          (Empty))
 
 (rewrite (SaveLayer (Empty) (Draw (Empty) g (Paint f bm i2) c t) (Paint (Color 1.0 r1 g1 b1) (SrcOver) i1))
-         (Draw (Empty) g (Paint f b i2) c t))
+         (Draw (Empty) g (Paint f bm i2) c t))
