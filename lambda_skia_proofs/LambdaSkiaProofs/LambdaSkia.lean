@@ -36,6 +36,8 @@ abbrev PaintDraw := Style × (Point -> Color) × ColorFilter
 abbrev BlendMode := Color -> Color -> Color
 --- SrcOver is a blend mode: r = s + (1-sa)*d
 axiom SrcOver : BlendMode
+-- soflight blend mode
+axiom SoftLight : BlendMode
 @[grind]
 axiom SrcOver_left_transparent:
   forall c : Color, SrcOver c Transparent = c
@@ -45,6 +47,12 @@ axiom SrcOver_right_transparent :
 @[grind]
 axiom SrcOver_associative :
   forall c₁ c₂ c₃ : Color, SrcOver (SrcOver c₁ c₂) c₃ = SrcOver c₁ (SrcOver c₂ c₃)
+
+-- blend mode src:
+axiom Src : BlendMode
+@[grind]
+axiom Src_def :
+  forall c₁ c₂ : Color, Src c₁ c₂ = c₂
 
 -- PaintBlend defines how 2 layers are blended together
 abbrev PaintBlend := (Float × BlendMode)
@@ -102,9 +110,31 @@ theorem lone_draw_inside_opaque_srcover_savelayer
   SaveLayer bottom (Draw EmptyLayer g pd (α, SrcOver) t c) (1.0, SrcOver) = Draw bottom g pd (α, SrcOver) t c := by
   grind
 
+
+theorem lone_softlight_draw_inside_opaque_srcover_savelayer
+  (g : Geometry) (pd : PaintDraw) (α: Float) (c : Geometry) (t: Transform) (any_bm: BlendMode):
+  SaveLayer EmptyLayer (Draw EmptyLayer g pd (α, any_bm) t c) (1.0, SrcOver) = Draw EmptyLayer g pd (α, any_bm) t c := by
+  unfold SaveLayer Draw EmptyLayer
+  simp [blend]
+  ext pt
+  cases (c pt)
+  · grind
+  · simp [applyAlpha_opaque]
+    simp [SrcOver_right_transparent]
+
+  --   simp [SrcOver_left_transparent]
+  -- · simp [applyAlpha_opaque]
+  --   generalize hp: (bottom pt) = p
+  --   generalize hq: (applyAlpha α (raster g pd t pt)) = q
+
+
 theorem last_draw_inside_opaque_srcover_savelayer
   (l₁ l₂ : Layer) (g c : Geometry) (pd : PaintDraw) (α : Float) (t : Transform):
   SaveLayer l₁ (Draw l₂ g pd (α, SrcOver) t c) (1.0, SrcOver) = Draw (SaveLayer l₁ l₂ (1.0, SrcOver)) g pd (α, SrcOver) t c := by
   grind
 
   --a sd asd
+
+theorem wtf:
+  ∀ c, SrcOver Transparent c = c := by
+  grind
