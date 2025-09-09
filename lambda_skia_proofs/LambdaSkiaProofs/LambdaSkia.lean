@@ -122,19 +122,11 @@ theorem lone_softlight_draw_inside_opaque_srcover_savelayer
   · simp [applyAlpha_opaque]
     simp [SrcOver_right_transparent]
 
-  --   simp [SrcOver_left_transparent]
-  -- · simp [applyAlpha_opaque]
-  --   generalize hp: (bottom pt) = p
-  --   generalize hq: (applyAlpha α (raster g pd t pt)) = q
-
+theorem empty_src_is_noop g pd t c:
+  Draw EmptyLayer g pd (0.0, Src) t c = EmptyLayer := by
+  grind
 
 theorem last_draw_inside_opaque_srcover_savelayer
   (l₁ l₂ : Layer) (g c : Geometry) (pd : PaintDraw) (α : Float) (t : Transform):
   SaveLayer l₁ (Draw l₂ g pd (α, SrcOver) t c) (1.0, SrcOver) = Draw (SaveLayer l₁ l₂ (1.0, SrcOver)) g pd (α, SrcOver) t c := by
-  grind
-
-  --a sd asd
-
-theorem wtf:
-  ∀ c, SrcOver Transparent c = c := by
   grind

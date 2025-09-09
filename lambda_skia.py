@@ -73,7 +73,7 @@ class Transform(Node):
         return '(Matrix ' + ' '.join([str(i) for i in self.matrix]) + ')'
 
     def pprint(self) -> str:
-        return 'Mat[...]'
+        return 'Mat' + str(self.matrix)
 
 
 def mk_color(argb: list[int]):
