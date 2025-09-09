@@ -153,6 +153,11 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                     stack[-1].layer = saved_state.layer
             case 'DrawPaint':
                 mk_draw(Full())
+            case 'DrawTextBlob':
+                x : float = command_data['x']
+                y : float = command_data['y']
+                bounds : list[float] = command_data['bounds']
+                mk_draw(x/1.0, y/1.0, [bound / 1S.0 for bound in bounds])
             case 'DrawRect':
                 coords: list[float] = command_data['coords']
                 mk_draw(Rect(*[coord / 1.0 for coord in coords]))
