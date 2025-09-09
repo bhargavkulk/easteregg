@@ -20,18 +20,32 @@ def extract_tile_mode(flags: int) -> int:
 
 
 class Renderer:
-    def __init__(self, skp_json: dict[str, Any], width: int = 512, height: int = 512):
+    def __init__(
+        self, skp_json: dict[str, Any], width: int = 512, height: int = 512, png: bool = True
+    ):
         """Initialize renderer with SKP data and canvas dimensions."""
-        self.surface = skia.Surface(width, height)
-        self.canvas = self.surface.getCanvas()
-        self.skp_json = skp_json
+        self.png = png
+        if png:
+            self.surface = skia.Surface(width, height)
+            self.canvas = self.surface.getCanvas()
+            self.skp_json = skp_json
+        else:
+            self.recorder = skia.PictureRecorder()
+            self.canvas = self.recorder.beginRecording(width, height)
 
     def to_png(self, output: Path):
+        assert self.png
         image = self.surface.makeImageSnapshot()
         if not image:
             raise RuntimeError('Failed to create image snapshot')
         # image.save takes a string not Path objext, so convert to string
         image.save(str(output), skia.kPNG)
+
+    def to_skp(self, output: Path):
+        assert not self.png
+        picture = self.recorder.finishRecordingAsPicture()
+        with output.open('wb') as f:
+            f.write(picture.serialize().bytes())
 
     def mk_paint(self, paint: ast.Paint):
         skpaint = skia.Paint()
@@ -226,6 +240,19 @@ def egg_to_png(json, layer, output_file):
         renderer = Renderer(json, w, h)
         renderer.render_layer(layer)
         renderer.to_png(output_file)
+        return
+    except Exception:
+        tb = traceback.format_exc()
+        return str(tb)
+
+
+def egg_to_skp(json, layer, output_file):
+    """Writes egg file to skp at 'output_file'"""
+    try:
+        w, h = json.get('dim', (512, 512))
+        renderer = Renderer(json, w, h, png=False)
+        renderer.render_layer(layer)
+        renderer.to_skp(output_file)
         return
     except Exception:
         tb = traceback.format_exc()

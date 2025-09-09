@@ -16,7 +16,7 @@ import yattag
 from egglog_runner import run_cmd, run_egglog
 from lambda_skia import pretty_print_layer
 from parse_sexp import parse_sexp
-from renderer import egg_to_png
+from renderer import egg_to_png, egg_to_skp
 from skp_compiler import compile_skp_to_lskia, get_reset_warnings
 from verify import verify_skp
 
@@ -239,6 +239,31 @@ def collate_data(args):
             image_diff = args.output / (bench_name + '__IMG_DIFF.png')
             ret, stdout, stdin = run_cmd(f'compare {pre_opt} {post_opt} {image_diff}'.split())
             data['image_diff'] = str(image_diff).replace('report', '.')
+
+        # SKP FILES
+        # - Make pre opt
+        pre_opt_skp = args.output / (bench_name + '__PRE.skp')
+        res1 = egg_to_skp(skp, lambda_skia_expr, pre_opt_skp)
+
+        # - Make post opt
+        post_opt_skp = args.output / (bench_name + '__POST.skp')
+        res1 = egg_to_skp(skp, parse_sexp(opt), pre_opt_skp)
+
+        if res1 is None:
+            data['pre_skp'] = str(pre_opt).replace('report', '.')
+        else:
+            pre_error = args.output / (bench_name + '__PRE_ERROR_SKP.txt')
+            with pre_error.open('w', encoding='utf-8') as f:
+                f.write(res1)
+            data['pre_error_skp'] = str(pre_error).replace('report', '.')
+
+        if res2 is None:
+            data['post_skp'] = str(post_opt).replace('report', '.')
+        else:
+            post_error = args.output / (bench_name + '__POST_ERROR_SKP.txt')
+            with post_error.open('w', encoding='utf-8') as f:
+                f.write(res2)
+            data['post_error_skp'] = str(post_error).replace('report', '.')
 
         # 4. Save Stats
         benchmarks.append(data)
