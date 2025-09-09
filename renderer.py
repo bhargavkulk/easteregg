@@ -162,8 +162,8 @@ class Renderer:
             case ast.Draw(bottom, shape, paint, clip, transform):
                 self.render_layer(bottom)
                 self.canvas.save()
-                self.clip_geometry(clip)
                 self.transform(transform)
+                self.clip_geometry(clip)
                 skpaint = self.mk_paint(paint)
                 self.render_geometry(shape, skpaint)
                 self.canvas.restore()
