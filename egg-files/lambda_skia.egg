@@ -60,7 +60,7 @@
 (rewrite (SaveLayer (Empty) (Draw (Empty) g (Paint f bm i2) c t) (Paint (Color 1.0 r1 g1 b1) (SrcOver) i1))
          (Draw (Empty) g (Paint f bm i2) c t))
 
-(rewrite (SaveLayer (Draw (Empty) g1 (Paint (Color a1 r1 g1 b1) (SrcOver) i1) c1 t)
-                    (Draw (Empty) g2 (Paint (Color 1.0 r2 g2 b2) (SrcOver) i2) c2 t)
+(rewrite (SaveLayer (Draw (Empty) e1 (Paint (Color a1 r1 g1 b1) (SrcOver) i1) c1 t)
+                    (Draw (Empty) e2 (Paint (Color 1.0 r2 g2 b2) (SrcOver) i2) c2 t)
                     (Paint (Color 1.0 r3 g3 b3) (DstIn) i3))
-         (Draw (Empty) g1 (Paint (Color a1 r1 g1 b1) (SrcOver) i1) (Intersect c1 (Intersect g2 c2)) t))
+         (Draw (Empty) e1 (Paint (Color a1 r1 g1 b1) (SrcOver) i1) (Intersect c1 (Intersect e2 c2)) t))
