@@ -28,7 +28,7 @@
                 <th>After</th>
                 <th>Diff</th>
                 <th>#SaveLayers</th>
-                <th colspan="2">PNG</th>
+                <th colspan="3">PNG</th>
             </tr>
         </thead>
         <tbody>
@@ -43,11 +43,11 @@
                 % endif
                 % if row['state'] == 0:
                     <td class="ctr"><a href="${row['compile_error']}">!</a></td>
-                    <td colspan="5" class="void"></td>
+                    <td colspan="6" class="void"></td>
                 % elif row['state'] == 1:
                     <td class="ctr"><a href="${row['pre_file']}">&raquo;</a></td>
                     <td class="ctr"><a href="${row['egglog_error']}">!</a></td>
-                    <td colspan="4" class="void"></td>
+                    <td colspan="5" class="void"></td>
                 % elif row['state'] == 2:
                     <td class="ctr"><a href="${row['pre_file']}">&raquo;</a></td>
                     <td class="ctr"><a href="${row['post_file']}">&raquo;</a></td>
@@ -65,7 +65,8 @@
                         % elif 'pre_png_err' in row:
                             <a href="${row['pre_png_err']}">!</a>
                         % endif
-                        |
+                    </td>
+                    <td class="ctr">
                         % if 'post_png' in row:
                             <a href="${row['post_png']}">&raquo;</a>
                         % elif 'post_png_err' in row:
