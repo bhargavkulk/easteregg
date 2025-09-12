@@ -24,8 +24,7 @@
                 <th>Benchmark</th>
                 <th>JSON</th>
                 <th>SkiaChrome</th>
-                <th>Before</th>
-                <th>After</th>
+                <th colspan="2">Opt</th>
                 <th>Diff</th>
                 <th>#SaveLayers</th>
                 <th colspan="3">PNG</th>
