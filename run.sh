@@ -23,4 +23,4 @@ cargo build --manifest-path egglog/Cargo.toml --quiet
 
 rm -rf report
 uv sync
-uv run make_report.py bench/json rsrc report
+uv run mk_report.py bench/json rsrc report

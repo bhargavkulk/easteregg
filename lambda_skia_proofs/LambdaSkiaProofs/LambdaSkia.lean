@@ -1,6 +1,7 @@
 open Classical
 
 -- The basic indexing type
+@[grind]
 def Point : Type := Unit
 
 -- WTF IS TRANFORM DOING
@@ -9,18 +10,22 @@ def Point : Type := Unit
 -- * the local coordinate set
 -- Remember a Layer maps a point to the
 -- The transform matrix (multiplication is implicit)
+@[grind]
 def Transform: Type := Point -> Point
 
 -- Color := (alpha, red, green, blue)
+@[grind]
 def Color : Type := (Float × Float × Float × Float)
 
 axiom isOpaque (c : Color) : Prop
 
+@[grind]
 def Transparent : Color := (0.0, 0.0, 0.0, 0.0)
 
 -- Geometry is a collection of points
 abbrev Geometry := Point -> Bool
 
+@[grind]
 def intersect (g1 g2 : Geometry) : Geometry :=
   fun pt => g1 pt && g2 pt
 
@@ -30,6 +35,7 @@ def Fill : Style := fun g => g
 
 -- Color Filters
 abbrev ColorFilter := Color -> Color
+@[grind]
 def idColorFilter : ColorFilter := fun c => c
 -- Paintdraw defines how a geometry is painted
 abbrev PaintDraw := Style × (Point -> Color) × ColorFilter
@@ -148,7 +154,7 @@ theorem last_draw_inside_opaque_srcover_savelayer
   SaveLayer l₁ (Draw l₂ g pd (α, SrcOver) t c) (1.0, SrcOver) = Draw (SaveLayer l₁ l₂ (1.0, SrcOver)) g pd (α, SrcOver) t c := by
   grind
 
-theorem something g1 pd1 a1 c1 t g2 c2 c (H: isOpaque c):
+theorem dstin_into_clip g1 pd1 a1 c1 t g2 c2 c (H: isOpaque c):
   SaveLayer (Draw EmptyLayer g1 pd1 (a1, SrcOver) t c1)
   (Draw EmptyLayer g2 (Fill, fun _ => c, idColorFilter) (1.0, SrcOver) t c2) (1.0, DstIn)
   =
