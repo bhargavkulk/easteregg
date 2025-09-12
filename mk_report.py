@@ -77,6 +77,8 @@ def collate_data(args: Args):
         shutil.copy(benchmark, JSON_FOLDER / benchmark.name)
         data['json_skp'] = htmlify_path(JSON_FOLDER / benchmark.name)
 
+        data['number_cmds'] = len(json_skp['commands'])
+
         # 2. verify the JSON skp conforms to our skia subset
         try:
             verify_skp(json_skp)
