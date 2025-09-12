@@ -34,7 +34,7 @@
             % for row in content['results']:
             <tr>
                 <td class="lgray">${row['full_name']}</td>
-                <td class="ctr"><a href="${row['json_skp']}">&raquo;</a></td>
+                <td class="ctr"><a href="${row['json_skp']}">${row['number_cmds']}</a></td>
                 % if 'verify_error' in row:
                     <td class="ctr"><a href="${row['verify_error']}">!</a></td>
                 % else:
