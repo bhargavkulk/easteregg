@@ -118,6 +118,27 @@ class TextBlob(Geometry):
         return f'TextBlob({self.x}, {self.y}, {self.bounds})'
 # trst_blob = TextBlob(x, y, bounds)
 
+@dataclass
+class ImageRect(Geometry):
+    src: list[float]
+    dst: list[float]
+    sampling: list[float]
+
+    @override
+    def pprint(self) -> str:
+        return f'ImageRect({self.src},{self.dst},{self.sampling})'
+        
+@dataclass
+class Path(Geometry):
+    """A path geometry defined by verbs and fill type"""
+    verbs: list[dict]   
+    fillType: str       
+
+    @override
+    def pprint(self) -> str:
+        return f'Path(fillType={self.fillType}, verbs={len(self.verbs)} commands)'
+
+
 class RRect(Geometry):
     """A rounded rectangular geometry"""
 
