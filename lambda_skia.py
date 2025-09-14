@@ -127,16 +127,16 @@ class ImageRect(Geometry):
     @override
     def pprint(self) -> str:
         return f'ImageRect({self.src},{self.dst},{self.sampling})'
-        
+
 @dataclass
 class Path(Geometry):
     """A path geometry defined by verbs and fill type"""
-    verbs: list[dict]   
-    fillType: str       
+    verbs: list[float]   
+    fillType: float      
 
     @override
     def pprint(self) -> str:
-        return f'Path(fillType={self.fillType}, verbs={len(self.verbs)} commands)'
+        return f'Path({self.verbs},{self.fillType})'
 
 
 class RRect(Geometry):

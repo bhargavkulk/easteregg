@@ -157,7 +157,16 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 x : float = command_data['x']
                 y : float = command_data['y']
                 bounds : list[float] = command_data['bounds']
-                mk_draw(x/1.0, y/1.0, [bound / 1S.0 for bound in bounds])
+                mk_draw(x/1.0, y/1.0, [bound / 1.0 for bound in bounds])
+            case 'DrawImageRect':
+                src : list[float] = command_data['src']
+                dst: list[float] = command_data['dst']
+                sampling : list[floaat] = command_data['sampling']
+                mk_draw([s/1.0 for s in src],[d / 1.0 for d in dst],[sample/1.0 for sample in sampling])
+            case 'DrawPath':
+                verbs : float = command_data['verbs']
+                fillType : list[float] = command_data['fillType']
+                mk_draw(verbs/1.0, [fill / 1.0 for fill in fillType])
             case 'DrawRect':
                 coords: list[float] = command_data['coords']
                 mk_draw(Rect(*[coord / 1.0 for coord in coords]))
