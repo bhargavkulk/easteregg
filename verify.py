@@ -272,7 +272,7 @@ def verify_paint(paint: dict):
                 verify_color_filter(value)
                 # raise NotImplementedError('fixing color filter')
             case 'imagefilter':
-                raise NotImplementedError('imagefilters not supported')
+                pass  # raise NotImplementedError('imagefilters not supported')
             case 'antiAlias':
                 pass
             case 'dashing':
