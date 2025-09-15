@@ -101,7 +101,7 @@ def verify_inner_image_filter(name, image_filter):
 def verify_shader(shader: dict):
     # this function is going to have a very annoying structure
     # I don't want to write this
-    assert False, 'searching for shader'
+    # assert False, 'searching for shader'
     assert 'name' in shader
     assert 'data' in shader
     assert 'values' in shader
@@ -307,6 +307,7 @@ def verify_command(command):
             assert 'paint' in command
             verify_paint(command['paint'])
         case 'DrawImageRect':
+            assert False, 'searching for image rect'
             assert 'image' in command  # src image
             assert 'src' in command  # crop size of the image
             assert 'dst' in command  # dst coords to be mapped to
