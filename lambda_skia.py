@@ -190,16 +190,45 @@ class Difference(Geometry):
 
 
 @dataclass
+class Style(Node):
+    def pprint(self) -> str:
+        raise NotImplementedError()
+
+
+@dataclass
+class FillStyle(Style):
+    @override
+    def pprint(self) -> str:
+        return 'FillStyle'
+
+
+@dataclass
+class StrokeStyle(Style):
+    @override
+    def pprint(self) -> str:
+        return 'StrokeStyle'
+
+
+@dataclass
 class Paint(Node):
     """Configuration that determines how geometries are filled and blended when
     drawn."""
 
     fill: Fill
+    style: Style
     blend_mode: BlendMode
     index: int  # This points to the skia command that uses this paint in the skp
 
     def pprint(self) -> str:
-        return f'Paint(' + self.fill.pprint() + ', ' + self.blend_mode + ')'
+        return (
+            f'Paint('
+            + self.fill.pprint()
+            + ', '
+            + self.blend_mode
+            + ', '
+            + self.style.pprint()
+            + ')'
+        )
 
 
 class Layer(Node):

@@ -7,6 +7,7 @@ from lambda_skia import (
     Difference,
     Draw,
     Empty,
+    FillStyle,
     Full,
     Intersect,
     Layer,
@@ -17,6 +18,7 @@ from lambda_skia import (
     Rect,
     RRect,
     SaveLayer,
+    StrokeStyle,
     Transform,
 )
 
@@ -35,7 +37,10 @@ geometry: "(Full)" -> full
         | "(Intersect" geometry geometry ")" -> intersect
         | "(Difference" geometry geometry ")" -> difference
 
-paint: "(Paint" fill blend_mode INT ")" -> paint
+paint: "(Paint" fill style blend_mode INT ")" -> paint
+
+style: "(FillStyle)" -> fill_style
+     | "(StrokeStyle)" -> stroke_style
 
 fill: "(Color" FLOAT FLOAT FLOAT FLOAT ")" -> color
     | "(LinearGradient)" -> linear_gradient
@@ -101,6 +106,12 @@ class LambdaSkiaTransformer(Transformer[Any, Layer]):
 
     def matrix(self, node):
         return Transform(node)
+
+    def fill_style(self, node):
+        return FillStyle()
+
+    def stroke_style(self, node):
+        return StrokeStyle()
 
 
 def parse_sexp(sexp_str: str) -> Layer:
