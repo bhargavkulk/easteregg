@@ -15,6 +15,8 @@ from lambda_skia import (
     RRect,
     SaveLayer,
     Transform,
+    ImageRect,
+    TextBlob,
 )
 
 grammar = """
