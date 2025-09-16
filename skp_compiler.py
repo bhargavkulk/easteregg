@@ -25,7 +25,6 @@ from lambda_skia import (
     pretty_print_layer,
     ImageRect,
     TextBlob,
-    Path,
 )
 
 warnings_var: ContextVar[list[str]] = ContextVar('warnings', default=[])
