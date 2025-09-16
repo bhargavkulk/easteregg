@@ -23,6 +23,9 @@ from lambda_skia import (
     Transform,
     mk_color,
     pretty_print_layer,
+    ImageRect,
+    TextBlob,
+    Path,
 )
 
 warnings_var: ContextVar[list[str]] = ContextVar('warnings', default=[])
@@ -157,16 +160,12 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 x : float = command_data['x']
                 y : float = command_data['y']
                 bounds : list[float] = command_data['bounds']
-                mk_draw(x/1.0, y/1.0, [bound / 1.0 for bound in bounds])
+                mk_draw(TextBlob(x/1.0, y/1.0, *[bound / 1.0 for bound in bounds]))
             case 'DrawImageRect':
-                src : list[float] = command_data['src']
                 dst: list[float] = command_data['dst']
-                sampling : list[floaat] = command_data['sampling']
-                mk_draw([s/1.0 for s in src],[d / 1.0 for d in dst],[sample/1.0 for sample in sampling])
+                mk_draw(ImageRect(*[d / 1.0 for d in dst]))
             case 'DrawPath':
-                verbs : float = command_data['verbs']
-                fillType : list[float] = command_data['fillType']
-                mk_draw(verbs/1.0, [fill / 1.0 for fill in fillType])
+                raise NotImplementedError()
             case 'DrawRect':
                 coords: list[float] = command_data['coords']
                 mk_draw(Rect(*[coord / 1.0 for coord in coords]))
