@@ -92,7 +92,17 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 return Paint(color, FillStyle(), blend_mode, i)
             else:
                 for key in json_paint.keys():
-                    if key not in ('shader', 'color', 'blendMode', 'antiAlias', 'dither'):
+                    if key not in (
+                        'strokeWidth',
+                        'cap',
+                        'strokeJoin',
+                        'style',
+                        'shader',
+                        'color',
+                        'blendMode',
+                        'antiAlias',
+                        'dither',
+                    ):
                         raise NotImplementedError(key, i)
 
                 color = mk_color(json_paint.get('color', [255, 0, 0, 0]))
@@ -108,8 +118,9 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
 
                 stroke_style = json_paint.get('style', 'fill')
 
-                style = FillStyle()
-                if stroke_style == 'stroke':
+                if stroke_style == 'fill':
+                    style = FillStyle()
+                elif stroke_style == 'stroke':
                     style = StrokeStyle()
                 else:
                     raise ValueError(f'{stroke_style} style is not implemented')
@@ -188,6 +199,8 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 mk_draw(Path(i))
             case 'DrawTextBlob':
                 # skip for now
+                pass
+            case 'DrawImageRect':
                 pass
             case 'ClipRect':
                 coords: list[float] = command_data['coords']
