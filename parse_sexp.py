@@ -27,6 +27,8 @@ matrix: "(Matrix" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FL
 geometry: "(Full)" -> full
         | "(Rect" FLOAT FLOAT FLOAT FLOAT ")" -> rect
         | "(RRect" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT ")" -> rrect
+        | "(ImageRect" FLOAT FLOAT FLOAT FLOAT ")" -> imagerect
+        | "(TextBlob" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT ")" -> textblob
         | "(Intersect" geometry geometry ")" -> intersect
         | "(Difference" geometry geometry ")" -> difference
 
@@ -63,6 +65,12 @@ class LambdaSkiaTransformer(Transformer[Any, Layer]):
 
     def rrect(self, node):
         return RRect(*node)
+
+    def imagerect(self, node):
+        return ImageRect(*node)
+
+    def textblob(self, node):
+        return TextBlob(*node)
 
     def intersect(self, node):
         return Intersect(*node)
