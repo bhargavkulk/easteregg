@@ -1,9 +1,9 @@
 import argparse
 import json
+import pathlib
 from contextvars import ContextVar
 from copy import deepcopy
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any, Literal, Optional, reveal_type
 
 from lambda_skia import (
@@ -19,6 +19,7 @@ from lambda_skia import (
     LinearGradient,
     Oval,
     Paint,
+    Path,
     Rect,
     RRect,
     SaveLayer,
@@ -173,6 +174,8 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 coords, *radii = command_data['coords']
                 ltrb_radii = radii_to_ltrb(radii)
                 mk_draw(RRect(*([i / 1.0 for i in coords + ltrb_radii])))
+            case 'DrawPath':
+                mk_draw(Path(i))
             case 'DrawTextBlob':
                 # skip for now
                 pass
@@ -197,8 +200,8 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('input', type=Path)
-    parser.add_argument('--output', '-o', type=Path)
+    parser.add_argument('input', type=pathlib.Path)
+    parser.add_argument('--output', '-o', type=pathlib.Path)
 
     args = parser.parse_args()
 

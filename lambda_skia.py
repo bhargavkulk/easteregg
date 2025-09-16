@@ -80,7 +80,7 @@ def mk_color(argb: list[int]):
     return Color(*[i / 255 for i in argb])
 
 
-type Fill = Color
+type Fill = Color | LinearGradient
 
 type BlendMode = Literal['(SrcOver)']
 
@@ -149,6 +149,17 @@ class Oval(Geometry):
     @override
     def pprint(self) -> str:
         return f'Oval({self.l}, {self.t}, {self.r}, {self.b})'
+
+
+@dataclass
+class Path(Geometry):
+    """A geometry that defines an arbitrary closed or open path"""
+
+    index: float
+
+    @override
+    def pprint(self) -> str:
+        return f'Path({self.index})'
 
 
 @dataclass

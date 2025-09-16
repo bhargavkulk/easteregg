@@ -13,6 +13,7 @@ from lambda_skia import (
     LinearGradient,
     Oval,
     Paint,
+    Path,
     Rect,
     RRect,
     SaveLayer,
@@ -27,6 +28,7 @@ layer: "(Empty)" -> empty
 matrix: "(Matrix" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT ")" -> matrix
 
 geometry: "(Full)" -> full
+        | "(Path" INT ")" -> path
         | "(Rect" FLOAT FLOAT FLOAT FLOAT ")" -> rect
         | "(RRect" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT ")" -> rrect
         | "(Oval" FLOAT FLOAT FLOAT FLOAT ")" -> oval
@@ -78,6 +80,9 @@ class LambdaSkiaTransformer(Transformer[Any, Layer]):
 
     def oval(self, node):
         return Oval(*node)
+
+    def path(self, node):
+        return Path(*node)
 
     def intersect(self, node):
         return Intersect(*node)
