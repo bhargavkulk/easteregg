@@ -203,6 +203,7 @@ def verify_blend_mode(blend_mode: str):
     # Overlay: https://nightly.cs.washington.edu/reports/easteregg/1753066297:verify:0530860e/Mail_ru__layer_18__VERIFY.html
     #          https://nightly.cs.washington.edu/reports/easteregg/1753066297:verify:0530860e/Mail_ru__layer_15__VERIFY.html
     # Plus: https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/GitHub__layer_2__VERIFY.html
+    assert blend_mode != 'DstIn', 'searching for dstin'
     assert blend_mode in {'Src', 'DstIn', 'Multiply', 'Overlay', 'SoftLight', 'Plus'}, (
         f'Unknown blend mode: {blend_mode}'
     )
@@ -307,7 +308,6 @@ def verify_command(command):
             assert 'paint' in command
             verify_paint(command['paint'])
         case 'DrawImageRect':
-            assert False, 'searching for image rect'
             assert 'image' in command  # src image
             assert 'src' in command  # crop size of the image
             assert 'dst' in command  # dst coords to be mapped to
