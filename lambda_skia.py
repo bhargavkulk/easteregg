@@ -111,32 +111,26 @@ class TextBlob(Geometry):
     """A textblob geometry defined by text, position, and attributes"""
     x: float
     y: float
-    bounds: list[float] # height of blob
+    l: float
+    t: float
+    r: float
+    b: float 
 
     @override
     def pprint(self) -> str:
-        return f'TextBlob({self.x}, {self.y}, {self.bounds})'
+        return f'TextBlob({self.x}, {self.y}, {self.l}, {self.t}, {self.r}, {self.b})'
 # trst_blob = TextBlob(x, y, bounds)
 
 @dataclass
 class ImageRect(Geometry):
-    src: list[float]
-    dst: list[float]
-    sampling: list[float]
+    l: float
+    t: float
+    r: float
+    b: float
 
     @override
     def pprint(self) -> str:
-        return f'ImageRect({self.src},{self.dst},{self.sampling})'
-
-@dataclass
-class Path(Geometry):
-    """A path geometry defined by verbs and fill type"""
-    verbs: list[float]   
-    fillType: float      
-
-    @override
-    def pprint(self) -> str:
-        return f'Path({self.verbs},{self.fillType})'
+        return f'ImageRect({self.l}, {self.t}, {self.r}, {self.b})'
 
 
 class RRect(Geometry):
