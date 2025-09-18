@@ -27,6 +27,8 @@
   (Full)
   (Rect f64 f64 f64 f64)
   (Oval f64 f64 f64 f64)
+  (TextBlob f64 f64 f64 f64 f64 f64)
+  (ImageRect f64 f64 f64 f64)
   (Intersect Geometry Geometry)
   (Difference Geometry Geometry))
 
