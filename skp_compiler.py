@@ -202,6 +202,7 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 pass
             case 'DrawImageRect':
                 pass
+
             case 'ClipRect':
                 coords: list[float] = command_data['coords']
                 op: ClipOp = command_data['op']

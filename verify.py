@@ -33,6 +33,8 @@ def verify_color_filter(colorfilter: dict):
             # 01_string -> the runtime function (exists only if 00_int is 0)
             # 02_bytearray -> funiforms
             # 03_int -> something i dont get
+            #
+            ## TODO: only luma color filters
 
             # Constructed from SkRuntimeEffect::makeColorFilter
             # the run time language is the SkSL (Skia Shader Language)
@@ -40,6 +42,7 @@ def verify_color_filter(colorfilter: dict):
             assert '01_string' in colorfilter['values']
             assert '02_byteArray' in colorfilter['values']
             assert '03_int' in colorfilter['values']
+            assert False, colorfilter['values']['01_string']
         case _:
             raise ValueError(f'Unknown color filter: {colorfilter["name"]}')
 
@@ -203,7 +206,7 @@ def verify_blend_mode(blend_mode: str):
     # Overlay: https://nightly.cs.washington.edu/reports/easteregg/1753066297:verify:0530860e/Mail_ru__layer_18__VERIFY.html
     #          https://nightly.cs.washington.edu/reports/easteregg/1753066297:verify:0530860e/Mail_ru__layer_15__VERIFY.html
     # Plus: https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/GitHub__layer_2__VERIFY.html
-    assert blend_mode != 'DstIn', 'searching for dstin'
+    # assert blend_mode != 'DstIn', 'searching for dstin'
     assert blend_mode in {'Src', 'DstIn', 'Multiply', 'Overlay', 'SoftLight', 'Plus'}, (
         f'Unknown blend mode: {blend_mode}'
     )
