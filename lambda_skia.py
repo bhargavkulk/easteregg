@@ -106,20 +106,23 @@ class Rect(Geometry):
     @override
     def pprint(self) -> str:
         return f'Rect({self.l}, {self.t}, {self.r}, {self.b})'
+
+
 @dataclass
 class TextBlob(Geometry):
     """A textblob geometry defined by text, position, and attributes"""
+
     x: float
     y: float
     l: float
     t: float
     r: float
-    b: float 
+    b: float
 
     @override
     def pprint(self) -> str:
         return f'TextBlob({self.x}, {self.y}, {self.l}, {self.t}, {self.r}, {self.b})'
-# trst_blob = TextBlob(x, y, bounds)
+
 
 @dataclass
 class ImageRect(Geometry):
@@ -133,6 +136,7 @@ class ImageRect(Geometry):
         return f'ImageRect({self.l}, {self.t}, {self.r}, {self.b})'
 
 
+@dataclass
 class RRect(Geometry):
     """A rounded rectangular geometry"""
 
