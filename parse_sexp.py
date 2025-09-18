@@ -20,6 +20,8 @@ from lambda_skia import (
     SaveLayer,
     StrokeStyle,
     Transform,
+    ImageRect,
+    TextBlob,
 )
 
 grammar = """
@@ -34,6 +36,8 @@ geometry: "(Full)" -> full
         | "(Rect" FLOAT FLOAT FLOAT FLOAT ")" -> rect
         | "(RRect" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT ")" -> rrect
         | "(Oval" FLOAT FLOAT FLOAT FLOAT ")" -> oval
+        | "(ImageRect" FLOAT FLOAT FLOAT FLOAT ")" -> imagerect
+        | "(TextBlob" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT ")" -> textblob
         | "(Intersect" geometry geometry ")" -> intersect
         | "(Difference" geometry geometry ")" -> difference
 
@@ -88,6 +92,12 @@ class LambdaSkiaTransformer(Transformer[Any, Layer]):
 
     def path(self, node):
         return Path(*node)
+
+    def imagerect(self, node):
+        return ImageRect(*node)
+
+    def textblob(self, node):
+        return TextBlob(*node)
 
     def intersect(self, node):
         return Intersect(*node)

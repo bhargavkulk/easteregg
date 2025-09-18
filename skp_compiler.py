@@ -15,6 +15,7 @@ from lambda_skia import (
     FillStyle,
     Full,
     Geometry,
+    ImageRect,
     Intersect,
     Layer,
     LinearGradient,
@@ -25,6 +26,7 @@ from lambda_skia import (
     RRect,
     SaveLayer,
     StrokeStyle,
+    TextBlob,
     Transform,
     mk_color,
     pretty_print_layer,
@@ -185,6 +187,14 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                     stack[-1].layer = saved_state.layer
             case 'DrawPaint':
                 mk_draw(Full())
+            case 'DrawTextBlob':
+                x: float = command_data['x']
+                y: float = command_data['y']
+                bounds: list[float] = command_data['bounds']
+                mk_draw(TextBlob(x / 1.0, y / 1.0, *[bound / 1.0 for bound in bounds]))
+            case 'DrawImageRect':
+                dst: list[float] = command_data['dst']
+                mk_draw(ImageRect(*[d / 1.0 for d in dst]))
             case 'DrawRect':
                 coords: list[float] = command_data['coords']
                 mk_draw(Rect(*[coord / 1.0 for coord in coords]))
