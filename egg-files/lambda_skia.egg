@@ -26,12 +26,8 @@
   (SoftLight)
   (Src))
 
-(datatype Style
-  (FilLStyle)
-  (StrokeStyle))
-
 (datatype SkPaint
-  (Paint Fill Style BlendMode i64))
+  (Paint Fill BlendMode i64))
 
 (datatype Geometry
   (Full)

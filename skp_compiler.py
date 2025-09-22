@@ -12,7 +12,6 @@ from lambda_skia import (
     Difference,
     Draw,
     Empty,
-    FillStyle,
     Full,
     Geometry,
     ImageRect,
@@ -25,7 +24,6 @@ from lambda_skia import (
     Rect,
     RRect,
     SaveLayer,
-    StrokeStyle,
     TextBlob,
     Transform,
     mk_color,
@@ -91,14 +89,10 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
             if json_paint is None:
                 color = Color(1.0, 0.0, 0.0, 0.0)
                 blend_mode: BlendMode = '(SrcOver)'
-                return Paint(color, FillStyle(), blend_mode, i)
+                return Paint(color, blend_mode, i)
             else:
                 for key in json_paint.keys():
                     if key not in (
-                        'strokeWidth',
-                        'cap',
-                        'strokeJoin',
-                        'style',
                         'shader',
                         'color',
                         'blendMode',
@@ -118,16 +112,7 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
 
                 blend_mode = '(' + json_paint.get('blendMode', 'SrcOver') + ')'
 
-                stroke_style = json_paint.get('style', 'fill')
-
-                if stroke_style == 'fill':
-                    style = FillStyle()
-                elif stroke_style == 'stroke':
-                    style = StrokeStyle()
-                else:
-                    raise ValueError(f'{stroke_style} style is not implemented')
-
-                return Paint(color, style, blend_mode, i)
+                return Paint(color, blend_mode, i)
 
         def push_clip(g: Geometry, op: ClipOp):
             # given g and op

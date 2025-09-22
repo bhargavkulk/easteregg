@@ -131,6 +131,7 @@ def collate_data(args: Args):
             egglog_warning_file.write_text(stderr)
         else:
             err_file = args.output / (name + '__POST_ERR.txt')
+            err_file.write_text(stderr)
             data['egglog_error'] = htmlify_path(err_file)
             data['state'] = 1
             results.append(data)
