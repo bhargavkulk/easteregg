@@ -125,6 +125,7 @@ s.pop()
 s.push()
 # symbolic premultiplied color c1
 c1 = mk_premul_color('c1', s)
+s.add(c1[3] == 1.0)
 
 # c2 = black
 c2 = (0.0, 0.0, 0.0, 1.0)
