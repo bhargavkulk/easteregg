@@ -120,7 +120,7 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
 
                 blend_mode = '(' + json_paint.get('blendMode', 'SrcOver') + ')'
 
-                return Paint(color, blend_mode, i)
+                return Paint(color, blend_mode, style, i)
 
         def push_clip(g: Geometry, op: ClipOp):
             # given g and op
