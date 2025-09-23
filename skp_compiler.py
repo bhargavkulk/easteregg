@@ -110,6 +110,14 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                     if '01_SkLinearGradient' in inner_shader:
                         color = LinearGradient()
 
+                json_style = json_paint.get('style', 'fill')
+                if json_style == 'fill':
+                    style = '(Solid)'
+                elif json_style == 'stroke':
+                    style = '(Stroke)'
+                else:
+                    raise NotImplementedError(f'Unknown style {json_style}')
+
                 blend_mode = '(' + json_paint.get('blendMode', 'SrcOver') + ')'
 
                 return Paint(color, blend_mode, i)
