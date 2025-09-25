@@ -69,7 +69,7 @@
 
 ;; REWRITE 3
 (rewrite (SaveLayer l1
-                    (Draw l2 g (Paint (Color a2 r2 g2 b2) (SrcOver) f2  ftri2) c t)
+                    (Draw l2 g (Paint (Color a2 r2 g2 b2) (SrcOver) f2  ftr i2) c t)
                     (Paint (Color 1.0 r1 g1 b1) (SrcOver) f1 (IdFilter) i1))
          (Draw (SaveLayer l1 l2 (Paint (Color 1.0 r1 g1 b1) (SrcOver) f1 (IdFilter) i1))
                g

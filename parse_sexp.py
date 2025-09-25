@@ -39,7 +39,7 @@ geometry: "(Full)" -> full
         | "(Intersect" geometry geometry ")" -> intersect
         | "(Difference" geometry geometry ")" -> difference
 
-paint: "(Paint" fill blend_mode style INT ")" -> paint
+paint: "(Paint" fill blend_mode style filter INT ")" -> paint
 
 fill: "(Color" FLOAT FLOAT FLOAT FLOAT ")" -> color
     | "(LinearGradient)" -> linear_gradient
@@ -47,6 +47,8 @@ fill: "(Color" FLOAT FLOAT FLOAT FLOAT ")" -> color
 blend_mode: "(" /[A-Za-z]+/ ")"
 
 style: "(" /[A-Za-z]+/ ")"
+
+filter: "(" /[A-Za-z]+/ ")"
 
 FLOAT: /-?\d+\.\d+/
 
@@ -67,6 +69,9 @@ class LambdaSkiaTransformer(Transformer[Any, Layer]):
         return '(' + str(node[0]) + ')'
 
     def style(self, node):
+        return '(' + str(node[0]) + ')'
+
+    def filter(self, node):
         return '(' + str(node[0]) + ')'
 
     def color(self, node):
