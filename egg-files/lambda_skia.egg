@@ -31,11 +31,11 @@
   (Solid)
   (Stroke))
 
-(datatype SkPaint
-  (Paint Fill BlendMode Style Filter i64))
-
 (datatype Filter
   (IdFilter))
+
+(datatype SkPaint
+  (Paint Fill BlendMode Style Filter i64))
 
 (datatype Geometry
   (Full)

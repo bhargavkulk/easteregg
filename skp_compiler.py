@@ -93,6 +93,7 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
             else:
                 for key in json_paint.keys():
                     if key not in (
+                        'colorfilter',
                         'shader',
                         'color',
                         'blendMode',
