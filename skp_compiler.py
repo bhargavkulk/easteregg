@@ -89,7 +89,7 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
             if json_paint is None:
                 color = Color(1.0, 0.0, 0.0, 0.0)
                 blend_mode: BlendMode = '(SrcOver)'
-                return Paint(color, blend_mode, '(Solid)', i)
+                return Paint(color, blend_mode, '(Solid)', '(IdFilter)', i)
             else:
                 for key in json_paint.keys():
                     if key not in (
