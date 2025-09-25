@@ -124,7 +124,7 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                     if json_color_filter['name'] == 'SkRuntimeColorFilter':
                         # I AM ASSUMING ALL RUNTIME FILTERS ARE LUMINANCE FILTERS
                         assert 'sk_luma' in json_color_filter['values']['01_string']
-                        raise NotImplementedError('for now no luma')
+                        color_filter = '(LumaFilter)'
                     else:
                         raise NotImplementedError(f'{json_color_filter["name"]} is not implemented')
                 else:

@@ -84,9 +84,9 @@ type Fill = Color | LinearGradient
 
 type BlendMode = Literal['(SrcOver)']
 
-type Style = Literal['(Solid)'] | Literal['(Stroke)']
+type Style = Literal['(Solid)', '(Stroke)']
 
-type Filter = Literal['(IdFilter)']
+type Filter = Literal['(IdFilter)', '(LumaFilter)']
 
 
 @dataclass
