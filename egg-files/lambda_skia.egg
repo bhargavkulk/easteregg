@@ -32,7 +32,10 @@
   (Stroke))
 
 (datatype SkPaint
-  (Paint Fill BlendMode Style i64))
+  (Paint Fill BlendMode Style Filter i64))
+
+(datatype Filter
+  (IdFilter))
 
 (datatype Geometry
   (Full)
@@ -56,19 +59,28 @@
 ;;----------------
 ;; Rewrites Below
 ;;----------------
-(rewrite (SaveLayer l1 (Draw l2 g (Paint (Color a2 r2 g2 b2) (SrcOver) f2 i2) c t) (Paint (Color 1.0 r1 g1 b1) (SrcOver) f1 i1))
-         (Draw (SaveLayer l1 l2 (Paint (Color 1.0 r1 g1 b1) (SrcOver) f1 i1)) g (Paint (Color a2 r2 g2 b2) (SrcOver) f2 i2) c t))
-
-(rewrite (SaveLayer l (Empty) (Paint (Color 1.0 r g b) (SrcOver) f i))
+;; REWRITE 1
+(rewrite (SaveLayer l (Empty) (Paint (Color 1.0 r g b) (SrcOver) style (IdFilter) i))
          l)
 
-(rewrite (Draw (Empty) e (Paint (Color 0.0 r g b) (Src) f i) c t)
+;; REWRITE 2
+(rewrite (SaveLayer (Empty) (Draw (Empty) g (Paint f bm st ftr i2) c t) (Paint (Color 1.0 r1 g1 b1) (SrcOver) st2 (IdFilter) i1))
+         (Draw (Empty) g (Paint f bm st ftr i2) c t))
+
+;; REWRITE 3
+(rewrite (SaveLayer l1
+                    (Draw l2 g (Paint (Color a2 r2 g2 b2) (SrcOver) f2  ftri2) c t)
+                    (Paint (Color 1.0 r1 g1 b1) (SrcOver) f1 (IdFilter) i1))
+         (Draw (SaveLayer l1 l2 (Paint (Color 1.0 r1 g1 b1) (SrcOver) f1 (IdFilter) i1))
+               g
+               (Paint (Color a2 r2 g2 b2) (SrcOver) f2 ftr i2) c t))
+
+;; REWRITE 4
+(rewrite (Draw (Empty) e (Paint (Color 0.0 r g b) (Src) f (IdFilter) i) c t)
          (Empty))
 
-(rewrite (SaveLayer (Empty) (Draw (Empty) g (Paint f bm st i2) c t) (Paint (Color 1.0 r1 g1 b1) (SrcOver) st2 i1))
-         (Draw (Empty) g (Paint f bm st i2) c t))
-
-(rewrite (SaveLayer (Draw (Empty) e1 (Paint (Color a1 r1 g1 b1) (SrcOver) st i1) c1 t)
-                    (Draw (Empty) e2 (Paint (Color 1.0 r2 g2 b2) (SrcOver) (Solid) i2) c2 t)
-                    (Paint (Color 1.0 r3 g3 b3) (DstIn) st2 i3))
-         (Draw (Empty) e1 (Paint (Color a1 r1 g1 b1) (SrcOver) st i1) (Intersect c1 (Intersect e2 c2)) t))
+;; REWRITE 5
+(rewrite (SaveLayer (Draw (Empty) e1 (Paint (Color a1 r1 g1 b1) (SrcOver) st (IdFilter) i1) c1 t)
+                    (Draw (Empty) e2 (Paint (Color 1.0 r2 g2 b2) (SrcOver) (Solid) (IdFilter) i2) c2 t)
+                    (Paint (Color 1.0 r3 g3 b3) (DstIn) st2 (IdFilter) i3))
+         (Draw (Empty) e1 (Paint (Color a1 r1 g1 b1) (SrcOver) st (IdFilter) i1) (Intersect c1 (Intersect e2 c2)) t))

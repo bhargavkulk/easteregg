@@ -86,6 +86,8 @@ type BlendMode = Literal['(SrcOver)']
 
 type Style = Literal['(Solid)'] | Literal['(Stroke)']
 
+type Filter = Literal['(IdFilter)']
+
 
 @dataclass
 class Geometry(Node):
@@ -227,10 +229,21 @@ class Paint(Node):
     fill: Fill
     blend_mode: BlendMode
     style: Style
+    color_filter: Filter
     index: int  # This points to the skia command that uses this paint in the skp
 
     def pprint(self) -> str:
-        return f'Paint(' + self.fill.pprint() + ', ' + self.blend_mode + ', ' + self.style + ')'
+        return (
+            f'Paint('
+            + self.fill.pprint()
+            + ', '
+            + self.blend_mode
+            + ', '
+            + self.style
+            + ', '
+            + self.color_filter
+            + ')'
+        )
 
 
 class Layer(Node):

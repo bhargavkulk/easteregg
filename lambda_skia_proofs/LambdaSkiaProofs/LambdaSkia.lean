@@ -133,6 +133,7 @@ def EmptyLayer : Layer := (fun _ => Transparent)
 noncomputable def SaveLayer (l₁ l₂ : Layer) (pb : PaintBlend) : Layer :=
   blend l₁ l₂ pb
 
+--! REWRITE 1
 theorem empty_SrcOver_SaveLayer_is_Empty l:
   SaveLayer l EmptyLayer (1.0, SrcOver, idColorFilter) = l :=
   by grind
@@ -148,21 +149,24 @@ theorem lone_draw_inside_opaque_srcover_savelayer
   SaveLayer bottom (Draw EmptyLayer g pd (α, SrcOver, cf) t c) (1.0, SrcOver, idColorFilter) = Draw bottom g pd (α, SrcOver, cf) t c :=
   by grind
 
-
+--! REWRITE 2
 theorem lone_softlight_draw_inside_opaque_srcover_savelayer
   (g : Geometry) (pd : PaintDraw) (α: Float) (c : Geometry) (t: Transform) (any_bm: BlendMode) cf:
   SaveLayer EmptyLayer (Draw EmptyLayer g pd (α, any_bm, cf) t c) (1.0, SrcOver, id) = Draw EmptyLayer g pd (α, any_bm, cf) t c :=
   by grind
 
+--! REWRITE 4
 theorem empty_src_is_noop g pd t c:
   Draw EmptyLayer g pd (0.0, Src, id) t c = EmptyLayer := by
   grind
 
+--! REWRITE 3
 theorem last_draw_inside_opaque_srcover_savelayer
   (l₁ l₂ : Layer) (g c : Geometry) (pd : PaintDraw) (α : Float) (t : Transform) cf:
   SaveLayer l₁ (Draw l₂ g pd (α, SrcOver, cf) t c) (1.0, SrcOver, id) = Draw (SaveLayer l₁ l₂ (1.0, SrcOver, id)) g pd (α, SrcOver, cf) t c := by
   grind
 
+--! REWRITE 5
 theorem dstin_into_clip g1 pd1 a1 c1 t g2 c2 c (H: isOpaque c):
   SaveLayer (Draw EmptyLayer g1 pd1 (a1, SrcOver, id) t c1)
   (Draw EmptyLayer g2 (Fill, fun _ => c) (1.0, SrcOver, id) t c2) (1.0, DstIn, id)
@@ -198,6 +202,34 @@ theorem luma_to_diff_clip g1 g2 tfrm clip f (H1: f (0.0, 0.0, 0.0, 1.0) = f Tran
             (1.0, SrcOver, f)
   =
   SaveLayer EmptyLayer
+            (Draw EmptyLayer g1 (id, fun _ => (1.0, 1.0, 1.0, 1.0)) (1.0, SrcOver, id) tfrm (difference clip g2))
+            (1.0, SrcOver, f) := by
+  simp [SaveLayer, Draw, blend, EmptyLayer, raster, applyAlpha_opaque, SrcOver_right_transparent]
+  ext pt
+  cases g1 (tfrm pt)
+  · simp [SrcOver_right_transparent]
+    cases (g2 (tfrm pt))
+    · simp
+    · cases clip (tfrm pt)
+      · simp
+      · simp [H1]
+  · simp [difference]
+    cases clip (tfrm pt)
+    · simp [SrcOver_right_transparent]
+    · cases g2 (tfrm pt)
+      · simp [SrcOver_left_transparent]
+      · simp
+        have H2 : SrcOver (1.0, 1.0, 1.0, 1.0) (0.0, 0.0, 0.0, 1.0) = (0.0, 0.0, 0.0, 1.0) := by
+          simp [SrcOver_right_opaque, isOpaque]
+        simp [H2, H1]
+
+theorem luma_to_diff_clip2 l g1 g2 tfrm clip f (H1: f (0.0, 0.0, 0.0, 1.0) = f Transparent):
+  SaveLayer l
+            (Draw (Draw EmptyLayer g1 (id, fun _ => (1.0, 1.0, 1.0, 1.0)) (1.0, SrcOver, id) tfrm clip)
+                  g2 (id, fun _ => (0.0, 0.0, 0.0, 1.0)) (1.0, SrcOver, id) tfrm clip)
+            (1.0, SrcOver, f)
+  =
+  SaveLayer l
             (Draw EmptyLayer g1 (id, fun _ => (1.0, 1.0, 1.0, 1.0)) (1.0, SrcOver, id) tfrm (difference clip g2))
             (1.0, SrcOver, f) := by
   simp [SaveLayer, Draw, blend, EmptyLayer, raster, applyAlpha_opaque, SrcOver_right_transparent]

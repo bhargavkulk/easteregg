@@ -118,9 +118,20 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 else:
                     raise NotImplementedError(f'Unknown style {json_style}')
 
+                if 'colorfilter' in json_paint:
+                    json_color_filter = json_paint['colorfilter']
+                    if json_color_filter['name'] == 'SkRuntimeColorFilter':
+                        # I AM ASSUMING ALL RUNTIME FILTERS ARE LUMINANCE FILTERS
+                        assert 'sk_luma' in json_color_filter['values']['01_string']
+                        raise NotImplementedError('for now no luma')
+                    else:
+                        raise NotImplementedError(f'{json_color_filter["name"]} is not implemented')
+                else:
+                    color_filter = '(IdFilter)'
+
                 blend_mode = '(' + json_paint.get('blendMode', 'SrcOver') + ')'
 
-                return Paint(color, blend_mode, style, i)
+                return Paint(color, blend_mode, style, color_filter, i)
 
         def push_clip(g: Geometry, op: ClipOp):
             # given g and op
