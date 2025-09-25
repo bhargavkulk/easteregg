@@ -32,7 +32,8 @@
   (Stroke))
 
 (datatype Filter
-  (IdFilter))
+  (IdFilter)
+  (LumaFilter))
 
 (datatype SkPaint
   (Paint Fill BlendMode Style Filter i64))
