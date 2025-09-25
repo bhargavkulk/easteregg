@@ -42,6 +42,7 @@ def verify_color_filter(colorfilter: dict):
             assert '01_string' in colorfilter['values']
             assert '02_byteArray' in colorfilter['values']
             assert '03_int' in colorfilter['values']
+            assert False, 'searching for sk_luma'
         case _:
             raise ValueError(f'Unknown color filter: {colorfilter["name"]}')
 
@@ -242,7 +243,6 @@ def verify_paint(paint: dict):
                 # fill -> draw inside, DEFAULT
                 # stroke -> draw border
                 # stroke and fill -> draw border and inside
-                assert False, 'style'
                 assert value in {'stroke'}, f'Unknown draw style: {value}'
             case 'strokeWidth':
                 # just a number

@@ -13,11 +13,14 @@ def Point : Type := Unit
 @[grind]
 def Transform: Type := Point -> Point
 
--- Color := (alpha, red, green, blue)
+-- Color := (red, green, blue, alpha)
 @[grind]
 def Color : Type := (Float × Float × Float × Float)
 
-axiom isOpaque (c : Color) : Prop
+def isOpaque (c : Color) : Prop := c.2.2.2 = 1.0
+
+example: isOpaque (1.0, 0.0, 0.0, 1.0) := by simp [isOpaque]
+
 
 @[grind]
 def Transparent : Color := (0.0, 0.0, 0.0, 0.0)
@@ -28,6 +31,10 @@ abbrev Geometry := Point -> Bool
 @[grind]
 def intersect (g1 g2 : Geometry) : Geometry :=
   fun pt => g1 pt && g2 pt
+
+@[grind]
+def difference (g1 g2 : Geometry) : Geometry :=
+  fun pt => g1 pt && not (g2 pt)
 
 -- Style changes the geometry
 abbrev Style := Geometry -> Geometry
@@ -61,6 +68,10 @@ axiom SrcOver_associative :
   forall c₁ c₂ c₃ : Color, SrcOver (SrcOver c₁ c₂) c₃ = SrcOver c₁ (SrcOver c₂ c₃)
 axiom SrcOver_luminance_white:
   forall c (f: Color -> Color), f (1.0, 1.0, 1.0, 1.0) = (0.0, 0.0, 0.0, 1.0) -> f (SrcOver c (1.0, 1.0, 1.0, 1.0)) = SrcOver (f c) (0.0, 0.0, 0.0, 1.0)
+@[grind]
+axiom SrcOver_right_opaque:
+  forall c1 c2 : Color, isOpaque c2 -> SrcOver c1 c2 = c2
+
 
 axiom DstIn: BlendMode
 @[grind]
@@ -180,35 +191,30 @@ theorem subsume_colorfilter g style c transform clip f (H: f Transparent = Trans
                        (1.0, SrcOver, f) =
   Draw EmptyLayer g (style, fun _ => f c) (1.0, SrcOver, id) transform clip := by grind
 
-theorem subsume_colorfilter1 g style c transform clip f l (H: f Transparent = Transparent):
-  SaveLayer l (Draw EmptyLayer g (style, fun _ => c) (1.0, SrcOver, id) transform clip)
-                       (1.0, SrcOver, f) =
-  Draw l g (style, fun _ => f c) (1.0, SrcOver, id) transform clip := by grind
-
-theorem subsume_luminance_white g style transform clip f l1 l2
-    (H2 : f (1.0, 1.0, 1.0, 1.0) = (0.0, 0.0, 0.0, 1.0)):
-  SaveLayer l1 (Draw l2 g (style, fun _ => (1.0, 1.0, 1.0, 1.0)) (1.0, SrcOver, id) transform clip)
-                       (1.0, SrcOver, f) =
-  Draw (SaveLayer l1 l2 (1.0, SrcOver, f)) g (style, fun _ => f (1.0, 1.0, 1.0, 1.0)) (1.0, SrcOver, id) transform clip := by
-  simp [SaveLayer, Draw, blend, raster, applyAlpha_opaque, SrcOver_associative]
+theorem luma_to_diff_clip g1 g2 tfrm clip f (H1: f (0.0, 0.0, 0.0, 1.0) = f Transparent):
+  SaveLayer EmptyLayer
+            (Draw (Draw EmptyLayer g1 (id, fun _ => (1.0, 1.0, 1.0, 1.0)) (1.0, SrcOver, id) tfrm clip)
+                  g2 (id, fun _ => (0.0, 0.0, 0.0, 1.0)) (1.0, SrcOver, id) tfrm clip)
+            (1.0, SrcOver, f)
+  =
+  SaveLayer EmptyLayer
+            (Draw EmptyLayer g1 (id, fun _ => (1.0, 1.0, 1.0, 1.0)) (1.0, SrcOver, id) tfrm (difference clip g2))
+            (1.0, SrcOver, f) := by
+  simp [SaveLayer, Draw, blend, EmptyLayer, raster, applyAlpha_opaque, SrcOver_right_transparent]
   ext pt
-  cases style g (transform pt) <;> simp
-  · simp [SrcOver_left_transparent]
-  · cases clip (transform pt) <;> simp
-    · simp [SrcOver_left_transparent]
-    · simp [H2]
-      have H3 := SrcOver_luminance_white (l2 pt) f H2
-      simp [H3]
-
-theorem subsume_luminance_black g style transform clip f l1 l2
-    (H2 : f (0.0, 0.0, 0.0, 1.0) = Transparent):
-  SaveLayer l1 (Draw l2 g (style, fun _ => (0.0, 0.0, 0.0, 1.0)) (1.0, SrcOver, id) transform clip)
-                       (1.0, SrcOver, f) =
-  Draw (SaveLayer l1 l2 (1.0, SrcOver, f)) g (style, fun _ => f (0.0, 0.0, 0.0, 1.0)) (0.0, SrcOver, id) transform clip := by
-  simp [SaveLayer, Draw, blend, raster, applyAlpha_opaque, SrcOver_associative]
-  ext pt
-  cases style g (transform pt) <;> simp
-  · simp [applyAlpha_on_transparent, SrcOver_left_transparent]
-  · cases clip (transform pt) <;> simp
-    · simp [applyAlpha_on_transparent, SrcOver_left_transparent]
-    · simp [H2, applyAlpha_transparent]
+  cases g1 (tfrm pt)
+  · simp [SrcOver_right_transparent]
+    cases (g2 (tfrm pt))
+    · simp
+    · cases clip (tfrm pt)
+      · simp
+      · simp [H1]
+  · simp [difference]
+    cases clip (tfrm pt)
+    · simp [SrcOver_right_transparent]
+    · cases g2 (tfrm pt)
+      · simp [SrcOver_left_transparent]
+      · simp
+        have H2 : SrcOver (1.0, 1.0, 1.0, 1.0) (0.0, 0.0, 0.0, 1.0) = (0.0, 0.0, 0.0, 1.0) := by
+          simp [SrcOver_right_opaque, isOpaque]
+        simp [H2, H1]

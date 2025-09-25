@@ -138,3 +138,17 @@ prove_eq(s, lhs, rhs, 'f(SrcOver(c1, black)) = SrcOver(f(c1), f(black))')
 s.pop()
 
 # counter example:  [c1_a = 1/2, c1_r = 1/2, c1_b = 0, c1_g = 0]
+
+s.push()
+# c1 = white
+c1 = (1.0, 1.0, 1.0, 1.0)
+
+# c2 = black
+c2 = (0.0, 0.0, 0.0, 1.0)
+
+# compute both sides
+lhs = f_z3(SrcOver(c1, c2))
+rhs = SrcOver(f_z3(c1), f_z3(c2))
+
+prove_eq(s, lhs, rhs, 'f(SrcOver(white, black)) = SrcOver(f(white), f(black))')
+s.pop()
