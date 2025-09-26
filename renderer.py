@@ -17,7 +17,7 @@ BLEND_MODES = {
 
 STYLES = {
     '(Solid)': skia.Paint.kFill_Style,
-    '(Style)': skia.Paint.kStroke_Style,
+    '(Stroke)': skia.Paint.kStroke_Style,
 }
 
 
