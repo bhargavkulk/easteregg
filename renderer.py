@@ -6,7 +6,6 @@ import skia  # pyrefly: ignore
 
 # https://github.com/bhargavkulk/easteregg/blob/9646d8c2fcc2e90c01b5a74745f574a5bf9de58a/eegg2png.py
 import lambda_skia as ast
-from docs.semantics import Geometry
 
 BLEND_MODES = {
     '(SrcOver)': skia.BlendMode.kSrcOver,
@@ -198,7 +197,7 @@ class Renderer:
     def geometry_to_path(self, geometry: ast.Geometry) -> skia.Path:
         canvas_bounds = skia.Rect.MakeWH(self.width, self.height)
 
-        match Geometry:
+        match geometry:
             case ast.Full():
                 path = skia.Path()
                 path.addRect(canvas_bounds)
