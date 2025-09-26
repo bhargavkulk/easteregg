@@ -13,7 +13,7 @@ from mako.template import Template
 from egglog_runner import run_cmd, run_egglog
 from lambda_skia import pretty_print_layer
 from parse_sexp import parse_sexp
-from renderer import egg_to_png
+from renderer import egg_to_png, egg_to_skp
 from skp_compiler import compile_skp_to_lskia, get_reset_warnings
 from verify import verify_skp
 
@@ -187,6 +187,27 @@ def collate_data(args: Args):
             png_diff = args.output / (name + '__PNG_DIFF.png')
             ret, stdout, stdin = run_cmd(f'compare {pre_png} {post_png} {png_diff}'.split())
             data['png_diff'] = htmlify_path(png_diff)
+
+        # 6. draw lambda skia to png
+        pre_skp = args.output / (name + '__PRE.skp')
+        pre_res = egg_to_skp(json_skp, pre_expr, pre_skp)
+
+        post_skp = args.output / (name + '__POST.skp')
+        post_res = egg_to_skp(json_skp, post_expr, post_skp)
+
+        if pre_res is None:
+            data['pre_skp'] = htmlify_path(pre_skp)
+        else:
+            pre_skp_error = args.output / (name + '__PRE_SKP_ERR.txt')
+            pre_skp_error.write_text(pre_res)
+            data['pre_skp_err'] = htmlify_path(pre_skp_error)
+
+        if post_res is None:
+            data['post_skp'] = htmlify_path(post_skp)
+        else:
+            post_skp_error = args.output / (name + '__POST_SKP_ERR.txt')
+            post_skp_error.write_text(post_res)
+            data['post_skp_err'] = htmlify_path(post_skp_error)
 
         results.append(data)
 
