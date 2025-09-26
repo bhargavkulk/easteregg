@@ -101,6 +101,8 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                         'dither',
                         'strokeWidth',
                         'style',
+                        'cap',
+                        'strokeJoin',
                     ):
                         raise NotImplementedError(key, i)
 

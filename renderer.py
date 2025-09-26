@@ -165,6 +165,18 @@ class Renderer:
         if 'strokeWidth' in json_paint:
             skpaint.setStrokeWidth(json_paint['strokeWidth'])
 
+        if 'cap' in json_paint:
+            if json_paint['cap'] == 'round':
+                skpaint.setStrokeCap(skia.Paint.Cap.kRound_Cap)
+            else:
+                raise NotImplementedError(f'{json_paint["cap"]} stroke cap')
+
+        if 'strokeJoin' in json_paint:
+            if json_paint['strokeJoin'] == 'round':
+                skpaint.setStrokeJoin(skia.Paint.Join.kRound_Join)
+            else:
+                raise NotImplementedError(f'{json_paint["strokeJoin"]} stroke join')
+
         # Add Filter
         if paint.color_filter == '(IdFilter)':
             pass
