@@ -57,7 +57,7 @@ class Renderer:
 
     def mk_paint(self, paint: ast.Paint):
         skpaint = skia.Paint()
-        json_paint = self.skp_json['commands'][paint.index]['paint']
+        json_paint = self.skp_json['commands'][paint.index].get('paint', None)
 
         # Add Fill
         match paint.fill:
