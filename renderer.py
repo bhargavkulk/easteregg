@@ -6,6 +6,7 @@ import skia  # pyrefly: ignore
 
 # https://github.com/bhargavkulk/easteregg/blob/9646d8c2fcc2e90c01b5a74745f574a5bf9de58a/eegg2png.py
 import lambda_skia as ast
+from docs.semantics import Geometry
 
 BLEND_MODES = {
     '(SrcOver)': skia.BlendMode.kSrcOver,
@@ -24,6 +25,8 @@ class Renderer:
         self, skp_json: dict[str, Any], width: int = 512, height: int = 512, png: bool = True
     ):
         """Initialize renderer with SKP data and canvas dimensions."""
+        self.width = width
+        self.height = height
         self.png = png
         if png:
             self.surface = skia.Surface(width, height)
@@ -163,7 +166,7 @@ class Renderer:
                 self.render_layer(bottom)
                 self.canvas.save()
                 self.transform(transform)
-                self.clip_geometry(clip)
+                self.new_clip_geometry(clip)
                 skpaint = self.mk_paint(paint)
                 self.render_geometry(shape, skpaint)
                 self.canvas.restore()
@@ -191,6 +194,48 @@ class Renderer:
                 )
             case _:
                 raise NotImplementedError(f'Geometry type {type(geometry)} not implemented')
+
+    def geometry_to_path(self, geometry: ast.Geometry) -> skia.Path:
+        canvas_bounds = skia.Rect.MakeWH(self.width, self.height)
+
+        match Geometry:
+            case ast.Full():
+                path = skia.Path()
+                path.addRect(canvas_bounds)
+                return path
+            case ast.Rect(l, t, r, b):
+                path = skia.Path()
+                path.addRect(l, t, r, b)
+                return path
+            case ast.RRect(l, t, r, b, rl, rt, rr, rb):
+                path = skia.Path()
+                rect = skia.Rect.MakeLTRB(l, t, r, b)
+                rrect = skia.RRect.MakeEmpty()
+                rrect.setNinePatch(rect, rl, rt, rr, rb)
+                path.addRRect(rrect)
+                return path
+            case ast.Intersect(left, right):
+                if isinstance(left, ast.Full):
+                    return self.geometry_to_path(right)
+                if isinstance(right, ast.Full):
+                    return self.geometry_to_path(left)
+
+                left_path = self.geometry_to_path(left)
+                right_path = self.geometry_to_path(right)
+
+                return skia.Op(left_path, right_path, skia.PathOp.kIntersect_PathOp)
+            case ast.Difference(left, right):
+                if isinstance(right, ast.Full):
+                    return skia.Path()
+
+                left_path = self.geometry_to_path(left)
+                right_path = self.geometry_to_path(right)
+
+                return skia.Op(left_path, right_path, skia.PathOp.kDifference_PathOp)
+
+    def new_clip_geometry(self, geometry: ast.Geometry) -> None:
+        clip_path = self.geometry_to_path(geometry)
+        self.canvas.clipPath(clip_path)
 
     def clip_geometry(self, geometry: ast.Geometry) -> None:
         """Apply clipping operations to the canvas for the given geometry."""
