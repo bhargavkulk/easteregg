@@ -191,6 +191,12 @@ class Renderer:
                 raise ValueError(
                     f'Geometry operator {type(geometry)} not allowed as a draw geometry'
                 )
+            case ast.TextBlob(x, y, l, t, r, b):
+                # Ignore for now
+                pass
+            case ast.ImageRect(l, t, r, b):
+                # Ignore for now
+                pass
             case _:
                 raise NotImplementedError(f'Geometry type {type(geometry)} not implemented')
 
