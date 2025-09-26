@@ -14,6 +14,11 @@ BLEND_MODES = {
     '(Src)': skia.BlendMode.kSrc,
 }
 
+STYLES = {
+    '(Solid)': skia.Paint.kFill_Style,
+    '(Style)': skia.Paint.kStroke_Style,
+}
+
 
 def extract_tile_mode(flags: int) -> int:
     return (flags >> 8) & 0xF
@@ -27,10 +32,10 @@ class Renderer:
         self.width = width
         self.height = height
         self.png = png
+        self.skp_json = skp_json
         if png:
             self.surface = skia.Surface(width, height)
             self.canvas = self.surface.getCanvas()
-            self.skp_json = skp_json
         else:
             self.recorder = skia.PictureRecorder()
             self.canvas = self.recorder.beginRecording(width, height)
@@ -150,7 +155,60 @@ class Renderer:
         else:
             raise NotImplementedError(f'{paint.blend_mode[1:-1]} blend mode is not supported')
 
+        # Add Style
+        if paint.style in STYLES.keys():
+            skpaint.setStyle(STYLES[paint.style])
+        else:
+            raise NotImplementedError(f'{paint.style[1:-1]} style is not supported')
+
         return skpaint
+
+    def mk_path(self, json_path: dict[str, Any]) -> skia.Path:
+        """Regenerate path from json"""
+        path_data = json_path['path']
+        fill_type = path_data.get('fillType', 'winding')
+
+        path = skia.Path()
+        if fill_type == 'winding':
+            path.setFillType(skia.PathFillType.kWinding)
+        elif fill_type == 'evenOdd':
+            path.setFillType(skia.PathFillType.kEvenOdd)
+        elif fill_type == 'inverseWinding':
+            path.setFillType(skia.PathFillType.kInverseWinding)
+        else:
+            raise ValueError(f'Unknown fillType: {fill_type}')
+
+        for verb in path_data['verbs']:
+            if isinstance(verb, dict):
+                if 'move' in verb:
+                    x, y = verb['move']
+                    path.moveTo(x, y)
+                elif 'cubic' in verb:
+                    pts = verb['cubic']
+                    (x1, y1), (x2, y2), (x3, y3) = pts
+                    path.cubicTo(x1, y1, x2, y2, x3, y3)
+                elif 'line' in verb:
+                    x, y = verb['line']
+                    path.lineTo(x, y)
+                elif 'quad' in verb:
+                    pts = verb['quad']
+                    (x1, y1), (x2, y2) = pts
+                    path.quadTo(x1, y1, x2, y2)
+                elif 'conic' in verb:
+                    pts = verb['conic']
+                    (x1, y1), (x2, y2), w = pts
+                    path.conicTo(x1, y1, x2, y2, w)
+                else:
+                    raise ValueError(f'Unknown verb key: {verb}')
+            elif isinstance(verb, str):
+                if verb == 'close':
+                    path.close()
+                else:
+                    raise ValueError(f'Unknown verb string: {verb}')
+            else:
+                raise TypeError(f'Unexpected verb type: {verb}')
+
+        return path
 
     def render_layer(self, layer: ast.Layer) -> None:
         """Recursively render a layer tree to the canvas."""
@@ -197,6 +255,10 @@ class Renderer:
             case ast.ImageRect(l, t, r, b):
                 # Ignore for now
                 pass
+            case ast.Path(idx):
+                json_path: dict[str, Any] = self.skp_json['commands'][idx]
+                path = self.mk_path(json_path)
+                self.canvas.drawPath(path, skpaint)
             case _:
                 raise NotImplementedError(f'Geometry type {type(geometry)} not implemented')
 
