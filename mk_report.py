@@ -184,7 +184,7 @@ def collate_data(args: Args):
             data['post_png_err'] = htmlify_path(post_png_error)
 
         if pre_res is None and post_res is None:
-            png_diff = args.output / (name + '__PNG_DIFF')
+            png_diff = args.output / (name + '__PNG_DIFF.png')
             ret, stdout, stdin = run_cmd(f'compare {pre_png} {post_png} {png_diff}'.split())
             data['png_diff'] = htmlify_path(png_diff)
 
