@@ -162,6 +162,18 @@ class Renderer:
         else:
             raise NotImplementedError(f'{paint.style[1:-1]} style is not supported')
 
+        # Add Filter
+        if paint.color_filter == '(IdFilter)':
+            pass
+        elif paint.color_filter == '(LumaFilter)':
+            runtime_effect = skia.RuntimeEffect.MakeForColorFilter(
+                skia.String('half4 main(half4 color) {return sk_luma(color.rgb);}')
+            )
+            cf = runtime_effect.makeColorFilter(None)
+            skpaint.setColorFilter(cf)
+        else:
+            raise NotImplementedError(f'{paint.color_filter[1:-1]} is not implemented')
+
         return skpaint
 
     def mk_path(self, json_path: dict[str, Any]) -> skia.Path:
