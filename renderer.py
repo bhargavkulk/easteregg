@@ -57,6 +57,7 @@ class Renderer:
 
     def mk_paint(self, paint: ast.Paint):
         skpaint = skia.Paint()
+        json_paint = self.skp_json['commands'][paint.index]['paint']
 
         # Add Fill
         match paint.fill:
@@ -161,6 +162,8 @@ class Renderer:
             skpaint.setStyle(STYLES[paint.style])
         else:
             raise NotImplementedError(f'{paint.style[1:-1]} style is not supported')
+        if 'strokeWidth' in json_paint:
+            skpaint.setStrokeWidth(json_paint['strokeWidth'])
 
         # Add Filter
         if paint.color_filter == '(IdFilter)':

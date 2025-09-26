@@ -99,6 +99,7 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                         'blendMode',
                         'antiAlias',
                         'dither',
+                        'strokeWidth',
                     ):
                         raise NotImplementedError(key, i)
 

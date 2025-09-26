@@ -33,8 +33,6 @@ def verify_color_filter(colorfilter: dict):
             # 01_string -> the runtime function (exists only if 00_int is 0)
             # 02_bytearray -> funiforms
             # 03_int -> something i dont get
-            #
-            ## TODO: only luma color filters
 
             # Constructed from SkRuntimeEffect::makeColorFilter
             # the run time language is the SkSL (Skia Shader Language)
@@ -42,7 +40,6 @@ def verify_color_filter(colorfilter: dict):
             assert '01_string' in colorfilter['values']
             assert '02_byteArray' in colorfilter['values']
             assert '03_int' in colorfilter['values']
-            assert False, 'searching for sk_luma'
         case _:
             raise ValueError(f'Unknown color filter: {colorfilter["name"]}')
 
@@ -247,6 +244,7 @@ def verify_paint(paint: dict):
             case 'strokeWidth':
                 # just a number
                 # does nothing if style is fill
+                assert False, 'strokeWidtakshdkajh'
                 pass
             case 'cap':
                 # setStrokeCap https://api.skia.org/classSkPaint.html#a68e82b3dfce8a3c35413795461794ba6
