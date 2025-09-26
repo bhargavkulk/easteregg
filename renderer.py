@@ -166,13 +166,7 @@ class Renderer:
         if paint.color_filter == '(IdFilter)':
             pass
         elif paint.color_filter == '(LumaFilter)':
-            runtime_effect = skia.RuntimeEffect.MakeForColorFilter(
-                skia.String(
-                    'half4 sk_luma(half3 color) { return saturate(dot(half3(0.2126, 0.7152, 0.0722), color)).000r;}\n'
-                    'half4 main(half4 color) {return sk_luma(color.rgb);}'
-                )
-            )
-            cf = runtime_effect.makeColorFilter(None)
+            cf = skia.LumaColorFilter()
             skpaint.setColorFilter(cf)
         else:
             raise NotImplementedError(f'{paint.color_filter[1:-1]} is not implemented')
