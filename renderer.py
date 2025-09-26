@@ -59,6 +59,9 @@ class Renderer:
         skpaint = skia.Paint()
         json_paint = self.skp_json['commands'][paint.index].get('paint', None)
 
+        if json_paint is None:
+            print(self.skp_json['commands'][paint.index])
+
         # Add Fill
         match paint.fill:
             case ast.Color(a, r, g, b):
