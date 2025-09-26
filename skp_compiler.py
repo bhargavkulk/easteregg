@@ -112,6 +112,8 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
 
                     if '01_SkLinearGradient' in inner_shader:
                         color = LinearGradient()
+                    else:
+                        raise NotImplementedError('unknown shader')
 
                 json_style = json_paint.get('style', 'fill')
                 if json_style == 'fill':
