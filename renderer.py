@@ -239,8 +239,9 @@ class Renderer:
                 return skia.Op(left_path, right_path, skia.PathOp.kDifference_PathOp)
 
     def new_clip_geometry(self, geometry: ast.Geometry) -> None:
-        clip_path = self.geometry_to_path(geometry)
-        self.canvas.clipPath(clip_path)
+        if not isinstance(geometry, ast.Full):
+            clip_path = self.geometry_to_path(geometry)
+            self.canvas.clipPath(clip_path)
 
     def clip_geometry(self, geometry: ast.Geometry) -> None:
         """Apply clipping operations to the canvas for the given geometry."""
