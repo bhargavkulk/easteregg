@@ -59,9 +59,6 @@ class Renderer:
         skpaint = skia.Paint()
         json_paint = self.skp_json['commands'][paint.index].get('paint', None)
 
-        if json_paint is None:
-            print(self.skp_json['commands'][paint.index])
-
         # Add Fill
         match paint.fill:
             case ast.Color(a, r, g, b):
@@ -165,16 +162,17 @@ class Renderer:
             skpaint.setStyle(STYLES[paint.style])
         else:
             raise NotImplementedError(f'{paint.style[1:-1]} style is not supported')
-        if 'strokeWidth' in json_paint:
+
+        if json_paint is not None and 'strokeWidth' in json_paint:
             skpaint.setStrokeWidth(json_paint['strokeWidth'])
 
-        if 'cap' in json_paint:
+        if json_paint is not None and 'cap' in json_paint:
             if json_paint['cap'] == 'round':
                 skpaint.setStrokeCap(skia.Paint.Cap.kRound_Cap)
             else:
                 raise NotImplementedError(f'{json_paint["cap"]} stroke cap')
 
-        if 'strokeJoin' in json_paint:
+        if json_paint is not None and 'strokeJoin' in json_paint:
             if json_paint['strokeJoin'] == 'round':
                 skpaint.setStrokeJoin(skia.Paint.Join.kRound_Join)
             else:
