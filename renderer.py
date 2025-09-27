@@ -13,6 +13,7 @@ BLEND_MODES = {
     '(SoftLight)': skia.BlendMode.kSoftLight,
     '(Src)': skia.BlendMode.kSrc,
     '(Overlay)': skia.BlendMode.kOverlay,
+    '(Multiply)': skia.BlendMode.kMultiply,
 }
 
 STYLES = {
