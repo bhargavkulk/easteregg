@@ -53,6 +53,8 @@
                     <td class="ctr"><a href="${row['diff_file']}">&raquo;</a></td>
                     % if row['counts'][0] > row['counts'][1]:
                         <td class="ctr green">${row['counts'][0]} → ${row['counts'][1]}</td>
+                    % elif row['counts'][0] == row['counts'][1] and row['counts'][0] == 0:
+                        <td class="ctr green">${row['counts'][0]} → ${row['counts'][1]}</td>
                     % elif row['counts'][0] == row['counts'][1]:
                         <td class="ctr yellow">${row['counts'][0]} → ${row['counts'][1]}</td>
                     % else:

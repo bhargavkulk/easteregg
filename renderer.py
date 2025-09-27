@@ -308,6 +308,10 @@ class Renderer:
                 rrect.setNinePatch(rect, rl, rt, rr, rb)
                 path.addRRect(rrect)
                 return path
+            case ast.Path(idx):
+                json_path: dict[str, Any] = self.skp_json['commands'][idx]
+                path = self.mk_path(json_path)
+                return path
             case ast.Intersect(left, right):
                 if isinstance(left, ast.Full):
                     return self.geometry_to_path(right)

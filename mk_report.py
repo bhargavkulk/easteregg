@@ -155,10 +155,12 @@ def collate_data(args: Args):
 
         data['counts'] = [before, after]
 
-        if before == after:
-            unchanged += 1
-        elif before < after:
+        if before < after:
             regressed += 1
+        elif before == after and before == 0:
+            improved += 1
+        elif before == after:
+            unchanged += 1
         else:
             improved += 1
 
