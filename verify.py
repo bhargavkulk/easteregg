@@ -101,6 +101,7 @@ def verify_inner_image_filter(name, image_filter):
 def verify_shader(shader: dict):
     # this function is going to have a very annoying structure
     # I don't want to write this
+    # assert False, 'searching for shader'
     assert 'name' in shader
     assert 'data' in shader
     assert 'values' in shader
@@ -202,6 +203,7 @@ def verify_blend_mode(blend_mode: str):
     # Overlay: https://nightly.cs.washington.edu/reports/easteregg/1753066297:verify:0530860e/Mail_ru__layer_18__VERIFY.html
     #          https://nightly.cs.washington.edu/reports/easteregg/1753066297:verify:0530860e/Mail_ru__layer_15__VERIFY.html
     # Plus: https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/GitHub__layer_2__VERIFY.html
+    # assert blend_mode != 'DstIn', 'searching for dstin'
     assert blend_mode in {'Src', 'DstIn', 'Multiply', 'Overlay', 'SoftLight', 'Plus'}, (
         f'Unknown blend mode: {blend_mode}'
     )
@@ -242,6 +244,7 @@ def verify_paint(paint: dict):
             case 'strokeWidth':
                 # just a number
                 # does nothing if style is fill
+                assert False, 'strokeWidtakshdkajh'
                 pass
             case 'cap':
                 # setStrokeCap https://api.skia.org/classSkPaint.html#a68e82b3dfce8a3c35413795461794ba6
@@ -271,7 +274,7 @@ def verify_paint(paint: dict):
                 verify_color_filter(value)
                 # raise NotImplementedError('fixing color filter')
             case 'imagefilter':
-                raise NotImplementedError('imagefilters not supported')
+                pass  # raise NotImplementedError('imagefilters not supported')
             case 'antiAlias':
                 pass
             case 'dashing':
@@ -299,6 +302,7 @@ def verify_command(command):
             assert 'paint' in command
             verify_paint(command['paint'])
         case 'DrawTextBlob':
+            # assert False, 'searching for textblob'
             assert 'x' in command  # location
             assert 'y' in command
             assert 'runs' in command  # text data

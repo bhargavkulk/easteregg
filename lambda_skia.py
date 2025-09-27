@@ -3,7 +3,7 @@ from typing import Any, Literal, override, reveal_type
 
 # Layer      l ::= Empty()
 #                | SaveLayer(bottom: l, top: l, paint: p)
-#                | Draw(bottom: l, shape: g, paint: p, clip: g
+#                | Draw(bottom: l, shape: g, paint: p, clip: g)
 #
 # Paint      p ::= Paint(fill: f, blend_mode: b)
 #
@@ -55,26 +55,38 @@ class Color(Node):
 
 
 @dataclass
+class LinearGradient(Node):
+    """Linear gradient shader"""
+
+    def pprint(self) -> str:
+        return f'LinearGradient'
+
+
+@dataclass
 class Transform(Node):
     """4x4 transform matrix"""
 
-    matrix: Any
+    matrix: list[float]
 
     @override
     def sexp(self) -> str:
         return '(Matrix ' + ' '.join([str(i) for i in self.matrix]) + ')'
 
     def pprint(self) -> str:
-        return 'Mat[...]'
+        return 'Mat' + str(self.matrix)
 
 
 def mk_color(argb: list[int]):
     return Color(*[i / 255 for i in argb])
 
 
-type Fill = Color
+type Fill = Color | LinearGradient
 
 type BlendMode = Literal['(SrcOver)']
+
+type Style = Literal['(Solid)', '(Stroke)']
+
+type Filter = Literal['(IdFilter)', '(LumaFilter)']
 
 
 @dataclass
@@ -138,20 +150,48 @@ class ImageRect(Geometry):
 
 @dataclass
 class RRect(Geometry):
-    """A rounded rectangular geometry"""
+    """A rectangular geometry defined by left, top, right, and bottom
+    coordinates, and the radii."""
 
     l: float
     t: float
     r: float
     b: float
-    lr: float
-    tr: float
+
+    rl: float
+    rt: float
     rr: float
-    br: float
+    rb: float
 
     @override
     def pprint(self) -> str:
-        return f'RRect({self.l}, {self.t}, {self.r}, {self.b}, {self.lr}, {self.tr}, {self.rr}, {self.br})'
+        return f'RRect({self.l}, {self.t}, {self.r}, {self.b}, {self.rl}, {self.rt}, {self.rr}, {self.rb})'
+
+
+@dataclass
+class Oval(Geometry):
+    """A rectangular geometry defined by left, top, right, and bottom
+    coordinates."""
+
+    l: float
+    t: float
+    r: float
+    b: float
+
+    @override
+    def pprint(self) -> str:
+        return f'Oval({self.l}, {self.t}, {self.r}, {self.b})'
+
+
+@dataclass
+class Path(Geometry):
+    """A geometry that defines an arbitrary closed or open path"""
+
+    index: float
+
+    @override
+    def pprint(self) -> str:
+        return f'Path({self.index})'
 
 
 @dataclass
@@ -163,10 +203,7 @@ class Intersect(Geometry):
 
     @override
     def pprint(self) -> str:
-        if isinstance(self.g1, Full):
-            return self.g2.pprint()
-        else:
-            return self.g1.pprint() + ' ∩ ' + self.g2.pprint()
+        return self.g1.pprint() + ' ∩ ' + self.g2.pprint()
 
 
 @dataclass
@@ -188,9 +225,22 @@ class Paint(Node):
 
     fill: Fill
     blend_mode: BlendMode
+    style: Style
+    color_filter: Filter
+    index: int  # This points to the skia command that uses this paint in the skp
 
     def pprint(self) -> str:
-        return f'Paint(' + self.fill.pprint() + ', ' + self.blend_mode + ')'
+        return (
+            f'Paint('
+            + self.fill.pprint()
+            + ', '
+            + self.blend_mode
+            + ', '
+            + self.style
+            + ', '
+            + self.color_filter
+            + ')'
+        )
 
 
 class Layer(Node):

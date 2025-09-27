@@ -1,9 +1,9 @@
 import argparse
 import json
+import pathlib
 from contextvars import ContextVar
 from copy import deepcopy
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any, Literal, Optional, reveal_type
 
 from lambda_skia import (
@@ -17,7 +17,10 @@ from lambda_skia import (
     ImageRect,
     Intersect,
     Layer,
+    LinearGradient,
+    Oval,
     Paint,
+    Path,
     Rect,
     RRect,
     SaveLayer,
@@ -78,8 +81,7 @@ class State:
 def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
     """Compiles serialized Skia commands into λSkia"""
     stack: list[State] = [State(Full(), I, Empty(), False, None)]
-    # print(stack)
-    # input()
+
     for i, command_data in enumerate(commands):
 
         def compile_paint(json_paint: Optional[dict]) -> Paint:
@@ -87,15 +89,56 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
             if json_paint is None:
                 color = Color(1.0, 0.0, 0.0, 0.0)
                 blend_mode: BlendMode = '(SrcOver)'
-                return Paint(color, blend_mode)
+                return Paint(color, blend_mode, '(Solid)', '(IdFilter)', i)
             else:
                 for key in json_paint.keys():
-                    if key not in ('color', 'blendMode', 'antiAlias'):
+                    if key not in (
+                        'colorfilter',
+                        'shader',
+                        'color',
+                        'blendMode',
+                        'antiAlias',
+                        'dither',
+                        'strokeWidth',
+                        'style',
+                        'cap',
+                        'strokeJoin',
+                    ):
                         raise NotImplementedError(key, i)
 
                 color = mk_color(json_paint.get('color', [255, 0, 0, 0]))
+                if 'shader' in json_paint.keys():
+                    # replace flat color with shader
+                    # So the shader is inside SkLocalMatrixShader
+                    inner_shader = json_paint['shader']['values']
+
+                    if '01_SkLinearGradient' in inner_shader:
+                        color = LinearGradient()
+                    else:
+                        raise NotImplementedError('unknown shader')
+
+                json_style = json_paint.get('style', 'fill')
+                if json_style == 'fill':
+                    style = '(Solid)'
+                elif json_style == 'stroke':
+                    style = '(Stroke)'
+                else:
+                    raise NotImplementedError(f'Unknown style {json_style}')
+
+                if 'colorfilter' in json_paint:
+                    json_color_filter = json_paint['colorfilter']
+                    if json_color_filter['name'] == 'SkRuntimeColorFilter':
+                        # I AM ASSUMING ALL RUNTIME FILTERS ARE LUMINANCE FILTERS
+                        assert 'sk_luma' in json_color_filter['values']['01_string']
+                        color_filter = '(LumaFilter)'
+                    else:
+                        raise NotImplementedError(f'{json_color_filter["name"]} is not implemented')
+                else:
+                    color_filter = '(IdFilter)'
+
                 blend_mode = '(' + json_paint.get('blendMode', 'SrcOver') + ')'
-                return Paint(color, blend_mode)
+
+                return Paint(color, blend_mode, style, color_filter, i)
 
         def push_clip(g: Geometry, op: ClipOp):
             # given g and op
@@ -166,10 +209,21 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
             case 'DrawRect':
                 coords: list[float] = command_data['coords']
                 mk_draw(Rect(*[coord / 1.0 for coord in coords]))
+            case 'DrawOval':
+                coords: list[float] = command_data['coords']
+                mk_draw(Oval(*[coord / 1.0 for coord in coords]))
             case 'DrawRRect':
                 coords, *radii = command_data['coords']
                 ltrb_radii = radii_to_ltrb(radii)
                 mk_draw(RRect(*([i / 1.0 for i in coords + ltrb_radii])))
+            case 'DrawPath':
+                mk_draw(Path(i))
+            case 'DrawTextBlob':
+                # skip for now
+                pass
+            case 'DrawImageRect':
+                pass
+
             case 'ClipRect':
                 coords: list[float] = command_data['coords']
                 op: ClipOp = command_data['op']
@@ -191,8 +245,8 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('input', type=Path)
-    parser.add_argument('--output', '-o', type=Path)
+    parser.add_argument('input', type=pathlib.Path)
+    parser.add_argument('--output', '-o', type=pathlib.Path)
 
     args = parser.parse_args()
 

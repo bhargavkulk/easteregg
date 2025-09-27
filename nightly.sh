@@ -26,4 +26,4 @@ $(pwd)/venv/bin/python -m pip install uv
 $(pwd)/venv/bin/python -m uv sync
 
 rm -rf report
-$(pwd)/venv/bin/python -m uv run make_report.py bench/json rsrc report
+$(pwd)/venv/bin/python -m uv run mk_report.py bench/json rsrc report

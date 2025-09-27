@@ -8,15 +8,18 @@ from lambda_skia import (
     Draw,
     Empty,
     Full,
+    ImageRect,
     Intersect,
     Layer,
+    LinearGradient,
+    Oval,
     Paint,
+    Path,
     Rect,
     RRect,
     SaveLayer,
-    Transform,
-    ImageRect,
     TextBlob,
+    Transform,
 )
 
 grammar = """
@@ -27,20 +30,29 @@ layer: "(Empty)" -> empty
 matrix: "(Matrix" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT ")" -> matrix
 
 geometry: "(Full)" -> full
+        | "(Path" INT ")" -> path
         | "(Rect" FLOAT FLOAT FLOAT FLOAT ")" -> rect
         | "(RRect" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT ")" -> rrect
+        | "(Oval" FLOAT FLOAT FLOAT FLOAT ")" -> oval
         | "(ImageRect" FLOAT FLOAT FLOAT FLOAT ")" -> imagerect
         | "(TextBlob" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT ")" -> textblob
         | "(Intersect" geometry geometry ")" -> intersect
         | "(Difference" geometry geometry ")" -> difference
 
-paint: "(Paint" fill blend_mode ")" -> paint
+paint: "(Paint" fill blend_mode style filter INT ")" -> paint
 
 fill: "(Color" FLOAT FLOAT FLOAT FLOAT ")" -> color
+    | "(LinearGradient)" -> linear_gradient
 
 blend_mode: "(" /[A-Za-z]+/ ")"
 
-%import common.FLOAT
+style: "(" /[A-Za-z]+/ ")"
+
+filter: "(" /[A-Za-z]+/ ")"
+
+FLOAT: /-?\d+\.\d+/
+
+%import common.INT
 %import common.WS
 %ignore WS
 """
@@ -50,11 +62,23 @@ class LambdaSkiaTransformer(Transformer[Any, Layer]):
     def FLOAT(self, node):
         return float(node)
 
+    def INT(self, node):
+        return int(node)
+
     def blend_mode(self, node):
+        return '(' + str(node[0]) + ')'
+
+    def style(self, node):
+        return '(' + str(node[0]) + ')'
+
+    def filter(self, node):
         return '(' + str(node[0]) + ')'
 
     def color(self, node):
         return Color(*node)
+
+    def linear_gradient(self, node):
+        return LinearGradient()
 
     def paint(self, node):
         return Paint(*node)
@@ -67,6 +91,12 @@ class LambdaSkiaTransformer(Transformer[Any, Layer]):
 
     def rrect(self, node):
         return RRect(*node)
+
+    def oval(self, node):
+        return Oval(*node)
+
+    def path(self, node):
+        return Path(*node)
 
     def imagerect(self, node):
         return ImageRect(*node)
