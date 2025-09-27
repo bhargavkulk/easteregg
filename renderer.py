@@ -182,7 +182,7 @@ class Renderer:
         if paint.color_filter == '(IdFilter)':
             pass
         elif paint.color_filter == '(LumaFilter)':
-            cf = skia.LumaColorFilter()
+            cf = skia.LumaColorFilter.Make()
             skpaint.setColorFilter(cf)
         else:
             raise NotImplementedError(f'{paint.color_filter[1:-1]} is not implemented')
