@@ -313,6 +313,7 @@ class Renderer:
                 path = self.mk_path(json_path)
                 return path
             case ast.Intersect(left, right):
+                print(left.pprint(), right.pprint())
                 if isinstance(left, ast.Full):
                     return self.geometry_to_path(right)
                 if isinstance(right, ast.Full):
