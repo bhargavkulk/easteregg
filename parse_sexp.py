@@ -26,6 +26,7 @@ grammar = """
 layer: "(Empty)" -> empty
      | "(SaveLayer" layer layer paint ")" -> save_layer
      | "(Draw" layer geometry paint geometry matrix ")" -> draw
+     | "(Clip" layer geometry ")" -> clip
 
 matrix: "(Matrix" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT ")" -> matrix
 
@@ -118,6 +119,9 @@ class LambdaSkiaTransformer(Transformer[Any, Layer]):
 
     def draw(self, node):
         return Draw(*node)
+
+    def clip(self, node):
+        return Clip(*node)
 
     def matrix(self, node):
         return Transform(node)

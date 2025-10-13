@@ -291,6 +291,25 @@ class SaveLayer(Layer):
 
 
 @dataclass
+class Clip(Layer):
+    layer: Layer
+    clip: Geometry
+
+    @override
+    def pretty_print(self, indent_level: int = 0) -> list[tuple[int, str]]:
+        # i, Clip with self.clip
+        # i + 1, self.layer
+
+        res: list[tuple[int, str]] = []
+        res.append((indent_level, 'Clip with ' + self.clip.pprint() + ':'))
+        if isinstance(self.layer, Empty):
+            res.append((indent_level + 1, 'Empty()'))
+        else:
+            res.extend(self.layer.pretty_print(indent_level + 1))
+        return res
+
+
+@dataclass
 class Draw(Layer):
     """A layer that renders a geometry onto an existing layer with the given
     paint and clipping region."""
