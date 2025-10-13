@@ -14,6 +14,7 @@ BLEND_MODES = {
     '(Src)': skia.BlendMode.kSrc,
     '(Overlay)': skia.BlendMode.kOverlay,
     '(Multiply)': skia.BlendMode.kMultiply,
+    '(Plus)': skia.BlendMode.kPlus,
 }
 
 STYLES = {
