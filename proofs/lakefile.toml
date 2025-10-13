@@ -1,7 +1,7 @@
-name = "lambda_skia_proofs"
+name = "proofs"
 version = "0.1.0"
 keywords = ["math"]
-defaultTargets = ["LambdaSkiaProofs"]
+defaultTargets = ["Proofs"]
 
 [leanOptions]
 pp.unicode.fun = true # pretty-prints `fun a ↦ b`
@@ -15,4 +15,4 @@ name = "mathlib"
 scope = "leanprover-community"
 
 [[lean_lib]]
-name = "LambdaSkiaProofs"
+name = "Proofs"

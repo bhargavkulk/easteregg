@@ -1,4 +1,4 @@
-# lambda_skia_proofs
+# proofs
 
 ## GitHub configuration
 
