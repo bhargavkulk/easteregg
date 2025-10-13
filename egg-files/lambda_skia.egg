@@ -114,3 +114,9 @@
                     (Draw (Empty) (Path nm) (Paint (Color 1.0 r2 g2 b2) (SrcOver) (Solid) (IdFilter) i2) c2 t)
                     (Paint (Color 1.0 r3 g3 b3) (DstIn) st2 (IdFilter) i3))
          (Clip bottom (Intersect (Path nm) c2)))
+
+;; Clip rewrites
+(rewrite (Clip (Draw bottom geo paint clip1 transform) clip2)
+         (Draw (Clip bottom clip2) geo paint (Intersect clip1 clip2) transform))
+(rewrite (Clip (Empty) clip)
+         (Empty))
