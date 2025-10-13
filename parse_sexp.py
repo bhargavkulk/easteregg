@@ -3,6 +3,7 @@ from typing import Any
 from lark import Lark, Transformer
 
 from lambda_skia import (
+    Clip,
     Color,
     Difference,
     Draw,
