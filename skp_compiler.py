@@ -219,16 +219,15 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
             case 'DrawPath':
                 mk_draw(Path(i))
             case 'DrawTextBlob':
+                # skip for now
                 pass
             case 'DrawImageRect':
                 pass
+
             case 'ClipRect':
                 coords: list[float] = command_data['coords']
                 op: ClipOp = command_data['op']
                 push_clip(Rect(*[coord / 1.0 for coord in coords]), op)
-            case 'ClipPath':
-                op: ClipOp = command_data['op']
-                push_clip(Path(i), op)
             case 'ClipRRect':
                 coords, *radii = command_data['coords']
                 ltrb_radii = radii_to_ltrb(radii)
