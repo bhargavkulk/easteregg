@@ -24,6 +24,7 @@
   (DstIn)
   (Src)
   ;; No formal axioms for the below blend modes
+  (Plus)
   (Multiply)
   (Overlay)
   (SoftLight))
