@@ -233,6 +233,9 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 ltrb_radii = radii_to_ltrb(radii)
                 op: ClipOp = command_data['op']
                 push_clip(RRect(*([i / 1.0 for i in coords + ltrb_radii])), op)
+            case 'ClipPath':
+                op: ClipOp = command_data['op']
+                push_clip(Path(i), op)
             case 'Concat44':
                 matrix: list[float] = [i for s in command_data['matrix'] for i in s]
                 push_transform(matrix)
