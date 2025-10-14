@@ -103,6 +103,7 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                         'style',
                         'cap',
                         'strokeJoin',
+                        'strokeMiter',
                     ):
                         raise NotImplementedError(key, i)
 
@@ -264,6 +265,6 @@ if __name__ == '__main__':
         with args.output.open('w') as f:
             f.write(layer)
     else:
-        print(layer.sexp())
-        print()
-        print(pretty_print_layer(layer))
+        print('(let test ' + layer.sexp() + ')')
+        # print()
+        # print(pretty_print_layer(layer))
