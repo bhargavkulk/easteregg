@@ -180,6 +180,9 @@ class Renderer:
             else:
                 raise NotImplementedError(f'{json_paint["strokeJoin"]} stroke join')
 
+        if json_paint is not None and 'strokeMiter' in json_paint:
+            skpaint.setStrokeMiter(json_paint['strokeMiter'])
+
         # Add Filter
         if paint.color_filter == '(IdFilter)':
             pass
@@ -314,7 +317,6 @@ class Renderer:
                 path = self.mk_path(json_path)
                 return path
             case ast.Intersect(left, right):
-                print(left.pprint(), right.pprint())
                 if isinstance(left, ast.Full):
                     return self.geometry_to_path(right)
                 if isinstance(right, ast.Full):
