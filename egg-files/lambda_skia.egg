@@ -81,8 +81,8 @@
                (Paint (Color a2 r2 g2 b2) (SrcOver) f2 ftr i2) c t))
 
 ;; REWRITE 4
-(rewrite (Draw (Empty) e (Paint (Color 0.0 r g b) (Src) f (IdFilter) i) c t)
-         (Empty))
+;; (rewrite (Draw (Empty) e (Paint (Color 0.0 r g b) (Src) f (IdFilter) i) c t)
+;;          (Empty))
 
 ;; REWRITE 5
 (rewrite (SaveLayer (Draw (Empty) e1 (Paint (Color a1 r1 g1 b1) (SrcOver) st (IdFilter) i1) c1 t)
@@ -117,7 +117,7 @@
 ;;          (Clip bottom (Intersect (Path nm) c2)))
 
 ;; ;; Clip rewrites
-;; (rewrite (Clip (Draw bottom geo paint clip1 transform) clip2)
-;;          (Draw (Clip bottom clip2) geo paint (Intersect clip1 clip2) transform))
-;; (rewrite (Clip (Empty) clip)
-;;          (Empty))
+(rewrite (Clip (Draw bottom geo paint clip1 transform) clip2)
+         (Draw (Clip bottom clip2) geo paint (Intersect clip1 clip2) transform))
+(rewrite (Clip (Empty) clip)
+         (Empty))
