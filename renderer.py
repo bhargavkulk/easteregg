@@ -150,6 +150,7 @@ class Renderer:
                             )
                         )
                 pass
+            # TODO: for now crashing on RadialGradients, will add support in a later PR
             case _:
                 raise NotImplementedError(f'{type(paint.fill)} fill is not supported')
 
