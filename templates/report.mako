@@ -75,13 +75,16 @@
                         % endif
                     </td>
                     % if 'png_diff' in row:
-                        <td class="ctr">
+                        % if row.get('png_diff_ret', 1) == 0:
+                            <td class="ctr green">
+                        % else:
+                            <td class="ctr red">
+                        % endif
                             <a href="${row['png_diff']}">&raquo;</a>
                         </td>
                     % else:
-                        <td class="void">
+                        <td class="void"></td>
                     % endif
-                    </td>
                 % endif
             </tr>
             % endfor
