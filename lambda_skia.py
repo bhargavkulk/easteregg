@@ -63,6 +63,14 @@ class LinearGradient(Node):
 
 
 @dataclass
+class RadialGradient(Node):
+    """Radial gradient shader"""
+
+    def pprint(self) -> str:
+        return f'RadialGradient'
+
+
+@dataclass
 class Transform(Node):
     """4x4 transform matrix"""
 
@@ -80,7 +88,7 @@ def mk_color(argb: list[int]):
     return Color(*[i / 255 for i in argb])
 
 
-type Fill = Color | LinearGradient
+type Fill = Color | LinearGradient | RadialGradient
 
 type BlendMode = Literal['(SrcOver)']
 

@@ -21,6 +21,7 @@ from lambda_skia import (
     Oval,
     Paint,
     Path,
+    RadialGradient,
     Rect,
     RRect,
     SaveLayer,
@@ -115,6 +116,8 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
 
                     if '01_SkLinearGradient' in inner_shader:
                         color = LinearGradient()
+                    if '01_SkRadialGradient' in inner_shader:
+                        color = RadialGradient()
                     else:
                         raise NotImplementedError('unknown shader')
 

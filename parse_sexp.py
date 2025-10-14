@@ -16,6 +16,7 @@ from lambda_skia import (
     Oval,
     Paint,
     Path,
+    RadialGradient,
     Rect,
     RRect,
     SaveLayer,
@@ -44,6 +45,7 @@ geometry: "(Full)" -> full
 paint: "(Paint" fill blend_mode style filter INT ")" -> paint
 
 fill: "(Color" FLOAT FLOAT FLOAT FLOAT ")" -> color
+    | "(RadialGradient)" -> radial_gradient
     | "(LinearGradient)" -> linear_gradient
 
 blend_mode: "(" /[A-Za-z]+/ ")"
@@ -81,6 +83,9 @@ class LambdaSkiaTransformer(Transformer[Any, Layer]):
 
     def linear_gradient(self, node):
         return LinearGradient()
+
+    def radial_gradient(self, node):
+        return RadialGradient()
 
     def paint(self, node):
         return Paint(*node)
