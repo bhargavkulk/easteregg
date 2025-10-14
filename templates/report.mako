@@ -75,8 +75,10 @@
                         % endif
                     </td>
                     % if 'png_diff' in row:
-                        % if row.get('png_diff_ret', 1) == 0:
+                        % if row.get('png_diff_ret') == 0:
                             <td class="ctr green">
+                        % elif row.get('png_diff_ret') == 2:
+                            <td class="ctr gray">
                         % else:
                             <td class="ctr red">
                         % endif
