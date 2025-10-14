@@ -17,10 +17,10 @@ def Transform: Type := Point -> Point
 @[grind, simp]
 def Color : Type := (Float × Float × Float × Float)
 
+@[grind, simp]
 def isOpaque (c : Color) : Prop := c.2.2.2 = 1.0
 
 example: isOpaque (1.0, 0.0, 0.0, 1.0) := by simp [isOpaque]
-
 
 @[grind]
 def Transparent : Color := (0.0, 0.0, 0.0, 0.0)
@@ -54,10 +54,9 @@ abbrev PaintDraw := Style × (Point -> Color)
 -- If you want to see the example formalization,
 -- see Colors.lean.
 abbrev BlendMode := Color -> Color -> Color
+
 --- SrcOver is a blend mode: r = s + (1-sa)*d
 axiom SrcOver : BlendMode
--- soflight blend mode
-axiom SoftLight : BlendMode
 @[grind, simp]
 axiom SrcOver_left_transparent:
   forall c : Color, SrcOver c Transparent = c
@@ -178,7 +177,7 @@ theorem dstin_into_clip g1 pd1 a1 c1 t g2 c2 c (H: isOpaque c):
   (Draw EmptyLayer g2 (Fill, fun _ => c) (1.0, SrcOver, id) t c2) (1.0, DstIn, id)
   =
   Draw EmptyLayer g1 pd1 (a1, SrcOver, id) t (intersect c1 (intersect g2 c2)) := by
-  simp [SaveLayer, Draw, blend]
+  simp
   grind
 
 inductive Clips (clip : Geometry) : Layer -> Layer -> Prop where
@@ -224,20 +223,9 @@ theorem luma_to_diff_clip g1 g2 tfrm clip f (H1: f (0.0, 0.0, 0.0, 1.0) = f Tran
   SaveLayer EmptyLayer
             (Draw EmptyLayer g1 (id, fun _ => (1.0, 1.0, 1.0, 1.0)) (1.0, SrcOver, id) tfrm (difference clip g2))
             (1.0, SrcOver, f) := by
-  simp [SaveLayer, Draw, blend, EmptyLayer, raster, applyAlpha_opaque]
-  ext pt
-  cases g1 (tfrm pt)
-  · grind
-  · simp
-    cases clip (tfrm pt)
-    · grind
-    · cases g2 (tfrm pt)
-      · grind
-      · simp
-        have H2 : SrcOver (1.0, 1.0, 1.0, 1.0) (0.0, 0.0, 0.0, 1.0) = (0.0, 0.0, 0.0, 1.0) := by
-          simp [SrcOver_right_opaque, isOpaque]
-        simp [H2]
-        grind
+  have H2 : SrcOver (1.0, 1.0, 1.0, 1.0) (0.0, 0.0, 0.0, 1.0) = (0.0, 0.0, 0.0, 1.0) := by grind
+  simp
+  grind
 
 theorem luma_to_diff_clip2 l g1 g2 tfrm clip f (H1: f (0.0, 0.0, 0.0, 1.0) = f Transparent):
   SaveLayer l
@@ -248,17 +236,6 @@ theorem luma_to_diff_clip2 l g1 g2 tfrm clip f (H1: f (0.0, 0.0, 0.0, 1.0) = f T
   SaveLayer l
             (Draw EmptyLayer g1 (id, fun _ => (1.0, 1.0, 1.0, 1.0)) (1.0, SrcOver, id) tfrm (difference clip g2))
             (1.0, SrcOver, f) := by
-  simp [SaveLayer, Draw, blend, EmptyLayer, raster, applyAlpha_opaque]
-  ext pt
-  cases g1 (tfrm pt)
-  · grind
-  · simp
-    cases clip (tfrm pt)
-    · grind
-    · cases g2 (tfrm pt)
-      · grind
-      · simp
-        have H2 : SrcOver (1.0, 1.0, 1.0, 1.0) (0.0, 0.0, 0.0, 1.0) = (0.0, 0.0, 0.0, 1.0) := by
-          simp [SrcOver_right_opaque, isOpaque]
-        simp [H2]
-        grind
+  have H2 : SrcOver (1.0, 1.0, 1.0, 1.0) (0.0, 0.0, 0.0, 1.0) = (0.0, 0.0, 0.0, 1.0) := by grind
+  simp
+  grind
