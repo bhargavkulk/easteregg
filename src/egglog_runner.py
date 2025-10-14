@@ -19,7 +19,5 @@ def run_egglog(egg_file):
     prelude = Path('./egg-files/lambda_skia.egg')
     extraction = Path('./egg-files/extract.egg')
 
-    command = (
-        f'cargo run --quiet --manifest-path egglog/Cargo.toml -- {prelude} {egg_file} {extraction}'
-    )
+    command = f'cargo run --quiet --manifest-path ../egglog/Cargo.toml -- {prelude} {egg_file} {extraction}'
     return run_cmd(command.split(), RUST_LOG='error')

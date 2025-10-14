@@ -91,5 +91,5 @@
    "inputRev": "main",
    "inherited": true,
    "configFile": "lakefile.toml"}],
- "name": "lambda_skia_proofs",
+ "name": "lambda_skia",
  "lakeDir": ".lake"}
