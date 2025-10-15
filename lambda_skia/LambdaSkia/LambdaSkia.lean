@@ -180,32 +180,21 @@ theorem dstin_into_clip g1 pd1 a1 c1 t g2 c2 c (H: isOpaque c):
   simp
   grind
 
-inductive Clips (clip : Geometry) : Layer -> Layer -> Prop where
-| emptyClip : Clips clip EmptyLayer EmptyLayer
-| drawClip : forall l1 l2 g pd a t c,
-    Clips clip l1 l2 ->
-    Clips clip (Draw l1 g pd (a, SrcOver, id) t c) (Draw l2 g pd (a, SrcOver, id) t (intersect c clip))
+@[grind]
+inductive Clips (clip : Geometry) (t : Transform) : Layer -> Layer -> Prop where
+| emptyClip : Clips clip t EmptyLayer EmptyLayer
+| drawClip : forall l1 l2 g pd a c,
+    Clips clip t l1 l2 ->
+    Clips clip t (Draw l1 g pd (a, SrcOver, id) t c) (Draw l2 g pd (a, SrcOver, id) t (intersect c clip))
 
 --! DSTIN
 theorem dstin_into_clip2 t g2 c2 c (H: isOpaque c) bottom1 bottom2:
-  Clips (intersect g2 c2) bottom1 bottom2 ->
+  Clips (intersect g2 c2) t bottom1 bottom2 ->
   SaveLayer bottom1
   (Draw EmptyLayer g2 (Fill, fun _ => c) (1.0, SrcOver, id) t c2) (1.0, DstIn, id)
   = bottom2 := by
   intro Hclip
-  induction Hclip with
-  | emptyClip => grind
-  | drawClip l1 l2 g pd α t' c' H HiH =>
-    simp at *
-    ext pt
-    cases pd.fst g (t' pt) <;> simp at *
-    · grind
-    · cases c' (t' pt) <;> simp at *
-      · grind
-      · cases g2 (t pt)
-        · simp
-          sorry
-        · sorry
+  induction Hclip <;> simp at * <;> grind
 
 theorem subsume_colorfilter g style c transform clip f (H: f Transparent = Transparent):
   SaveLayer EmptyLayer (Draw EmptyLayer g (style, fun _ => c) (1.0, SrcOver, id) transform clip)
