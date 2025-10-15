@@ -111,7 +111,7 @@
 
 ;; Clip rewrites
 (rewrite (Clip (Draw bottom geo paint clip1 transform) clip2 transform)
-         (Draw (Clip bottom clip2) geo paint (Intersect clip1 clip2) transform)
+         (Draw (Clip bottom clip2 transform) geo paint (Intersect clip1 clip2) transform)
          :ruleset opt)
 
 (rewrite (Clip (Empty) clip transform)
