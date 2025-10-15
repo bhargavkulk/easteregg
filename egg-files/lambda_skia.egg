@@ -55,11 +55,11 @@
 (datatype Transform
   (Matrix f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64))
 
-(datatype Layer
-  (Empty)
-  (Clip Layer Geometry Transform :unextractable)
-  (SaveLayer Layer Layer SkPaint :cost 100)
-  (Draw Layer Geometry SkPaint Geometry Transform))
+(sort Layer)
+(constructor Empty () Layer)
+(constructor Clip (Layer Geometry Transform) Layer :unextractable)
+(constructor SaveLayer (Layer Layer SkPaint) Layer :cost 100)
+(constructor Draw (Layer Geometry SkPaint Geometry Transform) Layer)
 
 ;;----------------
 ;; Rewrites Below
