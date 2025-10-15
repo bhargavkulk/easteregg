@@ -188,7 +188,6 @@ def collate_data(args: Args):
         if pre_res is None and post_res is None:
             png_diff = args.output / (name + '__PNG_DIFF.png')
             ret, stdout, stdin = run_cmd(f'compare {pre_png} {post_png} {png_diff}'.split())
-            print(stdout)
             data['png_diff'] = htmlify_path(png_diff)
 
         # 6. draw lambda skia to png
