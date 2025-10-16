@@ -290,6 +290,7 @@ class SaveLayer(Layer):
 class Clip(Layer):
     layer: Layer
     clip: Geometry
+    transform: Transform
 
     @override
     def pretty_print(self, indent_level: int = 0) -> list[tuple[int, str]]:
@@ -298,6 +299,7 @@ class Clip(Layer):
 
         res: list[tuple[int, str]] = []
         res.append((indent_level, 'Clip with ' + self.clip.pprint() + ':'))
+        res.append((indent_level + 1, '@ ' + self.transform.pprint()))
         if isinstance(self.layer, Empty):
             res.append((indent_level + 1, 'Empty()'))
         else:
