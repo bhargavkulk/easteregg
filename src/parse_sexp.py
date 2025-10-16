@@ -3,6 +3,7 @@ from typing import Any
 from lark import Lark, Transformer
 
 from lambda_skia import (
+    Clip,
     Color,
     Difference,
     Draw,
@@ -15,6 +16,7 @@ from lambda_skia import (
     Oval,
     Paint,
     Path,
+    RadialGradient,
     Rect,
     RRect,
     SaveLayer,
@@ -26,6 +28,7 @@ grammar = """
 layer: "(Empty)" -> empty
      | "(SaveLayer" layer layer paint ")" -> save_layer
      | "(Draw" layer geometry paint geometry matrix ")" -> draw
+     | "(Clip" layer geometry matrix ")" -> clip
 
 matrix: "(Matrix" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT ")" -> matrix
 
@@ -42,6 +45,7 @@ geometry: "(Full)" -> full
 paint: "(Paint" fill blend_mode style filter INT ")" -> paint
 
 fill: "(Color" FLOAT FLOAT FLOAT FLOAT ")" -> color
+    | "(RadialGradient)" -> radial_gradient
     | "(LinearGradient)" -> linear_gradient
 
 blend_mode: "(" /[A-Za-z]+/ ")"
@@ -79,6 +83,9 @@ class LambdaSkiaTransformer(Transformer[Any, Layer]):
 
     def linear_gradient(self, node):
         return LinearGradient()
+
+    def radial_gradient(self, node):
+        return RadialGradient()
 
     def paint(self, node):
         return Paint(*node)
@@ -118,6 +125,9 @@ class LambdaSkiaTransformer(Transformer[Any, Layer]):
 
     def draw(self, node):
         return Draw(*node)
+
+    def clip(self, node):
+        return Clip(*node)
 
     def matrix(self, node):
         return Transform(node)

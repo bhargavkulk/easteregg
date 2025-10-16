@@ -14,6 +14,7 @@ BLEND_MODES = {
     '(Src)': skia.BlendMode.kSrc,
     '(Overlay)': skia.BlendMode.kOverlay,
     '(Multiply)': skia.BlendMode.kMultiply,
+    '(Plus)': skia.BlendMode.kPlus,
 }
 
 STYLES = {
@@ -149,6 +150,7 @@ class Renderer:
                             )
                         )
                 pass
+            # TODO: for now crashing on RadialGradients, will add support in a later PR
             case _:
                 raise NotImplementedError(f'{type(paint.fill)} fill is not supported')
 
@@ -178,6 +180,9 @@ class Renderer:
                 skpaint.setStrokeJoin(skia.Paint.Join.kRound_Join)
             else:
                 raise NotImplementedError(f'{json_paint["strokeJoin"]} stroke join')
+
+        if json_paint is not None and 'strokeMiter' in json_paint:
+            skpaint.setStrokeMiter(json_paint['strokeMiter'])
 
         # Add Filter
         if paint.color_filter == '(IdFilter)':

@@ -21,6 +21,7 @@ from lambda_skia import (
     Oval,
     Paint,
     Path,
+    RadialGradient,
     Rect,
     RRect,
     SaveLayer,
@@ -103,6 +104,7 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                         'style',
                         'cap',
                         'strokeJoin',
+                        'strokeMiter',
                     ):
                         raise NotImplementedError(key, i)
 
@@ -114,6 +116,8 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
 
                     if '01_SkLinearGradient' in inner_shader:
                         color = LinearGradient()
+                    elif '01_SkRadialGradient' in inner_shader:
+                        color = RadialGradient()
                     else:
                         raise NotImplementedError('unknown shader')
 
@@ -219,11 +223,13 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
             case 'DrawPath':
                 mk_draw(Path(i))
             case 'DrawTextBlob':
-                # skip for now
-                pass
+                x: float = command_data['x']
+                y: float = command_data['y']
+                bounds: list[float] = command_data['bounds']
+                mk_draw(TextBlob(x / 1.0, y / 1.0, *[bound / 1.0 for bound in bounds]))
             case 'DrawImageRect':
-                pass
-
+                dst: list[float] = command_data['dst']
+                mk_draw(ImageRect(*[d / 1.0 for d in dst]))
             case 'ClipRect':
                 coords: list[float] = command_data['coords']
                 op: ClipOp = command_data['op']
@@ -233,6 +239,9 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 ltrb_radii = radii_to_ltrb(radii)
                 op: ClipOp = command_data['op']
                 push_clip(RRect(*([i / 1.0 for i in coords + ltrb_radii])), op)
+            case 'ClipPath':
+                op: ClipOp = command_data['op']
+                push_clip(Path(i), op)
             case 'Concat44':
                 matrix: list[float] = [i for s in command_data['matrix'] for i in s]
                 push_transform(matrix)
@@ -259,6 +268,6 @@ if __name__ == '__main__':
         with args.output.open('w') as f:
             f.write(layer)
     else:
-        print(layer.sexp())
-        print()
-        print(pretty_print_layer(layer))
+        print('(let test ' + layer.sexp() + ')')
+        # print()
+        # print(pretty_print_layer(layer))

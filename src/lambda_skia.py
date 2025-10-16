@@ -1,17 +1,5 @@
 from dataclasses import dataclass, fields
-from typing import Any, Literal, override, reveal_type
-
-# Layer      l ::= Empty()
-#                | SaveLayer(bottom: l, top: l, paint: p)
-#                | Draw(bottom: l, shape: g, paint: p, clip: g)
-#
-# Paint      p ::= Paint(fill: f, blend_mode: b)
-#
-# Fill       f ::= ARGB(float, float, float, float)
-#
-# Blend Mode b ::= SrcOver
-#
-# Geometry   g ::= Rect(float, float, float, float)
+from typing import Literal, override
 
 
 @dataclass
@@ -63,6 +51,14 @@ class LinearGradient(Node):
 
 
 @dataclass
+class RadialGradient(Node):
+    """Radial gradient shader"""
+
+    def pprint(self) -> str:
+        return f'RadialGradient'
+
+
+@dataclass
 class Transform(Node):
     """4x4 transform matrix"""
 
@@ -80,7 +76,7 @@ def mk_color(argb: list[int]):
     return Color(*[i / 255 for i in argb])
 
 
-type Fill = Color | LinearGradient
+type Fill = Color | LinearGradient | RadialGradient
 
 type BlendMode = Literal['(SrcOver)']
 
@@ -287,6 +283,27 @@ class SaveLayer(Layer):
             res.append((indent_level + 1, 'Empty()'))
         else:
             res.extend(self.top.pretty_print(indent_level + 1))
+        return res
+
+
+@dataclass
+class Clip(Layer):
+    layer: Layer
+    clip: Geometry
+    transform: Transform
+
+    @override
+    def pretty_print(self, indent_level: int = 0) -> list[tuple[int, str]]:
+        # i, Clip with self.clip
+        # i + 1, self.layer
+
+        res: list[tuple[int, str]] = []
+        res.append((indent_level, 'Clip with ' + self.clip.pprint() + ':'))
+        res.append((indent_level + 1, '@ ' + self.transform.pprint()))
+        if isinstance(self.layer, Empty):
+            res.append((indent_level + 1, 'Empty()'))
+        else:
+            res.extend(self.layer.pretty_print(indent_level + 1))
         return res
 
 
