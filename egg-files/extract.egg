@@ -1,3 +1,5 @@
-(run-schedule (saturate (run)))
+(run-schedule
+ ;; (repeat 1 (run simp))
+ (saturate (run opt)))
 
 (extract test)
