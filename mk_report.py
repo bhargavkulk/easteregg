@@ -1,6 +1,5 @@
 import argparse
 import json
-import re
 import shutil
 import sys
 import traceback
@@ -193,9 +192,12 @@ def collate_data(args: Args):
             )
             data['png_diff'] = htmlify_path(png_diff)
             if stderr:
-                match = re.search(r'(-?\d+)', stderr)
-                if match:
-                    data['png_diff_metric'] = int(match.group(1))
+                parts = stderr.strip().split()
+                if parts:
+                    try:
+                        data['png_diff_metric'] = int(parts[0])
+                    except ValueError:
+                        pass
 
         # 6. draw lambda skia to png
         pre_skp = args.output / (name + '__PRE.skp')
