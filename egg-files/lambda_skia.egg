@@ -7,7 +7,7 @@
   (SrcOver)
   (DstIn)
   (Src)
-  ;; No formal axioms for the below blend modes
+  ;; No specific rewrites for these blend modes
   (Plus)
   (Multiply)
   (Overlay)
