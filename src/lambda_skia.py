@@ -1,17 +1,5 @@
 from dataclasses import dataclass, fields
-from typing import Any, Literal, override, reveal_type
-
-# Layer      l ::= Empty()
-#                | SaveLayer(bottom: l, top: l, paint: p)
-#                | Draw(bottom: l, shape: g, paint: p, clip: g)
-#
-# Paint      p ::= Paint(fill: f, blend_mode: b)
-#
-# Fill       f ::= ARGB(float, float, float, float)
-#
-# Blend Mode b ::= SrcOver
-#
-# Geometry   g ::= Rect(float, float, float, float)
+from typing import Literal, override
 
 
 @dataclass

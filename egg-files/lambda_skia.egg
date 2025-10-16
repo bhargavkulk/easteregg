@@ -1,20 +1,3 @@
-;; Layer      l ::= Empty()
-;;                | SaveLayer(bottom: l, top: l, paint: p)
-;;                | Draw(bottom: l, shape: g, paint: p, clip: g, transform: t)
-;;
-;; Paint      p ::= Paint(fill: f, blend_mode: b)
-;;
-;; Fill       f ::= Color(float, float, float, float)
-;;
-;; Blend Mode b ::= SrcOver
-;;
-;; Geometry   g ::= Rect(float, float, float, float)
-;;                | Oval(float, float, float, float)
-;;                | Intersect(left: g, right: g)
-;;                | Difference(left: g, right g)
-;;
-;; Transform  t ::= Matrix(float * 16)
-
 (datatype Fill
   (LinearGradient)
   (RadialGradient)
