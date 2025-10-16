@@ -168,10 +168,10 @@ class Renderer:
                         int(skia.Color4f(json_color[1], json_color[2], json_color[3], json_color[0]))
                     )
 
-                points: list[float] | None = None
+                positions = None
                 if '02_byteArray' in json_rgshader:
                     if '03_scalarArray' in json_rgshader:
-                        points = [float(point) for point in json_rgshader['03_scalarArray']]
+                        positions = [float(point) for point in json_rgshader['03_scalarArray']]
                         center = skia.Point(*json_rgshader['04_point'])
                         radius = float(json_rgshader['05_scalar'])
                     else:
@@ -179,7 +179,7 @@ class Renderer:
                         radius = float(json_rgshader['04_scalar'])
                 else:
                     if '02_scalarArray' in json_rgshader:
-                        points = [float(point) for point in json_rgshader['02_scalarArray']]
+                        positions = [float(point) for point in json_rgshader['02_scalarArray']]
                         center = skia.Point(*json_rgshader['03_point'])
                         radius = float(json_rgshader['04_scalar'])
                     else:
@@ -191,7 +191,7 @@ class Renderer:
                         center,
                         radius,
                         colors,
-                        points,
+                        positions,
                         tile_mode,
                         flags,
                         matrix,
