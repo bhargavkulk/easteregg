@@ -4,7 +4,7 @@ import pathlib
 from contextvars import ContextVar
 from copy import deepcopy
 from dataclasses import dataclass
-from typing import Any, Literal, Optional, reveal_type
+from typing import Any, Literal, Optional
 
 from lambda_skia import (
     BlendMode,
@@ -28,7 +28,6 @@ from lambda_skia import (
     TextBlob,
     Transform,
     mk_color,
-    pretty_print_layer,
 )
 
 warnings_var: ContextVar[list[str]] = ContextVar('warnings', default=[])

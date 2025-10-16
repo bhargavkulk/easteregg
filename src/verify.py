@@ -365,7 +365,7 @@ def verify_skp(commands):
     for i, command in enumerate(commands['commands']):
         try:
             verify_command(command)
-        except Exception as e:
+        except Exception:
             raise ValueError(f'Error at {i}: {command["command"]}')
 
 
