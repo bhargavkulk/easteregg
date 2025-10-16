@@ -28,7 +28,7 @@ grammar = """
 layer: "(Empty)" -> empty
      | "(SaveLayer" layer layer paint ")" -> save_layer
      | "(Draw" layer geometry paint geometry matrix ")" -> draw
-     | "(Clip" layer geometry ")" -> clip
+     | "(Clip" layer geometry matrix ")" -> clip
 
 matrix: "(Matrix" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT ")" -> matrix
 
