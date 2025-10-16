@@ -281,10 +281,10 @@ class Renderer:
                 raise ValueError(
                     f'Geometry operator {type(geometry)} not allowed as a draw geometry'
                 )
-            case ast.TextBlob(x, y, l, t, r, b):
+            case ast.TextBlob(_, _, _, _, _, _):
                 # Ignore for now
                 pass
-            case ast.ImageRect(l, t, r, b):
+            case ast.ImageRect(_, _, _, _):
                 # Ignore for now
                 pass
             case ast.Path(idx):

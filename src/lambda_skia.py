@@ -47,7 +47,7 @@ class LinearGradient(Node):
     """Linear gradient shader"""
 
     def pprint(self) -> str:
-        return f'LinearGradient'
+        return 'LinearGradient'
 
 
 @dataclass
@@ -55,7 +55,7 @@ class RadialGradient(Node):
     """Radial gradient shader"""
 
     def pprint(self) -> str:
-        return f'RadialGradient'
+        return 'RadialGradient'
 
 
 @dataclass
@@ -227,7 +227,7 @@ class Paint(Node):
 
     def pprint(self) -> str:
         return (
-            f'Paint('
+            'Paint('
             + self.fill.pprint()
             + ', '
             + self.blend_mode
