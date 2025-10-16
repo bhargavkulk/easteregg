@@ -75,7 +75,15 @@
                         % endif
                     </td>
                     % if 'png_diff' in row:
-                        <td class="ctr">
+                        % if 'png_diff_metric' in row:
+                            % if row['png_diff_metric'] == 0:
+                                <td class="ctr green">
+                            % else:
+                                <td class="ctr red">
+                            % endif
+                        % else:
+                            <td class="ctr">
+                        % endif
                             <a href="${row['png_diff']}">&raquo;</a>
                         </td>
                     % else:
