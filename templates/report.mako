@@ -74,14 +74,16 @@
                             <a href="${row['post_png_err']}">!</a>
                         % endif
                     </td>
-                    % if 'png_diff' in row:
-                        % if row.get('png_diff_ret') == 0:
+                    % if 'png_diff' in row and 'png_diff_metric' in row:
+                        % if row['png_diff_metric'] == 0:
                             <td class="ctr green">
-                        % elif row.get('png_diff_ret') == 2:
-                            <td class="ctr gray">
                         % else:
                             <td class="ctr red">
                         % endif
+                            <a href="${row['png_diff']}">&raquo;</a>
+                        </td>
+                    % elif 'png_diff' in row:
+                        <td class="ctr">
                             <a href="${row['png_diff']}">&raquo;</a>
                         </td>
                     % else:
