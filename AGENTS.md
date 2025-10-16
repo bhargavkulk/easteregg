@@ -15,8 +15,8 @@
 - Keep functions composable; most scripts are orchestrations of pipeline stages, so prefer pure helpers and avoid introducing global state when possible.
 
 ## Testing & Verification
-- Run `./run.sh` from the repository root. It bootstraps the Egglog submodule, rebuilds the Rust components, installs Python dependencies with `uv`, and regenerates the HTML report so you see the same results that land in CI.
-- If you need to inspect an intermediate stage, every major script (for example `verify.py`, `skp_compiler.py`, `egglog_runner.py`, and `mk_report.py`) exposes a CLI via `uv run <script> --help`. Prefer these targeted invocations only for debugging; the required validation for a change is still `./run.sh`.
+- Run `uv run ruff check` and fix all the linter errors.
+- Run `uv run pyrefly check` and fix all the type errors.
 
 ## Pull Requests & Commits
 - Group related changes per commit, and describe how they affect the pipeline (verification, compilation, rendering, reporting, etc.).
