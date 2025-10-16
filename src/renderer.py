@@ -150,7 +150,53 @@ class Renderer:
                             )
                         )
                 pass
-            # TODO: for now crashing on RadialGradients, will add support in a later PR
+            case ast.RadialGradient():
+                json_shader: dict = self.skp_json['commands'][paint.index]['paint']['shader']
+
+                flat_matrix = [float(x) for row in json_shader['values']['00_matrix'] for x in row]
+                assert len(flat_matrix) == 9
+                matrix = skia.Matrix()
+                matrix.set9(flat_matrix)
+
+                json_rgshader: dict = json_shader['values']['01_SkRadialGradient']
+                flags: int = json_rgshader['00_uint']
+                tile_mode = skia.TileMode(extract_tile_mode(flags))
+
+                colors: list[int] = []
+                for json_color in json_rgshader['01_colorArray']:
+                    colors.append(
+                        int(skia.Color4f(json_color[1], json_color[2], json_color[3], json_color[0]))
+                    )
+
+                positions = None
+                if '02_byteArray' in json_rgshader:
+                    if '03_scalarArray' in json_rgshader:
+                        positions = [float(point) for point in json_rgshader['03_scalarArray']]
+                        center = skia.Point(*json_rgshader['04_point'])
+                        radius = float(json_rgshader['05_scalar'])
+                    else:
+                        center = skia.Point(*json_rgshader['03_point'])
+                        radius = float(json_rgshader['04_scalar'])
+                else:
+                    if '02_scalarArray' in json_rgshader:
+                        positions = [float(point) for point in json_rgshader['02_scalarArray']]
+                        center = skia.Point(*json_rgshader['03_point'])
+                        radius = float(json_rgshader['04_scalar'])
+                    else:
+                        center = skia.Point(*json_rgshader['02_point'])
+                        radius = float(json_rgshader['03_scalar'])
+
+                skpaint.setShader(
+                    skia.GradientShader.MakeRadial(
+                        center,
+                        radius,
+                        colors,
+                        positions,
+                        tile_mode,
+                        flags,
+                        matrix,
+                    )
+                )
             case _:
                 raise NotImplementedError(f'{type(paint.fill)} fill is not supported')
 
