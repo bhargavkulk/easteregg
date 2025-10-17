@@ -19,9 +19,6 @@ line-length = 100
 [tool.ruff.format]
 quote-style = "single"
 
-[tool.basedpyright]
-reportUnusedCallResult = "none"
-
 [tool.poetry]
 name = "easteregg"
 version = "0.1.0"

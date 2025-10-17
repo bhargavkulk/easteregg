@@ -5,6 +5,7 @@ from pathlib import Path
 
 def verify_color_filter(colorfilter: dict):
     # large composed color filter:
+    #
     # https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/GitHub__layer_10.json
     # https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/GitHub__layer_9.json
     # https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/json/Zoom__layer_11.json
