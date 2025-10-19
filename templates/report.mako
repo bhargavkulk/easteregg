@@ -17,6 +17,16 @@
         No. of websites <span class="yellow">Unchanged</span>: ${content['unchanged']}/${content['num_benchmarks']}<br />
         No. of websites <span class="red">Regressed</span>: ${content['regressed']}/${content['num_benchmarks']}<br />
         No. of websites <span>Failed</span>:  ${content['failed']}/${content['num_benchmarks']}
+        <!-- Display the SaveLayer aggregates computed in mk_report.collate_data so the
+             summary conveys the overall effect of optimization on successful benches. -->
+        <% totals = content.get('savelayer_totals') or {} %>
+        % if totals.get('benchmarks'):
+            <br />Total SaveLayers (before → after): ${totals.get('before', 0)} → ${totals.get('after', 0)}
+            <br />Net SaveLayer change: ${'%+d' % totals.get('delta', 0)}
+        % else:
+            <br />Total SaveLayers (before → after): n/a
+            <br />Net SaveLayer change: n/a (no successful benchmarks)
+        % endif
     </p>
     <table class="white-space: nowrap;" data-sortable>
         <thead class="gray">
