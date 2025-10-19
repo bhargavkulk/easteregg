@@ -51,6 +51,11 @@ def collate_data(args: Args):
     unchanged = 0
     regressed = 0
     failed = 0
+    # Track the aggregate number of SaveLayer nodes across successful benchmarks so the
+    # summary view can surface total before/after counts alongside per-benchmark data.
+    savelayer_before_total = 0
+    savelayer_after_total = 0
+    savelayer_successes = 0
 
     benchmarks: list[Path] = list(args.bench.glob('*.json'))
 
@@ -155,6 +160,15 @@ def collate_data(args: Args):
 
         data['counts'] = [before, after]
 
+        # Capture aggregate SaveLayer totals only when we have a successful optimization
+        # run. Later, the HTML summary displays these totals, so guard against missing
+        # data by using the stored counts before adding them to the running sum.
+        counts = data.get('counts')
+        if data['state'] == 2 and isinstance(counts, (list, tuple)) and len(counts) == 2:
+            savelayer_before_total += counts[0]
+            savelayer_after_total += counts[1]
+            savelayer_successes += 1
+
         if before < after:
             regressed += 1
         elif before == after and before == 0:
@@ -228,6 +242,14 @@ def collate_data(args: Args):
         'unchanged': unchanged,
         'regressed': regressed,
         'failed': failed,
+        # The template consumes these SaveLayer aggregates to display the overall delta
+        # for successful benchmarks in the summary header.
+        'savelayer_totals': {
+            'before': savelayer_before_total,
+            'after': savelayer_after_total,
+            'delta': savelayer_after_total - savelayer_before_total,
+            'benchmarks': savelayer_successes,
+        },
     }
 
     with (args.output / 'report.json').open('w') as f:
