@@ -70,7 +70,6 @@ type ClipOp = Literal['intersect'] | Literal['difference']
 
 @dataclass
 class State:
-    # matrix: list[float]?
     clip: Geometry
     transform: list[float]
     layer: Layer
@@ -268,5 +267,3 @@ if __name__ == '__main__':
             f.write(layer)
     else:
         print('(let test ' + layer.sexp() + ')')
-        # print()
-        # print(pretty_print_layer(layer))
