@@ -129,7 +129,7 @@ def collate_data(args: Args):
             egglog_file,
             Path('./egg-files/extract.egg'),
         ]
-        Path(name + '.txt').write_text('\n'.join(f.read_text() for f in files))
+        (args.output / (name + '.txt')).write_text('\n'.join(f.read_text() for f in files))
 
         if ret_code == 0:
             fmt_file = args.output / (name + '__POST.txt')
