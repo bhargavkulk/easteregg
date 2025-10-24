@@ -104,7 +104,7 @@ def collate_data(args: Args):
                 warning_file.write_text('\n'.join(warnings) + '\n')
                 data['warn_file'] = htmlify_path(warning_file)
 
-            egglog_file: Path = EGG_FOLDER / (name + '.egg')
+            egglog_file: Path = EGG_FOLDER / (name + 'TEST.egg')
             egglog_file.write_text('(let test ' + egglog_input + ')')
 
             fmt_file = args.output / (name + '__PRE.txt')
@@ -124,6 +124,12 @@ def collate_data(args: Args):
 
         # 4. optimize in egglog
         ret_code, egglog_output, stderr = run_egglog(egglog_file)
+        files = [
+            Path('./egg-files/lambda_skia.egg'),
+            egglog_file,
+            Path('./egg-files/extract.egg'),
+        ]
+        (args.output / (name + '.txt')).write_text('\n'.join(f.read_text() for f in files))
 
         if ret_code == 0:
             fmt_file = args.output / (name + '__POST.txt')

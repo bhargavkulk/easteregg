@@ -19,9 +19,6 @@ line-length = 100
 [tool.ruff.format]
 quote-style = "single"
 
-[tool.basedpyright]
-reportUnusedCallResult = "none"
-
 [tool.poetry]
 name = "easteregg"
 version = "0.1.0"
@@ -32,6 +29,14 @@ description = "Add your description here"
 skia-python = [
   { path = "./skia_python-138.0rc1-cp312-cp312-macosx_11_0_arm64.whl", marker = "sys_platform == 'darwin'" },
   { path = "./skia_python-138.0rc1-cp312-cp312-manylinux_2_28_x86_64.whl", marker = "sys_platform == 'linux'" },
+]
+
+[tool.pyrefly]
+project-includes = ["**/*"]
+project-excludes = [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/*venv/**/*",
 ]
 
 [dependency-groups]
