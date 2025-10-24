@@ -1,6 +1,6 @@
 (datatype Fill
-  (LinearGradient)
-  (RadialGradient)
+  (LinearGradient bool)
+  (RadialGradient bool)
   (Color f64 f64 f64 f64))
 
 (datatype BlendMode
