@@ -17,6 +17,10 @@ class Node:
                         processed_values.append(value.sexp())
                     case str():
                         processed_values.append(value)
+                    case True:
+                        processed_values.append('true')
+                    case False:
+                        processed_values.append('false')
                     case _:
                         processed_values.append(str(value))
 
@@ -46,6 +50,8 @@ class Color(Node):
 class LinearGradient(Node):
     """Linear gradient shader"""
 
+    is_opaque: bool
+
     def pprint(self) -> str:
         return 'LinearGradient'
 
@@ -53,6 +59,8 @@ class LinearGradient(Node):
 @dataclass
 class RadialGradient(Node):
     """Radial gradient shader"""
+
+    is_opaque: bool
 
     def pprint(self) -> str:
         return 'RadialGradient'

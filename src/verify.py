@@ -34,7 +34,6 @@ def verify_color_filter(colorfilter: dict):
             # 01_string -> the runtime function (exists only if 00_int is 0)
             # 02_bytearray -> funiforms
             # 03_int -> something i dont get
-            assert False, 'searching for luma filters'
             # Constructed from SkRuntimeEffect::makeColorFilter
             # the run time language is the SkSL (Skia Shader Language)
             assert '00_int' in colorfilter['values']
@@ -53,7 +52,6 @@ def verify_color_filter(colorfilter: dict):
 #     00_scalarArray -> matrix
 #     01_bool -> is RGBA domain
 #     02_bool -> is clamped
-#
 
 
 # IMPORTANT: If 01_bool is false then all the subsequent indices gets pushed up
@@ -128,6 +126,10 @@ def verify_shader(shader: dict):
 def verify_inner_shader(name, shader):
     match name:
         case 'SkLinearGradient':
+            color_array = shader['01_colorArray']
+            is_opaque = any(i[0] == 1 for i in color_array)
+            assert not is_opaque, 'opaque linear gradient'
+
             assert '00_uint' in shader  # flags
             assert '01_colorArray' in shader  # colors
 
@@ -146,6 +148,10 @@ def verify_inner_shader(name, shader):
                     assert '02_point' in shader  # start
                     assert '03_point' in shader  # end
         case 'SkRadialGradient':
+            color_array = shader['01_colorArray']
+            is_opaque = any(i[0] == 1 for i in color_array)
+            assert not is_opaque, 'opaque linear gradient'
+
             assert '00_uint' in shader  # flags
             assert '01_colorArray' in shader  # colors
 

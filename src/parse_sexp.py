@@ -46,8 +46,8 @@ geometry: "(Full)" -> full
 paint: "(Paint" fill blend_mode style filter INT ")" -> paint
 
 fill: "(Color" FLOAT FLOAT FLOAT FLOAT ")" -> color
-    | "(RadialGradient)" -> radial_gradient
-    | "(LinearGradient)" -> linear_gradient
+    | "(RadialGradient" boolean ")" -> radial_gradient
+    | "(LinearGradient" boolean ")" -> linear_gradient
 
 blend_mode: "(" /[A-Za-z]+/ ")"
 
@@ -56,6 +56,9 @@ style: "(" /[A-Za-z]+/ ")"
 filter: "(" /[A-Za-z]+/ ")"
 
 FLOAT: /-?\d+\.\d+/
+
+boolean: "true" -> true
+       | "false" -> false
 
 %import common.INT
 %import common.WS
@@ -70,6 +73,12 @@ class LambdaSkiaTransformer(Transformer[Any, Layer]):
     def INT(self, node):
         return int(node)
 
+    def true(self, node) -> bool:
+        return True
+
+    def false(self, node) -> bool:
+        return False
+
     def blend_mode(self, node):
         return '(' + str(node[0]) + ')'
 
@@ -83,10 +92,10 @@ class LambdaSkiaTransformer(Transformer[Any, Layer]):
         return Color(*node)
 
     def linear_gradient(self, node):
-        return LinearGradient()
+        return LinearGradient(*node)
 
     def radial_gradient(self, node):
-        return RadialGradient()
+        return RadialGradient(*node)
 
     def paint(self, node):
         return Paint(*node)
