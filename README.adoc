@@ -89,6 +89,7 @@ this.
 === DstIn masks
 
 Stuff like this:
+
 ....
 ᐊ SrcOver ClipRect [483.0 272.0 745.0 296.0], Mat [...]
   SaveLayer Color(255 0 0 0)
