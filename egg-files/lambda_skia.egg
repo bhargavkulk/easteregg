@@ -107,3 +107,10 @@
                     (Paint (Color 1.0 r g b) (SrcOver) nostyle (LumaFilter) i2))
          (Draw (Empty) shape (Paint (Color 1.0 0.0 0.0 0.0) (SrcOver) style (IdFilter) i1) clip transform)
          :ruleset opt)
+
+;; Gradient Clips
+(rewrite (SaveLayer (Draw (Empty) shape (Paint (Color a r g b) (SrcOver) style (IdFilter) i1) clip transform)
+                    (Draw (Empty) shape (Paint (LinearGradient true) (SrcOver) style (IdFilter) i2) clip transform)
+                    (Paint (Color 1.0 r1 g1 b1) (DstIn) nostyle (IdFilter) i3))
+         (Draw (Empty) shape (Paint (Color a r g b) (SrcOver) style (IdFilter) i1) clip transform)
+         :ruleset opt)
