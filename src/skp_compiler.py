@@ -119,7 +119,7 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                         color = LinearGradient(is_opaque)
                     elif '01_SkRadialGradient' in inner_shader:
                         is_opaque = any(
-                            i[0] == 1 for i in inner_shader['01_SkLinearGradient']['01_colorArray']
+                            i[0] == 1 for i in inner_shader['01_SkRadialGradient']['01_colorArray']
                         )
                         color = RadialGradient(is_opaque)
                     else:
