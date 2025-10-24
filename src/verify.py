@@ -126,10 +126,6 @@ def verify_shader(shader: dict):
 def verify_inner_shader(name, shader):
     match name:
         case 'SkLinearGradient':
-            color_array = shader['01_colorArray']
-            is_opaque = any(i[0] == 1 for i in color_array)
-            assert not is_opaque, 'opaque linear gradient'
-
             assert '00_uint' in shader  # flags
             assert '01_colorArray' in shader  # colors
 
@@ -148,10 +144,6 @@ def verify_inner_shader(name, shader):
                     assert '02_point' in shader  # start
                     assert '03_point' in shader  # end
         case 'SkRadialGradient':
-            color_array = shader['01_colorArray']
-            is_opaque = any(i[0] == 1 for i in color_array)
-            assert not is_opaque, 'opaque linear gradient'
-
             assert '00_uint' in shader  # flags
             assert '01_colorArray' in shader  # colors
 
@@ -210,6 +202,7 @@ def verify_blend_mode(blend_mode: str):
     # Overlay: https://nightly.cs.washington.edu/reports/easteregg/1753066297:verify:0530860e/Mail_ru__layer_18__VERIFY.html
     #          https://nightly.cs.washington.edu/reports/easteregg/1753066297:verify:0530860e/Mail_ru__layer_15__VERIFY.html
     # Plus: https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/GitHub__layer_2__VERIFY.html
+    assert blend_mode != 'DstIn', 'Searching for dstin'
     assert blend_mode in {'Src', 'DstIn', 'Multiply', 'Overlay', 'SoftLight', 'Plus'}, (
         f'Unknown blend mode: {blend_mode}'
     )
