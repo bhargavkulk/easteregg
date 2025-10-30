@@ -17,10 +17,8 @@ class Node:
                         values.append(value.sexp())
                     case str():
                         values.append(value)
-                    case True:
-                        values.append('true')
-                    case False:
-                        values.append('false')
+                    case bool():
+                        values.append('true' if value else 'false')
                     case _:
                         values.append(str(value))
 
