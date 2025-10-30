@@ -3,6 +3,18 @@ import json
 from pathlib import Path
 
 
+def can_m44_to_m33(m44):
+    # Check third column (index 2): should be [0, 0, 1, 0]
+    if m44[0][2] != 0 or m44[1][2] != 0 or m44[2][2] != 1 or m44[3][2] != 0:
+        return False
+
+    # Check third row (index 2): should be [0, 0, 1, 0]
+    if m44[2][0] != 0 or m44[2][1] != 0 or m44[2][3] != 0:
+        return False
+
+    return True
+
+
 def verify_color_filter(colorfilter: dict):
     # large composed color filter:
     #
@@ -343,6 +355,8 @@ def verify_command(command):
         case 'Concat44':
             # concat44 has only 1 possible attribute
             assert 'matrix' in command
+            assert not can_m44_to_m33(command['matrix']), 'searching for invalid matrices'
+
         case 'ClipRect':
             assert 'coords' in command
             assert 'op' in command
