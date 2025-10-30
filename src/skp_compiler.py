@@ -113,9 +113,15 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                     inner_shader = json_paint['shader']['values']
 
                     if '01_SkLinearGradient' in inner_shader:
-                        color = LinearGradient()
+                        is_opaque = all(
+                            i[0] == 1 for i in inner_shader['01_SkLinearGradient']['01_colorArray']
+                        )
+                        color = LinearGradient(is_opaque)
                     elif '01_SkRadialGradient' in inner_shader:
-                        color = RadialGradient()
+                        is_opaque = all(
+                            i[0] == 1 for i in inner_shader['01_SkRadialGradient']['01_colorArray']
+                        )
+                        color = RadialGradient(is_opaque)
                     else:
                         raise NotImplementedError('unknown shader')
 

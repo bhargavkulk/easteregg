@@ -10,21 +10,19 @@ class Node:
         try:
             field_values = [getattr(self, field.name) for field in fields(self)]
 
-            processed_values: list[str] = []
+            values: list[str] = []
             for value in field_values:
                 match value:
                     case Node():
-                        processed_values.append(value.sexp())
+                        values.append(value.sexp())
                     case str():
-                        processed_values.append(value)
+                        values.append(value)
+                    case bool():
+                        values.append('true' if value else 'false')
                     case _:
-                        processed_values.append(str(value))
+                        values.append(str(value))
 
-            return (
-                f'({class_name} {" ".join(processed_values)})'
-                if processed_values
-                else f'({class_name})'
-            )
+            return f'({class_name} {" ".join(values)})' if values else f'({class_name})'
         except TypeError:
             raise NotImplementedError()
 
@@ -46,6 +44,8 @@ class Color(Node):
 class LinearGradient(Node):
     """Linear gradient shader"""
 
+    is_opaque: bool
+
     def pprint(self) -> str:
         return 'LinearGradient'
 
@@ -53,6 +53,8 @@ class LinearGradient(Node):
 @dataclass
 class RadialGradient(Node):
     """Radial gradient shader"""
+
+    is_opaque: bool
 
     def pprint(self) -> str:
         return 'RadialGradient'

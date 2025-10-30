@@ -159,3 +159,19 @@ and post-optimized egglog ``.skp``s. We also run the pre- and post-optimized
 optimizations produce the same image. All of these scripts are orchestrated by
 link:make_report.py[] to create a nice formatted HTML table to view in your
 browser.
+
+== Some links
+
+https://bugs.chromium.org/p/skia/issues/detail?id=2180
+https://bugs.chromium.org/p/skia/issues/detail?id=5716
+These two are bugs in Skia related to their existing optimizer
+He also sent a huge number related to the Chrome-side optimizer:
+https://bugs.chromium.org/p/chromium/issues/detail?id=1006140
+https://bugs.chromium.org/p/chromium/issues/detail?id=748485
+https://bugs.chromium.org/p/chromium/issues/detail?id=749422
+https://chromium-review.googlesource.com/c/chromium/src/+/589815
+https://bugs.chromium.org/p/chromium/issues/detail?id=769603
+https://bugs.chromium.org/p/chromium/issues/detail?id=1195276
+https://chromium-review.googlesource.com/c/chromium/src/+/2851121
+https://bugs.chromium.org/p/chromium/issues/detail?id=1302290
+https://chromium-review.googlesource.com/c/chromium/src/+/3504971
