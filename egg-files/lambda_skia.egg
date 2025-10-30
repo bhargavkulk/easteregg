@@ -49,6 +49,8 @@
 ;;----------------
 (ruleset opt)
 (ruleset simp)
+(ruleset clip)
+
 ;; REWRITE 1
 (rewrite (SaveLayer l (Empty) (Paint (Color 1.0 r g b) (SrcOver) style (IdFilter) i))
          l

@@ -10,25 +10,21 @@ class Node:
         try:
             field_values = [getattr(self, field.name) for field in fields(self)]
 
-            processed_values: list[str] = []
+            values: list[str] = []
             for value in field_values:
                 match value:
                     case Node():
-                        processed_values.append(value.sexp())
+                        values.append(value.sexp())
                     case str():
-                        processed_values.append(value)
+                        values.append(value)
                     case True:
-                        processed_values.append('true')
+                        values.append('true')
                     case False:
-                        processed_values.append('false')
+                        values.append('false')
                     case _:
-                        processed_values.append(str(value))
+                        values.append(str(value))
 
-            return (
-                f'({class_name} {" ".join(processed_values)})'
-                if processed_values
-                else f'({class_name})'
-            )
+            return f'({class_name} {" ".join(values)})' if values else f'({class_name})'
         except TypeError:
             raise NotImplementedError()
 

@@ -202,7 +202,6 @@ def verify_blend_mode(blend_mode: str):
     # Overlay: https://nightly.cs.washington.edu/reports/easteregg/1753066297:verify:0530860e/Mail_ru__layer_18__VERIFY.html
     #          https://nightly.cs.washington.edu/reports/easteregg/1753066297:verify:0530860e/Mail_ru__layer_15__VERIFY.html
     # Plus: https://nightly.cs.washington.edu/reports/easteregg/1753074320:verify:8ab065ff/GitHub__layer_2__VERIFY.html
-    assert blend_mode != 'DstIn', 'Searching for dstin'
     assert blend_mode in {'Src', 'DstIn', 'Multiply', 'Overlay', 'SoftLight', 'Plus'}, (
         f'Unknown blend mode: {blend_mode}'
     )
