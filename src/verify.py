@@ -355,8 +355,9 @@ def verify_command(command):
         case 'Concat44':
             # concat44 has only 1 possible attribute
             assert 'matrix' in command
-            assert not can_m44_to_m33(command['matrix']), 'searching for invalid matrices'
-
+            assert not can_m44_to_m33(command['matrix']), (
+                f'searching for invalid matrices {command["matrix"]}'
+            )
         case 'ClipRect':
             assert 'coords' in command
             assert 'op' in command
