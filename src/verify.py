@@ -4,6 +4,10 @@ from pathlib import Path
 
 
 def can_m44_to_m33(m44):
+    print(f'  {m44[0][2]} ')
+    print(f'  {m44[1][2]} ')
+    print(''.join(m44[2]))
+    print(f'  {m44[3][2]} ')
     return (
         m44[2][0] == 0
         and m44[2][1] == 0
