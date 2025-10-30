@@ -4,15 +4,15 @@ from pathlib import Path
 
 
 def can_m44_to_m33(m44):
-    # Check third column (index 2): should be [0, 0, 1, 0]
-    if m44[0][2] != 0 or m44[1][2] != 0 or m44[2][2] != 1 or m44[3][2] != 0:
-        return False
-
-    # Check third row (index 2): should be [0, 0, 1, 0]
-    if m44[2][0] != 0 or m44[2][1] != 0 or m44[2][3] != 0:
-        return False
-
-    return True
+    return (
+        m44[2][0] == 0
+        and m44[2][1] == 0
+        and m44[2][2] == 1
+        and m44[2][3] == 0
+        and m44[0][2] == 0
+        and m44[1][2] == 0
+        and m44[3][2] == 0
+    )
 
 
 def verify_color_filter(colorfilter: dict):
