@@ -163,16 +163,16 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                     path.addRect(left, top, right, bottom)
                     geometry = skia.Rect()
                     path.isRect(geometry)
-                    geometry = Rect(geometry.left, geometry.top, geometry.right, geometry.bottom)
+                    g = Rect(geometry.left, geometry.top, geometry.right, geometry.bottom)
                     stack[-1].clip = (Intersect if op == 'intersect' else Difference)(
-                        stack[-1].clip, geometry
+                        stack[-1].clip, g
                     )
                 case RRect(l, t, r, b, rl, rt, rr, rb):
-                    path = skia.Path()
-                    rect = skia.Rect.MakeLTRB(l, t, r, b)
-                    rrect = skia.RRect.MakeEmpty()
-                    rrect.setNinePatch(rect, rl, rt, rr, rb)
-                    path.addRRect(rrect)
+                    # path = skia.Path()
+                    # rect = skia.Rect.MakeLTRB(l, t, r, b)
+                    # rrect = skia.RRect.MakeEmpty()
+                    # rrect.setNinePatch(rect, rl, rt, rr, rb)
+                    # path.addRRect(rrect)
                     stack[-1].clip = (Intersect if op == 'intersect' else Difference)(
                         stack[-1].clip, geometry
                     )
