@@ -208,6 +208,7 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 # [..., s₁(m, c, l, b, p)]
                 # -->
                 # [..., s₁(m, c, l, b, p), s₂(m, c, l, b, p)]
+                print(stack[-1])
                 new_state = deepcopy(stack[-1])
                 new_state.is_save_layer = False
                 stack.append(new_state)
