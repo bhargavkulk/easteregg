@@ -6,6 +6,8 @@ from copy import deepcopy
 from dataclasses import dataclass
 from typing import Any, Literal, Optional
 
+import skia  # pyrefly: ignore
+
 from lambda_skia import (
     BlendMode,
     Color,
@@ -148,12 +150,41 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
 
                 return Paint(color, blend_mode, style, color_filter, i)
 
-        def push_clip(g: Geometry, op: ClipOp):
+        def push_clip(geometry: Geometry, op: ClipOp):
             # given g and op
             # [..., s(m, c, l, b, p)]
             # -->
             # [..., s(m, op(c, g), l, b, p)]
-            stack[-1].clip = (Intersect if op == 'intersect' else Difference)(stack[-1].clip, g)
+
+            # Check if round trip from path gets us the same shape
+            match geometry:
+                case Rect(left, top, right, bottom):
+                    path = skia.Path()
+                    path.addRect(left, top, right, bottom)
+                    geometry = skia.Rect()
+                    path.isRect(geometry)
+                    geometry = Rect(geometry.left, geometry.top, geometry.right, geometry.bottom)
+                    stack[-1].clip = (Intersect if op == 'intersect' else Difference)(
+                        stack[-1].clip, geometry
+                    )
+                case RRect(l, t, r, b, rl, rt, rr, rb):
+                    path = skia.Path()
+                    rect = skia.Rect.MakeLTRB(l, t, r, b)
+                    rrect = skia.RRect.MakeEmpty()
+                    rrect.setNinePatch(rect, rl, rt, rr, rb)
+                    path.addRRect(rrect)
+                    stack[-1].clip = (Intersect if op == 'intersect' else Difference)(
+                        stack[-1].clip, geometry
+                    )
+                case Path(idx):
+                    # json_path: dict[str, Any] = self.skp_json['commands'][idx]
+                    # path = self.mk_path(json_path)
+                    # self.canvas.drawPath(path, skpaint)
+                    stack[-1].clip = (Intersect if op == 'intersect' else Difference)(
+                        stack[-1].clip, geometry
+                    )
+                case _:
+                    raise NotImplementedError(f'Geometry type {type(geometry)} not implemented')
 
         def push_transform(m: list[float]):
             # given m₂
