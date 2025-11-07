@@ -58,11 +58,7 @@ def mm(a, b):
 
 
 def radii_to_ltrb(radii: list[list[float]]) -> list[float]:
-    left = radii[0][0]
-    top = radii[0][1]
-    right = radii[1][0]
-    bottom = radii[2][1]
-    return [left, top, right, bottom]
+    return sum(radii, [])
 
 
 type ClipOp = Literal['intersect'] | Literal['difference']
