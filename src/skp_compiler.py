@@ -281,7 +281,7 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 skrrect_pre = rrect.to_skrrect()
                 transform = to_matrix33(stack[-1].transform)
                 skpath = skia.Path.RRect(skrrect_pre)
-                skpath.transform(transform)
+                # skpath.transform(transform)
                 skrrect_post = skia.RRect()
                 skpath.isRRect(skrrect_post)
                 assert skrrect_post is not None
