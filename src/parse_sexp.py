@@ -36,7 +36,7 @@ matrix: "(Matrix" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FL
 geometry: "(Full)" -> full
         | "(Path" INT ")" -> path
         | "(Rect" FLOAT FLOAT FLOAT FLOAT ")" -> rect
-        | "(RRect" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT ")" -> rrect
+        | "(RRect" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT ")" -> rrect
         | "(Oval" FLOAT FLOAT FLOAT FLOAT ")" -> oval
         | "(ImageRect" FLOAT FLOAT FLOAT FLOAT ")" -> imagerect
         | "(TextBlob" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT ")" -> textblob
