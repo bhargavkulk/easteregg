@@ -6,6 +6,9 @@ from copy import deepcopy
 from dataclasses import dataclass
 from typing import Any, Literal, Optional
 
+import numpy as np
+import skia  # pyrefly: ignore
+
 from lambda_skia import (
     BlendMode,
     Color,
@@ -59,6 +62,32 @@ def mm(a, b):
 
 def radii_to_ltrb(radii: list[list[float]]) -> list[float]:
     return sum(radii, [])
+
+
+def to_matrix33(matrix: list[float]) -> skia.Matrix:
+    """When converting from SkM44 to SkMatrix, the third row and
+    column is dropped.  When converting from SkMatrix to SkM44
+    the third row and column remain as identity:
+    [ a b 0 c ]    [ a b c ]
+    [ d e 0 f ] -> [ d e f ]
+    [ 0 0 1 0 ]    [ g h i ]
+    [ g h 0 i ]
+    """
+
+    m33: list[float] = [
+        matrix[0],
+        matrix[1],
+        matrix[3],
+        matrix[4],
+        matrix[5],
+        matrix[7],
+        matrix[12],
+        matrix[13],
+        matrix[15],
+    ]
+
+    m33_array = np.array(m33, dtype=np.float32).reshape(3, 3)
+    return skia.Matrix(m33_array)
 
 
 type ClipOp = Literal['intersect'] | Literal['difference']
@@ -233,15 +262,27 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
             case 'ClipRect':
                 coords: list[float] = command_data['coords']
                 op: ClipOp = command_data['op']
-                push_clip(Rect(*[coord / 1.0 for coord in coords]), op)
+                skrect_pre = skia.Rect.MakeLTRB(*[coord / 1.0 for coord in coords])
+                transform = to_matrix33(stack[-1].transform)
+                skpath = skia.Path.Rect(skrect_pre)
+                skpath.transform(transform)
+                skrect_post = skia.Rect()
+                skpath.isRect(skrect_post)
+                assert skrect_post is not None
+                rect = Rect(
+                    skrect_post.left(), skrect_post.top(), skrect_post.right(), skrect_post.bottom()
+                )
+                push_clip(rect, op)
             case 'ClipRRect':
-                coords, *radii = command_data['coords']
-                ltrb_radii = radii_to_ltrb(radii)
-                op: ClipOp = command_data['op']
-                push_clip(RRect(*([i / 1.0 for i in coords + ltrb_radii])), op)
+                raise NotImplementedError('Pausing this for now')
+                # coords, *radii = command_data['coords']
+                # ltrb_radii = radii_to_ltrb(radii)
+                # op: ClipOp = command_data['op']
+                # push_clip(RRect(*([i / 1.0 for i in coords + ltrb_radii])), op)
             case 'ClipPath':
-                op: ClipOp = command_data['op']
-                push_clip(Path(i), op)
+                raise NotImplementedError('Pausing this for now')
+                # op: ClipOp = command_data['op']
+                # push_clip(Path(i), op)
             case 'Concat44':
                 matrix: list[float] = [i for s in command_data['matrix'] for i in s]
                 push_transform(matrix)
