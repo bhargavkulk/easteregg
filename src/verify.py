@@ -289,7 +289,12 @@ def verify_command(command):
         case 'DrawPaint':
             assert 'paint' in command
             verify_paint(command['paint'])
-        case 'DrawRect' | 'DrawRRect':
+        case 'DrawRect':
+            assert 'coords' in command  # location
+            assert 'paint' in command
+            verify_paint(command['paint'])
+        case 'DrawRRect':
+            assert False, 'searching for DrawRRect'
             assert 'coords' in command  # location
             assert 'paint' in command
             verify_paint(command['paint'])
