@@ -274,11 +274,19 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 )
                 push_clip(rect, op)
             case 'ClipRRect':
-                raise NotImplementedError('Pausing this for now')
-                # coords, *radii = command_data['coords']
-                # ltrb_radii = radii_to_ltrb(radii)
-                # op: ClipOp = command_data['op']
-                # push_clip(RRect(*([i / 1.0 for i in coords + ltrb_radii])), op)
+                coords, *radii = command_data['coords']
+                ltrb_radii = radii_to_ltrb(radii)
+                op: ClipOp = command_data['op']
+                rrect = RRect(*([i / 1.0 for i in coords + ltrb_radii]))
+                skrrect_pre = rrect.to_skrrect()
+                transform = to_matrix33(stack[-1].transform)
+                skpath = skia.Path.RRect(skrrect_pre)
+                skpath.transform(transform)
+                skrrect_post = skia.RRect()
+                skpath.isRRect(skrrect_post)
+                assert skrrect_post is not None
+                rrect = RRect.from_skrrect(skrrect_post)
+                push_clip(rrect, op)
             case 'ClipPath':
                 raise NotImplementedError('Pausing this for now')
                 # op: ClipOp = command_data['op']

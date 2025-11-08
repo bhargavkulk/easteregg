@@ -1,5 +1,5 @@
 from dataclasses import dataclass, fields
-from typing import Literal, override
+from typing import Literal, Self, override
 
 import skia  # pyrefly: ignore
 
@@ -188,6 +188,28 @@ class RRect(Geometry):
         )
 
         return rrect
+
+    @staticmethod
+    def from_skrrect(skrrect) -> Self:
+        ul = skrrect.radii(skia.RRect.Corner.kUpperLeft_Corner)
+        ur = skrrect.radii(skia.RRect.Corner.kUpperRight_Corner)
+        lr = skrrect.radii(skia.RRect.Corner.kLowerRight_Corner)
+        ll = skrrect.radii(skia.RRect.Corner.kLowerLeft_Corner)
+        rect = skrrect.rect()
+        return RRect(
+            rect.left(),
+            rect.top(),
+            rect.right(),
+            rect.bottom(),
+            ul.x(),
+            ul.y(),
+            ur.x(),
+            ur.y(),
+            lr.x(),
+            lr.y(),
+            ll.x(),
+            ll.y(),
+        )
 
 
 @dataclass
