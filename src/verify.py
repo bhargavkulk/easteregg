@@ -351,6 +351,7 @@ def verify_command(command):
             assert 'op' in command
             assert command['op'] in {'intersect', 'difference'}, command['op']
         case 'ClipRRect':
+            assert False, 'Searching for ClipRRect'
             assert 'coords' in command  # ltrb and radii
             assert 'op' in command
             assert command['op'] in {'intersect', 'difference'}, command['op']
