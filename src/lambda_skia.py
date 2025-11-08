@@ -1,6 +1,8 @@
 from dataclasses import dataclass, fields
 from typing import Literal, override
 
+import skia  # pyrefly: ignore
+
 
 @dataclass
 class Node:
@@ -148,22 +150,44 @@ class ImageRect(Geometry):
 
 @dataclass
 class RRect(Geometry):
-    """A rectangular geometry defined by left, top, right, and bottom
-    coordinates, and the radii."""
+    """An elliptical rounded rectangular geometry defined by left, top, right,
+    and bottom coordinates, and the radii."""
 
     l: float
     t: float
     r: float
     b: float
 
-    rl: float
-    rt: float
-    rr: float
-    rb: float
+    ul_x: float
+    ul_y: float
+
+    ur_x: float
+    ur_y: float
+
+    lr_x: float
+    lr_y: float
+
+    ll_x: float
+    ll_y: float
 
     @override
     def pprint(self) -> str:
-        return f'RRect({self.l}, {self.t}, {self.r}, {self.b}, {self.rl}, {self.rt}, {self.rr}, {self.rb})'
+        return f'RRect({self.l}, {self.t}, {self.r}, {self.b}, {self.ul_x}, {self.ul_y}, {self.ur_x}, {self.ur_y}, {self.lr_x}, {self.lr_y}, {self.ll_x}, {self.lr_y})'
+
+    def to_skrrect(self) -> skia.RRect:
+        rect = skia.Rect.MakeLTRB(self.l, self.t, self.r, self.b)
+        rrect = skia.RRect()
+        rrect.setRectRadii(
+            rect,
+            [
+                skia.Point(self.ul_x, self.ul_y),
+                skia.Point(self.ur_x, self.ur_y),
+                skia.Point(self.lr_x, self.lr_y),
+                skia.Point(self.ll_x, self.ll_y),
+            ],
+        )
+
+        return rrect
 
 
 @dataclass

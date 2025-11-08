@@ -165,7 +165,9 @@ class Renderer:
                 colors: list[int] = []
                 for json_color in json_rgshader['01_colorArray']:
                     colors.append(
-                        int(skia.Color4f(json_color[1], json_color[2], json_color[3], json_color[0]))
+                        int(
+                            skia.Color4f(json_color[1], json_color[2], json_color[3], json_color[0])
+                        )
                     )
 
                 positions = None
@@ -316,10 +318,9 @@ class Renderer:
                 self.canvas.drawPaint(skpaint)
             case ast.Rect(left, top, right, bottom):
                 self.canvas.drawRect(skia.Rect.MakeLTRB(left, top, right, bottom), skpaint)
-            case ast.RRect(l, t, r, b, rl, rt, rr, rb):
-                rect = skia.Rect.MakeLTRB(l, t, r, b)
-                rrect = skia.RRect.MakeEmpty()
-                rrect.setNinePatch(rect, rl, rt, rr, rb)
+            case ast.RRect():
+                assert isinstance(geometry, ast.RRect)
+                rrect = geometry.to_skrrect()
                 self.canvas.drawRRect(rrect, skpaint)
             case ast.Oval(left, top, right, bottom):
                 self.canvas.drawOval(skia.Rect.MakeLTRB(left, top, right, bottom), skpaint)
@@ -352,11 +353,10 @@ class Renderer:
                 path = skia.Path()
                 path.addRect(l, t, r, b)
                 return path
-            case ast.RRect(l, t, r, b, rl, rt, rr, rb):
+            case ast.RRect():
                 path = skia.Path()
-                rect = skia.Rect.MakeLTRB(l, t, r, b)
-                rrect = skia.RRect.MakeEmpty()
-                rrect.setNinePatch(rect, rl, rt, rr, rb)
+                assert isinstance(geometry, ast.RRect)
+                rrect = geometry.to_skrrect()
                 path.addRRect(rrect)
                 return path
             case ast.Path(idx):
@@ -394,10 +394,9 @@ class Renderer:
             match geometry:
                 case ast.Rect(left, top, right, bottom):
                     self.canvas.clipRect(skia.Rect.MakeLTRB(left, top, right, bottom), clip_op)
-                case ast.RRect(l, t, r, b, rl, rt, rr, rb):
-                    rect = skia.Rect.MakeLTRB(l, t, r, b)
-                    rrect = skia.RRect.MakeEmpty()
-                    rrect.setNinePatch(rect, rl, rt, rr, rb)
+                case ast.RRect():
+                    assert isinstance(geometry, ast.RRect)
+                    rrect = geometry.to_skrrect()
                     self.canvas.clipRRect(rrect, clip_op)
                 case _:
                     raise ValueError(
