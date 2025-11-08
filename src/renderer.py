@@ -318,7 +318,7 @@ class Renderer:
                 self.canvas.drawPaint(skpaint)
             case ast.Rect(left, top, right, bottom):
                 self.canvas.drawRect(skia.Rect.MakeLTRB(left, top, right, bottom), skpaint)
-            case ast.RRect(l, t, r, b, rl, rt, rr, rb):
+            case ast.RRect():
                 assert isinstance(geometry, ast.RRect)
                 rrect = geometry.to_skrrect()
                 self.canvas.drawRRect(rrect, skpaint)
@@ -353,7 +353,7 @@ class Renderer:
                 path = skia.Path()
                 path.addRect(l, t, r, b)
                 return path
-            case ast.RRect(l, t, r, b, rl, rt, rr, rb):
+            case ast.RRect():
                 path = skia.Path()
                 assert isinstance(geometry, ast.RRect)
                 rrect = geometry.to_skrrect()
@@ -394,7 +394,7 @@ class Renderer:
             match geometry:
                 case ast.Rect(left, top, right, bottom):
                     self.canvas.clipRect(skia.Rect.MakeLTRB(left, top, right, bottom), clip_op)
-                case ast.RRect(l, t, r, b, rl, rt, rr, rb):
+                case ast.RRect():
                     assert isinstance(geometry, ast.RRect)
                     rrect = geometry.to_skrrect()
                     self.canvas.clipRRect(rrect, clip_op)
