@@ -354,10 +354,7 @@ class Renderer:
                 json_path: dict[str, Any] = self.skp_json['commands'][idx]
                 path = self.mk_path(json_path)
                 path2 = self.path_map[idx2]
-                print('--- old path ---')
-                print(path_to_str(path))
-                print('--- new path ---')
-                print(path_to_str(path2))
+                print(path_to_str(path) == path_to_str(path2))
                 self.canvas.drawPath(path, skpaint)
             case _:
                 raise NotImplementedError(f'Geometry type {type(geometry)} not implemented')
