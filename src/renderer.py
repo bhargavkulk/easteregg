@@ -1,4 +1,7 @@
+import io
+import sys
 import traceback
+from contextlib import redirect_stdout
 from pathlib import Path
 from typing import Any
 
@@ -27,15 +30,28 @@ def extract_tile_mode(flags: int) -> int:
     return (flags >> 8) & 0xF
 
 
+def path_to_str(path: skia.Path) -> str:
+    buffer = io.StringIO()
+    with redirect_stdout(buffer):
+        path.dumpHex()
+    return buffer.getvalue()
+
+
 class Renderer:
     def __init__(
-        self, skp_json: dict[str, Any], width: int = 512, height: int = 512, png: bool = True
+        self,
+        skp_json: dict[str, Any],
+        path_map: dict[int, skia.Path],
+        width: int = 512,
+        height: int = 512,
+        png: bool = True,
     ):
         """Initialize renderer with SKP data and canvas dimensions."""
         self.width = width
         self.height = height
         self.png = png
         self.skp_json = skp_json
+        self.path_map = path_map
         if png:
             self.surface = skia.Surface(width, height)
             self.canvas = self.surface.getCanvas()
@@ -334,9 +350,14 @@ class Renderer:
             case ast.ImageRect(_, _, _, _):
                 # Ignore for now
                 pass
-            case ast.Path(idx):
+            case ast.Path(idx, idx2):
                 json_path: dict[str, Any] = self.skp_json['commands'][idx]
                 path = self.mk_path(json_path)
+                path2 = self.path_map[idx2]
+                print('--- old path ---')
+                print(path_to_str(path))
+                print('--- new path ---')
+                print(path_to_str(path2))
                 self.canvas.drawPath(path, skpaint)
             case _:
                 raise NotImplementedError(f'Geometry type {type(geometry)} not implemented')
@@ -427,11 +448,11 @@ class Renderer:
         self.canvas.setMatrix(skia_m44)
 
 
-def egg_to_png(json, layer, output_file):
+def egg_to_png(json, layer, output_file, path_map):
     """Writes egg file to png at 'output_file'"""
     try:
         w, h = json.get('dim', (512, 512))
-        renderer = Renderer(json, w, h)
+        renderer = Renderer(json, path_map, w, h)
         renderer.render_layer(layer)
         renderer.to_png(output_file)
         return
@@ -440,11 +461,11 @@ def egg_to_png(json, layer, output_file):
         return str(tb)
 
 
-def egg_to_skp(json, layer, output_file):
+def egg_to_skp(json, layer, output_file, path_map):
     """Writes egg file to skp at 'output_file'"""
     try:
         w, h = json.get('dim', (512, 512))
-        renderer = Renderer(json, w, h, png=False)
+        renderer = Renderer(json, path_map, w, h, png=False)
         renderer.render_layer(layer)
         renderer.to_skp(output_file)
         return

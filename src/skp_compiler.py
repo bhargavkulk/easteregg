@@ -104,9 +104,17 @@ class State:
     paint: Optional[Paint]  # Only not none, if is_save_layer is True
 
 
-def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
+def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> tuple[Layer, skia.Path]:
     """Compiles serialized Skia commands into λSkia"""
     stack: list[State] = [State(Full(), I, Empty(), False, None)]
+    path_map: dict[int, skia.Path] = dict()
+    path_index = 0
+
+    def insert_in_path_map(path: skia.Path) -> int:
+        nonlocal path_index
+        path_map[path_index] = path
+        path_index += 1
+        return path_index - 1
 
     for i, command_data in enumerate(commands):
 
@@ -253,15 +261,8 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 mk_draw(RRect(*([i / 1.0 for i in coords + ltrb_radii])))
             case 'DrawPath':
                 path = Path.from_jsonpath(command_data['path'])
-                old_stdout = sys.stdout
-                sys.stdout = buffer = io.StringIO()
-
-                path.dumpHex()
-
-                output = buffer.getvalue()
-                sys.stdout = old_stdout
-                print(output)
-                mk_draw(Path(i))
+                index = insert_in_path_map(path)
+                mk_draw(Path(i, index))
             case 'DrawTextBlob':
                 x: float = command_data['x']
                 y: float = command_data['y']
@@ -309,7 +310,7 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 raise NotImplementedError(command + ' @ ' + str(i))
 
     assert len(stack) == 1, 'Unbalanced Save/SaveLayer'
-    return stack[-1].layer
+    return (stack[-1].layer, path_map)
 
 
 if __name__ == '__main__':
@@ -322,7 +323,7 @@ if __name__ == '__main__':
     with args.input.open('rb') as f:
         skp = json.load(f)
 
-    layer = compile_skp_to_lskia(skp['commands'])
+    layer, _ = compile_skp_to_lskia(skp['commands'])
 
     if args.output:
         with args.output.open('w') as f:

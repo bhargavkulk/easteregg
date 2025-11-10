@@ -231,7 +231,8 @@ class Oval(Geometry):
 class Path(Geometry):
     """A geometry that defines an arbitrary closed or open path"""
 
-    index: float
+    index: int
+    index2: int
 
     @override
     def pprint(self) -> str:

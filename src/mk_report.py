@@ -95,7 +95,7 @@ def collate_data(args: Args):
 
         # 3. compile to lambda skia
         try:
-            pre_expr = compile_skp_to_lskia(json_skp['commands'])
+            pre_expr, path_map = compile_skp_to_lskia(json_skp['commands'])
             egglog_input = pre_expr.sexp()
 
             warnings = get_reset_warnings()
@@ -186,10 +186,10 @@ def collate_data(args: Args):
 
         # 6. draw lambda skia to png
         pre_png = args.output / (name + '__PRE.png')
-        pre_res = egg_to_png(json_skp, pre_expr, pre_png)
+        pre_res = egg_to_png(json_skp, pre_expr, pre_png, path_map)
 
         post_png = args.output / (name + '__POST.png')
-        post_res = egg_to_png(json_skp, post_expr, post_png)
+        post_res = egg_to_png(json_skp, post_expr, post_png, path_map)
 
         if pre_res is None:
             data['pre_png'] = htmlify_path(pre_png)
@@ -218,10 +218,10 @@ def collate_data(args: Args):
 
         # 6. draw lambda skia to png
         pre_skp = args.output / (name + '__PRE.skp')
-        pre_res = egg_to_skp(json_skp, pre_expr, pre_skp)
+        pre_res = egg_to_skp(json_skp, pre_expr, pre_skp, path_map)
 
         post_skp = args.output / (name + '__POST.skp')
-        post_res = egg_to_skp(json_skp, post_expr, post_skp)
+        post_res = egg_to_skp(json_skp, post_expr, post_skp, path_map)
 
         if pre_res is None:
             data['pre_skp'] = htmlify_path(pre_skp)
