@@ -298,7 +298,6 @@ def verify_command(command):
             assert 'paint' in command
             verify_paint(command['paint'])
         case 'DrawPath':
-            assert False, 'Searching for Path'
             assert 'path' in command
             verify_path(command['path'])
             assert 'paint' in command
@@ -356,6 +355,7 @@ def verify_command(command):
             assert 'op' in command
             assert command['op'] in {'intersect', 'difference'}, command['op']
         case 'ClipPath':
+            assert False, 'Searching for Path'
             assert 'path' in command
             verify_path(command['path'])
             assert command['op'] in {'intersect', 'difference'}, command['op']
