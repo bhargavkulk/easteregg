@@ -260,8 +260,8 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> tuple[Layer, skia.Pa
                 ltrb_radii = radii_to_ltrb(radii)
                 mk_draw(RRect(*([i / 1.0 for i in coords + ltrb_radii])))
             case 'DrawPath':
-                path = Path.from_jsonpath(command_data['path'])
-                index = insert_in_path_map(path)
+                skpath = Path.from_jsonpath(command_data['path'])
+                index = insert_in_path_map(skpath)
                 mk_draw(Path(i, index))
             case 'DrawTextBlob':
                 x: float = command_data['x']
@@ -300,9 +300,12 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> tuple[Layer, skia.Pa
                 rrect = RRect.from_skrrect(skrrect_post)
                 push_clip(rrect, op)
             case 'ClipPath':
-                raise NotImplementedError('Pausing this for now')
-                # op: ClipOp = command_data['op']
-                # push_clip(Path(i), op)
+                skpath = Path.from_jsonpath(command_data['path'])
+                transform = to_matrix33(stack[-1].transform)
+                skpath.transform(transform)
+                index = insert_in_path_map(skpath)
+                op: ClipOp = command_data['op']
+                push_clip(Path(i, index), op)
             case 'Concat44':
                 matrix: list[float] = [i for s in command_data['matrix'] for i in s]
                 push_transform(matrix)
