@@ -1,6 +1,8 @@
 import argparse
+import io
 import json
 import pathlib
+import sys
 from contextvars import ContextVar
 from copy import deepcopy
 from dataclasses import dataclass
@@ -250,6 +252,15 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 ltrb_radii = radii_to_ltrb(radii)
                 mk_draw(RRect(*([i / 1.0 for i in coords + ltrb_radii])))
             case 'DrawPath':
+                path = Path.from_jsonpath(command_data['path'])
+                old_stdout = sys.stdout
+                sys.stdout = buffer = io.StringIO()
+
+                path.dumpHex()
+
+                output = buffer.getvalue()
+                sys.stdout = old_stdout
+                print(output)
                 mk_draw(Path(i))
             case 'DrawTextBlob':
                 x: float = command_data['x']

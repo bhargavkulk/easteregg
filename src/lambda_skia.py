@@ -1,5 +1,5 @@
 from dataclasses import dataclass, fields
-from typing import Literal, Self, override
+from typing import Any, Literal, Self, override
 
 import skia  # pyrefly: ignore
 
@@ -236,6 +236,54 @@ class Path(Geometry):
     @override
     def pprint(self) -> str:
         return f'Path({self.index})'
+
+    @staticmethod
+    def from_jsonpath(path_data: dict[str, Any]) -> skia.Path:
+        """Regenerate path from json. This function needs the value under they
+        key "path" within the command"""
+        fill_type = path_data.get('fillType', 'winding')
+
+        path = skia.Path()
+        if fill_type == 'winding':
+            path.setFillType(skia.PathFillType.kWinding)
+        elif fill_type == 'evenOdd':
+            path.setFillType(skia.PathFillType.kEvenOdd)
+        elif fill_type == 'inverseWinding':
+            path.setFillType(skia.PathFillType.kInverseWinding)
+        else:
+            raise ValueError(f'Unknown fillType: {fill_type}')
+
+        for verb in path_data['verbs']:
+            if isinstance(verb, dict):
+                if 'move' in verb:
+                    x, y = verb['move']
+                    path.moveTo(x, y)
+                elif 'cubic' in verb:
+                    pts = verb['cubic']
+                    (x1, y1), (x2, y2), (x3, y3) = pts
+                    path.cubicTo(x1, y1, x2, y2, x3, y3)
+                elif 'line' in verb:
+                    x, y = verb['line']
+                    path.lineTo(x, y)
+                elif 'quad' in verb:
+                    pts = verb['quad']
+                    (x1, y1), (x2, y2) = pts
+                    path.quadTo(x1, y1, x2, y2)
+                elif 'conic' in verb:
+                    pts = verb['conic']
+                    (x1, y1), (x2, y2), w = pts
+                    path.conicTo(x1, y1, x2, y2, w)
+                else:
+                    raise ValueError(f'Unknown verb key: {verb}')
+            elif isinstance(verb, str):
+                if verb == 'close':
+                    path.close()
+                else:
+                    raise ValueError(f'Unknown verb string: {verb}')
+            else:
+                raise TypeError(f'Unexpected verb type: {verb}')
+
+        return path
 
 
 @dataclass
