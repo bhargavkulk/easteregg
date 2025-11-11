@@ -279,10 +279,13 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> tuple[Layer, skia.Pa
                 skpath = skia.Path.Rect(skrect_pre)
                 skpath.transform(transform)
                 skrect_post = skia.Rect()
-                skpath.isRect(skrect_post)
-                assert skrect_post is not None
+                res = skpath.isRect(skrect_post)
+                assert res, 'cant transform rect'
                 rect = Rect(
-                    skrect_post.left(), skrect_post.top(), skrect_post.right(), skrect_post.bottom()
+                    skrect_post.left(),
+                    skrect_post.top(),
+                    skrect_post.right(),
+                    skrect_post.bottom(),
                 )
                 push_clip(rect, op)
             case 'ClipRRect':
@@ -295,8 +298,8 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> tuple[Layer, skia.Pa
                 skpath = skia.Path.RRect(skrrect_pre)
                 skpath.transform(transform)
                 skrrect_post = skia.RRect()
-                skpath.isRRect(skrrect_post)
-                assert skrrect_post is not None
+                res = skpath.isRRect(skrrect_post)
+                assert res, 'cant transform rrect'
                 rrect = RRect.from_skrrect(skrrect_post)
                 push_clip(rrect, op)
             case 'ClipPath':
