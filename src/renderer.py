@@ -379,6 +379,8 @@ class Renderer:
             case ast.Path(idx, idx2):
                 json_path: dict[str, Any] = self.skp_json['commands'][idx]
                 path2 = self.path_map[idx2]
+                if idx2 == 12:
+                    print(path_to_str(idx2))
                 return path2
             case ast.Intersect(left, right):
                 if isinstance(left, ast.Full):
