@@ -273,7 +273,8 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 mk_draw(RRect(*([i / 1.0 for i in coords + ltrb_radii])))
             case 'DrawPath':
                 skpath = mk_path(command_data)
-                skpath.dumpHex()
+                if i == 28:
+                    skpath.dumpHex()
                 mk_draw(Path(i))
             case 'DrawTextBlob':
                 x: float = command_data['x']
