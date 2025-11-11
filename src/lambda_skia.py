@@ -236,7 +236,7 @@ class Path(Geometry):
 
     @override
     def pprint(self) -> str:
-        return f'Path({self.index})'
+        return f'Path({self.index2})'
 
     @staticmethod
     def from_jsonpath(path_data: dict[str, Any]) -> skia.Path:
