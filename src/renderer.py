@@ -1,4 +1,6 @@
+import io
 import traceback
+from contextlib import redirect_stdout
 from pathlib import Path
 from typing import Any
 
@@ -25,6 +27,13 @@ STYLES = {
 
 def extract_tile_mode(flags: int) -> int:
     return (flags >> 8) & 0xF
+
+
+def path_to_str(path: skia.Path) -> str:
+    buffer = io.StringIO()
+    with redirect_stdout(buffer):
+        path.dumpHex()
+    return buffer.getvalue()
 
 
 class Renderer:
