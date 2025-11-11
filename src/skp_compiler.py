@@ -6,6 +6,8 @@ from copy import deepcopy
 from dataclasses import dataclass
 from typing import Any, Literal, Optional
 
+import skia  # pyrefly: ignore
+
 from lambda_skia import (
     BlendMode,
     Color,
@@ -29,8 +31,57 @@ from lambda_skia import (
     Transform,
     mk_color,
 )
+from renderer import path_to_str
 
 warnings_var: ContextVar[list[str]] = ContextVar('warnings', default=[])
+
+
+def mk_path(json_path: dict[str, Any]) -> skia.Path:
+    """Regenerate path from json"""
+    path_data = json_path['path']
+    fill_type = path_data.get('fillType', 'winding')
+
+    path = skia.Path()
+    if fill_type == 'winding':
+        path.setFillType(skia.PathFillType.kWinding)
+    elif fill_type == 'evenOdd':
+        path.setFillType(skia.PathFillType.kEvenOdd)
+    elif fill_type == 'inverseWinding':
+        path.setFillType(skia.PathFillType.kInverseWinding)
+    else:
+        raise ValueError(f'Unknown fillType: {fill_type}')
+
+    for verb in path_data['verbs']:
+        if isinstance(verb, dict):
+            if 'move' in verb:
+                x, y = verb['move']
+                path.moveTo(x, y)
+            elif 'cubic' in verb:
+                pts = verb['cubic']
+                (x1, y1), (x2, y2), (x3, y3) = pts
+                path.cubicTo(x1, y1, x2, y2, x3, y3)
+            elif 'line' in verb:
+                x, y = verb['line']
+                path.lineTo(x, y)
+            elif 'quad' in verb:
+                pts = verb['quad']
+                (x1, y1), (x2, y2) = pts
+                path.quadTo(x1, y1, x2, y2)
+            elif 'conic' in verb:
+                pts = verb['conic']
+                (x1, y1), (x2, y2), w = pts
+                path.conicTo(x1, y1, x2, y2, w)
+            else:
+                raise ValueError(f'Unknown verb key: {verb}')
+        elif isinstance(verb, str):
+            if verb == 'close':
+                path.close()
+            else:
+                raise ValueError(f'Unknown verb string: {verb}')
+        else:
+            raise TypeError(f'Unexpected verb type: {verb}')
+
+    return path
 
 
 def get_reset_warnings():
@@ -221,6 +272,8 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> Layer:
                 ltrb_radii = radii_to_ltrb(radii)
                 mk_draw(RRect(*([i / 1.0 for i in coords + ltrb_radii])))
             case 'DrawPath':
+                skpath = mk_path(command_data)
+                skpath.dumpHex()
                 mk_draw(Path(i))
             case 'DrawTextBlob':
                 x: float = command_data['x']
