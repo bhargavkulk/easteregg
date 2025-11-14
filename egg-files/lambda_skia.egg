@@ -116,3 +116,10 @@
          (Draw (Empty) shape (Paint (Color a r g b) (SrcOver) style (IdFilter) i1) clip transform)
          :ruleset opt)
 ;; to-do, add textblob rewrite2
+(rewrite
+  (SaveLayer
+    (Draw (Empty) shape    (Paint (Color a1 r1 g1 b1) (SrcOver) st1 (IdFilter) i1) clip t)
+    (Draw (Empty) shape'   (Paint (Color 1.0 r2 g2 b2) (SrcOver) st2 (IdFilter) i2) clip t)
+    (Paint (Color 1.0 r3 g3 b3) (DstIn) nostyle (IdFilter) i3))
+  (Draw (Empty) shape' (Paint (Color a1 r1 g1 b1) (SrcOver) st2 (IdFilter) i2) (Intersect clip shape) t)
+  :ruleset opt)
