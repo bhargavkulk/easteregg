@@ -34,7 +34,7 @@ layer: "(Empty)" -> empty
 matrix: "(Matrix" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT ")" -> matrix
 
 geometry: "(Full)" -> full
-        | "(Path" INT ")" -> path
+        | "(Path" INT INT ")" -> path
         | "(Rect" FLOAT FLOAT FLOAT FLOAT ")" -> rect
         | "(RRect" FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT ")" -> rrect
         | "(Oval" FLOAT FLOAT FLOAT FLOAT ")" -> oval

@@ -26,7 +26,7 @@
 
 (datatype Geometry
   (Full)
-  (Path i64)
+  (Path i64 i64)
   (Rect f64 f64 f64 f64)
   (RRect f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64)
   (Oval f64 f64 f64 f64)
@@ -88,9 +88,9 @@
          :ruleset opt)
 
 (rewrite (SaveLayer bottom
-                    (Draw (Empty) (Path nm) (Paint (Color 1.0 r2 g2 b2) (SrcOver) (Solid) (IdFilter) i2) c2 t)
+                    (Draw (Empty) (Path nm nm2) (Paint (Color 1.0 r2 g2 b2) (SrcOver) (Solid) (IdFilter) i2) c2 t)
                     (Paint (Color 1.0 r3 g3 b3) (DstIn) st2 (IdFilter) i3))
-         (Clip bottom (Intersect (Path nm) c2) t)
+         (Clip bottom (Intersect (Path nm nm2) c2) t)
          :ruleset opt)
 
 ;; Clip rewrites
