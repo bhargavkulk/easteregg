@@ -229,6 +229,14 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> tuple[Layer, skia.Pa
             # [..., s(m, c, l, b, p)]
             # -->
             # [..., s(m, op(c, g), l, b, p)]
+            if op == 'intersect':
+                # skip redundant intersect:
+                # [..., s(m, Intersect(Intersect(c, g), g), l, b, p)]
+                # -->
+                # [..., s(m, Intersect(c, g), l, b, p)]
+                current_clip = stack[-1].clip
+                if isinstance(current_clip, Intersect) and current_clip.g2 == g:
+                    return
             stack[-1].clip = (Intersect if op == 'intersect' else Difference)(stack[-1].clip, g)
 
         def push_transform(m: list[float]):
