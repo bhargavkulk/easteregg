@@ -349,7 +349,7 @@ class Renderer:
             case ast.ImageRect(_, _, _, _):
                 # Ignore for now
                 pass
-            case ast.Path(idx, idx2):
+            case ast.Path(_, idx2):
                 path2 = self.path_map[idx2]
                 self.canvas.drawPath(path2, skpaint)
             case _:
@@ -373,7 +373,7 @@ class Renderer:
                 rrect = geometry.to_skrrect()
                 path.addRRect(rrect)
                 return path
-            case ast.Path(idx, idx2):
+            case ast.Path(_, idx2):
                 path2 = self.path_map[idx2]
                 return path2
             case ast.Intersect(left, right):
