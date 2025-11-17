@@ -1,5 +1,4 @@
 import io
-import sys
 import traceback
 from contextlib import redirect_stdout
 from pathlib import Path
@@ -351,8 +350,6 @@ class Renderer:
                 # Ignore for now
                 pass
             case ast.Path(idx, idx2):
-                json_path: dict[str, Any] = self.skp_json['commands'][idx]
-                path = self.mk_path(json_path)
                 path2 = self.path_map[idx2]
                 self.canvas.drawPath(path2, skpaint)
             case _:
@@ -377,7 +374,6 @@ class Renderer:
                 path.addRRect(rrect)
                 return path
             case ast.Path(idx, idx2):
-                json_path: dict[str, Any] = self.skp_json['commands'][idx]
                 path2 = self.path_map[idx2]
                 return path2
             case ast.Intersect(left, right):
