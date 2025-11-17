@@ -1,8 +1,6 @@
 import argparse
-import io
 import json
 import pathlib
-import sys
 from contextvars import ContextVar
 from copy import deepcopy
 from dataclasses import dataclass
@@ -90,6 +88,49 @@ def to_matrix33(matrix: list[float]) -> skia.Matrix:
 
     m33_array = np.array(m33, dtype=np.float32).reshape(3, 3)
     return skia.Matrix(m33_array)
+
+
+def path_to_rect(skpath: skia.Path) -> Optional[Rect]:
+    skrect_post = skia.Rect()
+    if not skpath.isRect(skrect_post):
+        return None
+    return Rect(
+        skrect_post.left(),
+        skrect_post.top(),
+        skrect_post.right(),
+        skrect_post.bottom(),
+    )
+
+
+def path_to_image_rect(skpath: skia.Path) -> Optional[ImageRect]:
+    skrect_post = skia.Rect()
+    if not skpath.isRect(skrect_post):
+        return None
+    return ImageRect(
+        skrect_post.left(),
+        skrect_post.top(),
+        skrect_post.right(),
+        skrect_post.bottom(),
+    )
+
+
+def path_to_rrect(skpath: skia.Path) -> Optional[RRect]:
+    skrrect_post = skia.RRect()
+    if not skpath.isRRect(skrrect_post):
+        return None
+    return RRect.from_skrrect(skrrect_post)
+
+
+def path_to_oval(skpath: skia.Path) -> Optional[Oval]:
+    skrect_post = skia.Rect()
+    if not skpath.isOval(skrect_post):
+        return None
+    return Oval(
+        skrect_post.left(),
+        skrect_post.top(),
+        skrect_post.right(),
+        skrect_post.bottom(),
+    )
 
 
 type ClipOp = Literal['intersect'] | Literal['difference']
@@ -197,6 +238,9 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> tuple[Layer, skia.Pa
             # [..., s(m₁ × m₂, c, l, b, p)]
             stack[-1].transform = mm(stack[-1].transform, m)
 
+        def identity_transform() -> Transform:
+            return Transform(I.copy())
+
         def mk_draw(g: Geometry):
             p = compile_paint(command_data.get('paint', None))
             # given g and p
@@ -204,7 +248,11 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> tuple[Layer, skia.Pa
             # -->
             # [..., s(m, c, Draw(l, g, p, c, m), b, p')]
             stack[-1].layer = Draw(
-                stack[-1].layer, g, p, stack[-1].clip, Transform(stack[-1].transform)
+                stack[-1].layer,
+                g,
+                p,
+                stack[-1].clip,
+                identity_transform(),
             )
 
         match command := command_data['command']:
@@ -242,70 +290,103 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> tuple[Layer, skia.Pa
             case 'DrawPaint':
                 mk_draw(Full())
             case 'DrawTextBlob':
-                x: float = command_data['x']
-                y: float = command_data['y']
-                bounds: list[float] = command_data['bounds']
-                mk_draw(TextBlob(x / 1.0, y / 1.0, *[bound / 1.0 for bound in bounds]))
+                x = float(command_data['x'])
+                y = float(command_data['y'])
+                bounds = [float(bound) for bound in command_data['bounds']]
+                rect = skia.Rect.MakeLTRB(
+                    x + bounds[0],
+                    y + bounds[1],
+                    x + bounds[2],
+                    y + bounds[3],
+                )
+                skpath = skia.Path.Rect(rect)
+                skpath.transform(to_matrix33(stack[-1].transform))
+                tight_bounds = skpath.computeTightBounds()
+                assert tight_bounds is not None
+                left = tight_bounds.left()
+                top = tight_bounds.top()
+                right = tight_bounds.right()
+                bottom = tight_bounds.bottom()
+                mk_draw(TextBlob(left, top, 0.0, 0.0, right - left, bottom - top))
             case 'DrawImageRect':
-                dst: list[float] = command_data['dst']
-                mk_draw(ImageRect(*[d / 1.0 for d in dst]))
+                dst = [float(d) for d in command_data['dst']]
+                skrect = skia.Rect.MakeLTRB(*dst)
+                skpath = skia.Path.Rect(skrect)
+                skpath.transform(to_matrix33(stack[-1].transform))
+                image_rect = path_to_image_rect(skpath)
+                assert image_rect is not None, 'cant transform image rect'
+                mk_draw(image_rect)
             case 'DrawRect':
-                coords: list[float] = command_data['coords']
-                mk_draw(Rect(*[coord / 1.0 for coord in coords]))
+                coords = [float(coord) for coord in command_data['coords']]
+                skrect_pre = skia.Rect.MakeLTRB(*coords)
+                skpath = skia.Path.Rect(skrect_pre)
+                skpath.transform(to_matrix33(stack[-1].transform))
+                rect = path_to_rect(skpath)
+                if rect is None:
+                    index = insert_in_path_map(skpath)
+                    geometry: Geometry = Path(i, index)
+                else:
+                    geometry = rect
+                mk_draw(geometry)
             case 'DrawOval':
-                coords: list[float] = command_data['coords']
-                mk_draw(Oval(*[coord / 1.0 for coord in coords]))
+                coords = [float(coord) for coord in command_data['coords']]
+                skrect_pre = skia.Rect.MakeLTRB(*coords)
+                skpath = skia.Path.Oval(skrect_pre)
+                skpath.transform(to_matrix33(stack[-1].transform))
+                oval = path_to_oval(skpath)
+                assert oval is not None, 'cant transform oval'
+                mk_draw(oval)
             case 'DrawRRect':
                 coords, *radii = command_data['coords']
                 ltrb_radii = radii_to_ltrb(radii)
-                mk_draw(RRect(*([i / 1.0 for i in coords + ltrb_radii])))
+                values = [float(val) for val in coords + ltrb_radii]
+                rrect = RRect(*values)
+                skrrect = rrect.to_skrrect()
+                skpath = skia.Path.RRect(skrrect)
+                skpath.transform(to_matrix33(stack[-1].transform))
+                rrect_geometry = path_to_rrect(skpath)
+                if rrect_geometry is None:
+                    index = insert_in_path_map(skpath)
+                    geometry = Path(i, index)
+                else:
+                    geometry = rrect_geometry
+                mk_draw(geometry)
             case 'DrawPath':
                 skpath = Path.from_jsonpath(command_data['path'])
+                skpath.transform(to_matrix33(stack[-1].transform))
                 index = insert_in_path_map(skpath)
                 mk_draw(Path(i, index))
-            case 'DrawTextBlob':
-                x: float = command_data['x']
-                y: float = command_data['y']
-                bounds: list[float] = command_data['bounds']
-                mk_draw(TextBlob(x / 1.0, y / 1.0, *[bound / 1.0 for bound in bounds]))
-            case 'DrawImageRect':
-                dst: list[float] = command_data['dst']
-                mk_draw(ImageRect(*[d / 1.0 for d in dst]))
             case 'ClipRect':
-                coords: list[float] = command_data['coords']
+                coords = [float(coord) for coord in command_data['coords']]
                 op: ClipOp = command_data['op']
-                skrect_pre = skia.Rect.MakeLTRB(*[coord / 1.0 for coord in coords])
-                transform = to_matrix33(stack[-1].transform)
+                skrect_pre = skia.Rect.MakeLTRB(*coords)
                 skpath = skia.Path.Rect(skrect_pre)
-                skpath.transform(transform)
-                skrect_post = skia.Rect()
-                res = skpath.isRect(skrect_post)
-                assert res, 'cant transform rect'
-                rect = Rect(
-                    skrect_post.left(),
-                    skrect_post.top(),
-                    skrect_post.right(),
-                    skrect_post.bottom(),
-                )
-                push_clip(rect, op)
+                skpath.transform(to_matrix33(stack[-1].transform))
+                rect = path_to_rect(skpath)
+                if rect is None:
+                    index = insert_in_path_map(skpath)
+                    geometry: Geometry = Path(i, index)
+                else:
+                    geometry = rect
+                push_clip(geometry, op)
             case 'ClipRRect':
                 coords, *radii = command_data['coords']
                 ltrb_radii = radii_to_ltrb(radii)
                 op: ClipOp = command_data['op']
-                rrect = RRect(*([i / 1.0 for i in coords + ltrb_radii]))
+                rrect = RRect(*[float(i) for i in coords + ltrb_radii])
                 skrrect_pre = rrect.to_skrrect()
-                transform = to_matrix33(stack[-1].transform)
                 skpath = skia.Path.RRect(skrrect_pre)
-                skpath.transform(transform)
-                skrrect_post = skia.RRect()
-                res = skpath.isRRect(skrrect_post)
-                assert res, 'cant transform rrect'
-                rrect = RRect.from_skrrect(skrrect_post)
-                push_clip(rrect, op)
+                skpath.transform(to_matrix33(stack[-1].transform))
+                rrect_geometry = path_to_rrect(skpath)
+                if rrect_geometry is None:
+                    index = insert_in_path_map(skpath)
+                    geometry = Path(i, index)
+                else:
+                    geometry = rrect_geometry
+                push_clip(geometry, op)
             case 'ClipPath':
                 skpath = Path.from_jsonpath(command_data['path'])
-                transform = to_matrix33(stack[-1].transform)
-                skpath.transform(transform)
+                skpath.transform(to_matrix33(stack[-1].transform))
                 index = insert_in_path_map(skpath)
                 op: ClipOp = command_data['op']
                 push_clip(Path(i, index), op)
