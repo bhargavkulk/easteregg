@@ -262,8 +262,6 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> tuple[Layer, skia.Pa
             case 'DrawPath':
                 skpath = Path.from_jsonpath(command_data['path'])
                 index = insert_in_path_map(skpath)
-                if index == 12:
-                    skpath.dumpHex()
                 mk_draw(Path(i, index))
             case 'DrawTextBlob':
                 x: float = command_data['x']
