@@ -322,8 +322,12 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> tuple[Layer, skia.Pa
                 skpath = skia.Path.Rect(skrect_pre)
                 skpath.transform(to_matrix33(stack[-1].transform))
                 rect = path_to_rect(skpath)
-                assert rect is not None, 'cant transform rect'
-                mk_draw(rect)
+                if rect is None:
+                    index = insert_in_path_map(skpath)
+                    geometry: Geometry = Path(i, index)
+                else:
+                    geometry = rect
+                mk_draw(geometry)
             case 'DrawOval':
                 coords = [float(coord) for coord in command_data['coords']]
                 skrect_pre = skia.Rect.MakeLTRB(*coords)
@@ -341,8 +345,12 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> tuple[Layer, skia.Pa
                 skpath = skia.Path.RRect(skrrect)
                 skpath.transform(to_matrix33(stack[-1].transform))
                 rrect_geometry = path_to_rrect(skpath)
-                assert rrect_geometry is not None, 'cant transform rrect'
-                mk_draw(rrect_geometry)
+                if rrect_geometry is None:
+                    index = insert_in_path_map(skpath)
+                    geometry = Path(i, index)
+                else:
+                    geometry = rrect_geometry
+                mk_draw(geometry)
             case 'DrawPath':
                 skpath = Path.from_jsonpath(command_data['path'])
                 skpath.transform(to_matrix33(stack[-1].transform))
