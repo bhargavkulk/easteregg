@@ -224,6 +224,14 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> tuple[Layer, skia.Pa
 
                 return Paint(color, blend_mode, style, color_filter, i)
 
+        def same_bounds_rect_rrect(rect_geom: Rect, rrect_geom: RRect) -> bool:
+            return (
+                rect_geom.l == rrect_geom.l
+                and rect_geom.t == rrect_geom.t
+                and rect_geom.r == rrect_geom.r
+                and rect_geom.b == rrect_geom.b
+            )
+
         def push_clip(g: Geometry, op: ClipOp):
             # given g and op
             # [..., s(m, c, l, b, p)]
@@ -235,8 +243,27 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> tuple[Layer, skia.Pa
                 # -->
                 # [..., s(m, Intersect(c, g), l, b, p)]
                 current_clip = stack[-1].clip
-                if isinstance(current_clip, Intersect) and current_clip.g2 == g:
-                    return
+                if isinstance(current_clip, Intersect):
+                    last_clip = current_clip.g2
+                    if last_clip == g:
+                        return
+
+                    if isinstance(last_clip, RRect) and isinstance(g, Rect):
+                        # [..., s(m, Intersect(c, RRect(c)), l, b, p)], intersect with Rect(c)
+                        # -->
+                        # [..., s(m, Intersect(c, RRect(c)), l, b, p)]
+                        if same_bounds_rect_rrect(g, last_clip):
+                            # intersect(rrect, rect) = rrect when bounds match
+                            return
+
+                    if isinstance(last_clip, Rect) and isinstance(g, RRect):
+                        # [..., s(m, Intersect(c, Rect(c)), l, b, p)], intersect with RRect(c)
+                        # -->
+                        # [..., s(m, Intersect(c, RRect(c)), l, b, p)]
+                        if same_bounds_rect_rrect(last_clip, g):
+                            # intersect(rect, rrect) = rrect when bounds match
+                            stack[-1].clip = Intersect(current_clip.g1, g)
+                            return
             stack[-1].clip = (Intersect if op == 'intersect' else Difference)(stack[-1].clip, g)
 
         def push_transform(m: list[float]):
