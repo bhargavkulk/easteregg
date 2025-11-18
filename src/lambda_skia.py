@@ -49,7 +49,7 @@ class LinearGradient(Node):
     is_opaque: bool
 
     def pprint(self) -> str:
-        return 'LinearGradient'
+        return f'LinearGradient({self.is_opaque})'
 
 
 @dataclass
@@ -59,7 +59,7 @@ class RadialGradient(Node):
     is_opaque: bool
 
     def pprint(self) -> str:
-        return 'RadialGradient'
+        return f'RadialGradient({self.is_opaque})'
 
 
 @dataclass
