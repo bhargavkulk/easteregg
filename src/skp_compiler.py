@@ -224,12 +224,14 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> tuple[Layer, skia.Pa
 
                 return Paint(color, blend_mode, style, color_filter, i)
 
-        def same_bounds_rect_rrect(rect_geom: Rect, rrect_geom: RRect) -> bool:
+        def rectish_contains(inner: Geometry, outer: Geometry) -> bool:
             return (
-                rect_geom.l == rrect_geom.l
-                and rect_geom.t == rrect_geom.t
-                and rect_geom.r == rrect_geom.r
-                and rect_geom.b == rrect_geom.b
+                isinstance(inner, (Rect, RRect))
+                and isinstance(outer, (Rect, RRect))
+                and inner.l >= outer.l
+                and inner.t >= outer.t
+                and inner.r <= outer.r
+                and inner.b <= outer.b
             )
 
         def push_clip(g: Geometry, op: ClipOp):
@@ -248,22 +250,19 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> tuple[Layer, skia.Pa
                     if last_clip == g:
                         return
 
-                    if isinstance(last_clip, RRect) and isinstance(g, Rect):
-                        # [..., s(m, Intersect(c, RRect(c)), l, b, p)], intersect with Rect(c)
+                    if rectish_contains(last_clip, g):
+                        # [..., s(m, Intersect(Intersect(c, a), b), l, b, p)] where a ⊆ b
                         # -->
-                        # [..., s(m, Intersect(c, RRect(c)), l, b, p)]
-                        if same_bounds_rect_rrect(g, last_clip):
-                            # intersect(rrect, rect) = rrect when bounds match
-                            return
+                        # [..., s(m, Intersect(c, a), l, b, p)]
+                        stack[-1].clip = Intersect(current_clip.g1, last_clip)
+                        return
 
-                    if isinstance(last_clip, Rect) and isinstance(g, RRect):
-                        # [..., s(m, Intersect(c, Rect(c)), l, b, p)], intersect with RRect(c)
+                    if rectish_contains(g, last_clip):
+                        # [..., s(m, Intersect(Intersect(c, b), a), l, b, p)] where b ⊆ a
                         # -->
-                        # [..., s(m, Intersect(c, RRect(c)), l, b, p)]
-                        if same_bounds_rect_rrect(last_clip, g):
-                            # intersect(rect, rrect) = rrect when bounds match
-                            stack[-1].clip = Intersect(current_clip.g1, g)
-                            return
+                        # [..., s(m, Intersect(c, b), l, b, p)]
+                        stack[-1].clip = Intersect(current_clip.g1, g)
+                        return
             stack[-1].clip = (Intersect if op == 'intersect' else Difference)(stack[-1].clip, g)
 
         def push_transform(m: list[float]):
