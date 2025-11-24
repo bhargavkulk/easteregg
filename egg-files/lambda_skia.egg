@@ -130,7 +130,7 @@ theorem remove_redundant_outer_savelayer
   (Draw (Empty) shape' (Paint (Color a1 r1 g1 b1) (SrcOver) st2 (IdFilter) i2) (Intersect clip shape) t)
   :ruleset opt)
 
-;; For mailru 41
+;; For mailru 41 not yet working
 (rewrite
   (SaveLayer
     (Draw (Empty) shape    (Paint (Color a1 r1 g1 b1) (SrcOver) st1 (IdFilter) i1) clip t)
@@ -138,3 +138,24 @@ theorem remove_redundant_outer_savelayer
     (Paint (Color 1.0 r3 g3 b3) (DstIn) nostyle (IdFilter) i3))
   (Draw (Empty) shape' (Paint (Color a1 r1 g1 b1) (SrcOver) st2 (IdFilter) i2) (Intersect clip shape) t)
   :ruleset opt)
+
+;; For mailru 45, used chat, haven't proven in Lean yet
+  ;; ---- Aggressive general removal (outer opaque SrcOver over inner SaveLayer) ----
+(rewrite
+  (SaveLayer bottom
+             (SaveLayer inner_bottom inner_top (Paint (Color a_inner r_inner g_inner b_inner) (DstIn) st_inner (IdFilter) i_inner))
+             (Paint (Color 1.0 r_outer g_outer b_outer) (SrcOver) st_outer (IdFilter) i_outer))
+  (SaveLayer bottom inner_top (Paint (Color a_inner r_inner g_inner b_inner) (DstIn) st_inner (IdFilter) i_inner))
+  :ruleset opt)
+
+;; ---- Specific, safer removal that matches Draw/Mask/DstIn (uses alpha==1.0 checks) ----
+(rewrite
+  (SaveLayer bottom
+             (SaveLayer
+               (Draw (Empty) g1 (Paint (Color a1 r1 g1 b1) (SrcOver) st1 (IdFilter) i1) c1 t)
+               (Draw (Empty) g2 (Paint (Color 1.0 r2 g2 b2) (SrcOver) st2 (IdFilter) i2) c2 t)
+               (Paint (Color 1.0 rm gm bm) (DstIn) nostyle (IdFilter) i3))
+             (Paint (Color 1.0 r3 g3 b3) (SrcOver) st_outer (IdFilter) i4))
+  (Draw bottom g1 (Paint (Color a1 r1 g1 b1) (SrcOver) st1 (IdFilter) i1) (Intersect c1 (Intersect g2 c2)) t)
+  :ruleset opt)
+
