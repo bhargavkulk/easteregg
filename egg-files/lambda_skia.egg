@@ -131,6 +131,7 @@ theorem remove_redundant_outer_savelayer
   :ruleset opt)
 
 ;; For mailru 41 not yet working
+;; 1
 (rewrite
   (SaveLayer
     (Draw (Empty) shape    (Paint (Color a1 r1 g1 b1) (SrcOver) st1 (IdFilter) i1) clip t)
@@ -138,6 +139,17 @@ theorem remove_redundant_outer_savelayer
     (Paint (Color 1.0 r3 g3 b3) (DstIn) nostyle (IdFilter) i3))
   (Draw (Empty) shape' (Paint (Color a1 r1 g1 b1) (SrcOver) st2 (IdFilter) i2) (Intersect clip shape) t)
   :ruleset opt)
+
+;; 2
+  (rewrite
+  (SaveLayer
+    (Draw (Empty) shape    (Paint (Color a1 r1 g1 b1) (SrcOver) st1 (IdFilter) i1) clip t)
+    (Draw (Empty) mask     (Paint (Color 1.0 r2 g2 b2) (SrcOver) st2 (IdFilter) i2) maskClip t)
+    (Paint (Color 1.0 r3 g3 b3) (DstIn) nostyle (IdFilter) i3))
+  (Draw (Empty) shape (Paint (Color a1 r1 g1 b1) (SrcOver) st1 (IdFilter) i1) 
+        (Intersect clip (Intersect mask maskClip)) t)
+  :ruleset opt)
+
 
 ;; For mailru 45, used chat, haven't proven in Lean yet
   ;; ---- Aggressive general removal (outer opaque SrcOver over inner SaveLayer) ----
