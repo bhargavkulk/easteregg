@@ -109,14 +109,14 @@
          (Draw (Empty) shape (Paint (Color 1.0 0.0 0.0 0.0) (SrcOver) style (IdFilter) i1) clip transform)
          :ruleset opt)
 
-;; Gradient Clips
+;; Gradient Clips SUCCESS
 (rewrite (SaveLayer (Draw (Empty) shape (Paint (Color a r g b) (SrcOver) style (IdFilter) i1) clip transform)
                     (Draw (Empty) shape (Paint (LinearGradient true) (SrcOver) style (IdFilter) i2) clip transform)
                     (Paint (Color 1.0 r1 g1 b1) (DstIn) nostyle (IdFilter) i3))
          (Draw (Empty) shape (Paint (Color a r g b) (SrcOver) style (IdFilter) i1) clip transform)
          :ruleset opt)
 
-;; to-do, add textblob rewrite2
+;; to-do, add textblob rewrite2 : SUCCESS : Proven
 (rewrite
   (SaveLayer
     (Draw (Empty) shape    (Paint (Color a1 r1 g1 b1) (SrcOver) st1 (IdFilter) i1) clip t)
@@ -125,5 +125,9 @@
   (Draw (Empty) shape' (Paint (Color a1 r1 g1 b1) (SrcOver) st2 (IdFilter) i2) (Intersect clip shape) t)
   :ruleset opt)
 
-
-
+;; GPT produced rw potential for mailru41 : ?? : Unproven
+(rewrite (SaveLayer bottom
+                    (Draw (Empty) shape (Paint fill (SrcOver) (Solid) (IdFilter) i1) clip1 t1)
+                    (Paint (Color 1.0 r g b) (DstIn) nostyle (IdFilter) i2))
+         (Clip bottom (Intersect shape clip1) t1)
+         :ruleset opt)
