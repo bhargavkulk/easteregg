@@ -1,0 +1,130 @@
+{
+  "version": 1,
+  "commands": [
+    {
+      "command": "DrawPaint",
+      "visible": true,
+      "paint": {
+        "color": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "blendMode": "Src"
+      }
+    },
+    {
+      "command": "Save",
+      "visible": true
+    },
+    {
+      "command": "Concat44",
+      "visible": true,
+      "matrix": [
+        [
+          1,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          1,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "command": "Save",
+      "visible": true
+    },
+    {
+      "command": "ClipRect",
+      "visible": true,
+      "coords": [
+        0,
+        0,
+        369,
+        207
+      ],
+      "op": "intersect",
+      "antiAlias": true,
+      "shortDesc": " [0 0 369 207]"
+    },
+    {
+      "command": "SaveLayer",
+      "visible": true,
+      "bounds": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "paint": {
+        "imagefilter": {
+          "name": "SkBlurImageFilter",
+          "data": "data/0",
+          "values": {
+            "00_int": 1,
+            "01_bool": false,
+            "02_scalar": 20,
+            "03_scalar": 20,
+            "04_int": 3
+          }
+        }
+      }
+    },
+    {
+      "command": "Save",
+      "visible": true
+    },
+    {
+      "command": "ClipRect",
+      "visible": true,
+      "coords": [
+        -20,
+        -20,
+        389,
+        227
+      ],
+      "op": "intersect",
+      "antiAlias": true,
+      "shortDesc": " [-20 -20 389 227]"
+    },
+    {
+      "command": "Restore",
+      "visible": true
+    },
+    {
+      "command": "Restore",
+      "visible": true
+    },
+    {
+      "command": "Restore",
+      "visible": true
+    },
+    {
+      "command": "Restore",
+      "visible": true
+    }
+  ],
+  "dim": [
+    371,
+    208
+  ],
+  "has_save_layer": true
+}

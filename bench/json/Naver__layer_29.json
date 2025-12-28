@@ -1,0 +1,361 @@
+{
+  "version": 1,
+  "commands": [
+    {
+      "command": "DrawPaint",
+      "visible": true,
+      "paint": {
+        "color": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "blendMode": "Src"
+      }
+    },
+    {
+      "command": "Save",
+      "visible": true
+    },
+    {
+      "command": "Concat44",
+      "visible": true,
+      "matrix": [
+        [
+          1,
+          0,
+          0,
+          -1270
+        ],
+        [
+          0,
+          1,
+          0,
+          -1658
+        ],
+        [
+          0,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "command": "Save",
+      "visible": true
+    },
+    {
+      "command": "ClipRRect",
+      "visible": true,
+      "coords": [
+        [
+          1283,
+          1667,
+          1329,
+          1713
+        ],
+        [
+          23,
+          23
+        ],
+        [
+          23,
+          23
+        ],
+        [
+          23,
+          23
+        ],
+        [
+          23,
+          23
+        ]
+      ],
+      "op": "difference",
+      "antiAlias": true
+    },
+    {
+      "command": "Save",
+      "visible": true
+    },
+    {
+      "command": "Concat44",
+      "visible": true,
+      "matrix": [
+        [
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          4
+        ],
+        [
+          0,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "command": "DrawRRect",
+      "visible": true,
+      "coords": [
+        [
+          1282,
+          1666,
+          1330,
+          1714
+        ],
+        [
+          24,
+          24
+        ],
+        [
+          24,
+          24
+        ],
+        [
+          24,
+          24
+        ],
+        [
+          24,
+          24
+        ]
+      ],
+      "paint": {
+        "antiAlias": true,
+        "blur": {
+          "sigma": 4,
+          "style": "normal"
+        },
+        "colorfilter": {
+          "name": "SkBlendModeColorFilter",
+          "data": "data/0",
+          "values": {
+            "00_color": [
+              0.0588235,
+              0,
+              0,
+              0
+            ],
+            "01_uint": 5
+          }
+        }
+      }
+    },
+    {
+      "command": "Restore",
+      "visible": true
+    },
+    {
+      "command": "Restore",
+      "visible": true
+    },
+    {
+      "command": "Save",
+      "visible": true
+    },
+    {
+      "command": "ClipRRect",
+      "visible": true,
+      "coords": [
+        [
+          1282,
+          1666,
+          1330,
+          1714
+        ],
+        [
+          24,
+          24
+        ],
+        [
+          24,
+          24
+        ],
+        [
+          24,
+          24
+        ],
+        [
+          24,
+          24
+        ]
+      ],
+      "op": "intersect",
+      "antiAlias": true
+    },
+    {
+      "command": "SaveLayer",
+      "visible": true
+    },
+    {
+      "command": "DrawRect",
+      "visible": true,
+      "coords": [
+        1282,
+        1666,
+        1330,
+        1714
+      ],
+      "paint": {
+        "antiAlias": true,
+        "color": [
+          255,
+          255,
+          255,
+          255
+        ]
+      },
+      "shortDesc": " [1282 1666 1330 1714]"
+    },
+    {
+      "command": "DrawPath",
+      "visible": true,
+      "path": {
+        "dump": "path.setFillType(SkPathFillType::kInverseWinding);\npath.moveTo(1283, 1690);\npath.conicTo(1283, 1667, 1306, 1667, 0.707106769f);\npath.conicTo(1329, 1667, 1329, 1690, 0.707106769f);\npath.conicTo(1329, 1713, 1306, 1713, 0.707106769f);\npath.conicTo(1283, 1713, 1283, 1690, 0.707106769f);\npath.close();\n",
+        "fillType": "inverseWinding",
+        "verbs": [
+          {
+            "move": [
+              1283,
+              1690
+            ]
+          },
+          {
+            "conic": [
+              [
+                1283,
+                1667
+              ],
+              [
+                1306,
+                1667
+              ],
+              0.707107
+            ]
+          },
+          {
+            "conic": [
+              [
+                1329,
+                1667
+              ],
+              [
+                1329,
+                1690
+              ],
+              0.707107
+            ]
+          },
+          {
+            "conic": [
+              [
+                1329,
+                1713
+              ],
+              [
+                1306,
+                1713
+              ],
+              0.707107
+            ]
+          },
+          {
+            "conic": [
+              [
+                1283,
+                1713
+              ],
+              [
+                1283,
+                1690
+              ],
+              0.707107
+            ]
+          },
+          "close"
+        ]
+      },
+      "paint": {
+        "antiAlias": true,
+        "color": [
+          26,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "command": "Restore",
+      "visible": true
+    },
+    {
+      "command": "Restore",
+      "visible": true
+    },
+    {
+      "command": "DrawImageRect",
+      "visible": true,
+      "image": {
+        "data": "data/1"
+      },
+      "src": [
+        250,
+        702,
+        282,
+        734
+      ],
+      "dst": [
+        1298,
+        1682,
+        1314,
+        1698
+      ],
+      "sampling": {
+        "maxAniso": 0,
+        "useCubic": false,
+        "filter": 1,
+        "mipmap": 2,
+        "cubic.B": 0,
+        "cubic.C": 0
+      },
+      "paint": {
+        "antiAlias": true
+      },
+      "strict": true,
+      "shortDesc": " [1298 1682 1314 1698]"
+    },
+    {
+      "command": "Restore",
+      "visible": true
+    }
+  ],
+  "dim": [
+    70,
+    72
+  ],
+  "has_save_layer": true
+}

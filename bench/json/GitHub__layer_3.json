@@ -1,0 +1,205 @@
+{
+  "version": 1,
+  "commands": [
+    {
+      "command": "DrawPaint",
+      "visible": true,
+      "paint": {
+        "color": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "blendMode": "Src"
+      }
+    },
+    {
+      "command": "SaveLayer",
+      "visible": true,
+      "bounds": [
+        0,
+        0,
+        512,
+        256
+      ],
+      "paint": {
+        "color": [
+          204,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "command": "Save",
+      "visible": true
+    },
+    {
+      "command": "ClipRect",
+      "visible": true,
+      "coords": [
+        0,
+        0,
+        512,
+        256
+      ],
+      "op": "intersect",
+      "antiAlias": true,
+      "shortDesc": " [0 0 512 256]"
+    },
+    {
+      "command": "Save",
+      "visible": true
+    },
+    {
+      "command": "ClipRect",
+      "visible": true,
+      "coords": [
+        0,
+        0,
+        512,
+        256
+      ],
+      "op": "intersect",
+      "antiAlias": true,
+      "shortDesc": " [0 0 512 256]"
+    },
+    {
+      "command": "DrawImageRect",
+      "visible": true,
+      "image": {
+        "data": "data/0"
+      },
+      "src": [
+        0,
+        0,
+        933.333,
+        666.667
+      ],
+      "dst": [
+        0,
+        0,
+        512,
+        256
+      ],
+      "sampling": {
+        "maxAniso": 0,
+        "useCubic": false,
+        "filter": 1,
+        "mipmap": 2,
+        "cubic.B": 0,
+        "cubic.C": 0
+      },
+      "paint": {
+        "antiAlias": true
+      },
+      "strict": true,
+      "shortDesc": " [0 0 512 256]"
+    },
+    {
+      "command": "DrawImageRect",
+      "visible": true,
+      "image": {
+        "data": "data/1"
+      },
+      "src": [
+        274.377,
+        8.95182,
+        1207.71,
+        675.619
+      ],
+      "dst": [
+        0,
+        0,
+        512,
+        256
+      ],
+      "sampling": {
+        "maxAniso": 0,
+        "useCubic": false,
+        "filter": 1,
+        "mipmap": 2,
+        "cubic.B": 0,
+        "cubic.C": 0
+      },
+      "paint": {
+        "antiAlias": true,
+        "color": [
+          225,
+          0,
+          0,
+          0
+        ]
+      },
+      "strict": true,
+      "shortDesc": " [0 0 512 256]"
+    },
+    {
+      "command": "Restore",
+      "visible": true
+    },
+    {
+      "command": "Restore",
+      "visible": true
+    },
+    {
+      "command": "SaveLayer",
+      "visible": true,
+      "bounds": [
+        0,
+        0,
+        512,
+        256
+      ],
+      "paint": {
+        "blendMode": "DstIn"
+      }
+    },
+    {
+      "command": "DrawImageRect",
+      "visible": true,
+      "image": {
+        "data": "data/2"
+      },
+      "src": [
+        0,
+        0,
+        1025,
+        374
+      ],
+      "dst": [
+        0,
+        0,
+        512,
+        187
+      ],
+      "sampling": {
+        "maxAniso": 0,
+        "useCubic": false,
+        "filter": 1,
+        "mipmap": 2,
+        "cubic.B": 0,
+        "cubic.C": 0
+      },
+      "paint": {
+        "antiAlias": true
+      },
+      "shortDesc": " [0 0 512 187]"
+    },
+    {
+      "command": "Restore",
+      "visible": true
+    },
+    {
+      "command": "Restore",
+      "visible": true
+    }
+  ],
+  "dim": [
+    512,
+    256
+  ],
+  "has_save_layer": true
+}

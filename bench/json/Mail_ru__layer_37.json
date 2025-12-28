@@ -1,0 +1,218 @@
+{
+  "version": 1,
+  "commands": [
+    {
+      "command": "DrawPaint",
+      "visible": true,
+      "paint": {
+        "color": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "blendMode": "Src"
+      }
+    },
+    {
+      "command": "Save",
+      "visible": true
+    },
+    {
+      "command": "Concat44",
+      "visible": true,
+      "matrix": [
+        [
+          1,
+          0,
+          0,
+          -756
+        ],
+        [
+          0,
+          1,
+          0,
+          -3602
+        ],
+        [
+          0,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "command": "Save",
+      "visible": true
+    },
+    {
+      "command": "ClipRect",
+      "visible": true,
+      "coords": [
+        824,
+        3606,
+        1081,
+        3638
+      ],
+      "op": "intersect",
+      "antiAlias": true,
+      "shortDesc": " [824 3606 1081 3638]"
+    },
+    {
+      "command": "Save",
+      "visible": true
+    },
+    {
+      "command": "ClipRRect",
+      "visible": true,
+      "coords": [
+        [
+          824,
+          3606,
+          856,
+          3638
+        ],
+        [
+          16,
+          16
+        ],
+        [
+          16,
+          16
+        ],
+        [
+          16,
+          16
+        ],
+        [
+          16,
+          16
+        ]
+      ],
+      "op": "intersect",
+      "antiAlias": true
+    },
+    {
+      "command": "SaveLayer",
+      "visible": true
+    },
+    {
+      "command": "DrawRect",
+      "visible": true,
+      "coords": [
+        824,
+        3606,
+        856,
+        3638
+      ],
+      "paint": {
+        "antiAlias": true,
+        "color": [
+          255,
+          248,
+          248,
+          248
+        ]
+      },
+      "shortDesc": " [824 3606 856 3638]"
+    },
+    {
+      "command": "DrawImageRect",
+      "visible": true,
+      "image": {
+        "data": "data/0"
+      },
+      "src": [
+        0,
+        0,
+        312,
+        312
+      ],
+      "dst": [
+        824,
+        3606,
+        856,
+        3638
+      ],
+      "sampling": {
+        "maxAniso": 0,
+        "useCubic": false,
+        "filter": 1,
+        "mipmap": 2,
+        "cubic.B": 0,
+        "cubic.C": 0
+      },
+      "paint": {
+        "antiAlias": true
+      },
+      "shortDesc": " [824 3606 856 3638]"
+    },
+    {
+      "command": "Restore",
+      "visible": true
+    },
+    {
+      "command": "Restore",
+      "visible": true
+    },
+    {
+      "command": "DrawRRect",
+      "visible": true,
+      "coords": [
+        [
+          824.5,
+          3606.5,
+          855.5,
+          3637.5
+        ],
+        [
+          15.5,
+          15.5
+        ],
+        [
+          15.5,
+          15.5
+        ],
+        [
+          15.5,
+          15.5
+        ],
+        [
+          15.5,
+          15.5
+        ]
+      ],
+      "paint": {
+        "strokeWidth": 1,
+        "antiAlias": true,
+        "color": [
+          31,
+          0,
+          16,
+          61
+        ],
+        "style": "stroke"
+      }
+    },
+    {
+      "command": "Restore",
+      "visible": true
+    },
+    {
+      "command": "Restore",
+      "visible": true
+    }
+  ],
+  "dim": [
+    482,
+    40
+  ],
+  "has_save_layer": true
+}

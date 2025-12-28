@@ -1,0 +1,109 @@
+{
+  "version": 1,
+  "commands": [
+    {
+      "command": "DrawPaint",
+      "visible": true,
+      "paint": {
+        "color": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "blendMode": "Src"
+      }
+    },
+    {
+      "command": "Save",
+      "visible": true
+    },
+    {
+      "command": "Concat44",
+      "visible": true,
+      "matrix": [
+        [
+          1,
+          0,
+          0,
+          30
+        ],
+        [
+          0,
+          1,
+          0,
+          30
+        ],
+        [
+          0,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "command": "SaveLayer",
+      "visible": true,
+      "bounds": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "paint": {
+        "imagefilter": {
+          "name": "SkBlurImageFilter",
+          "data": "data/0",
+          "values": {
+            "00_int": 1,
+            "01_bool": false,
+            "02_scalar": 10,
+            "03_scalar": 10,
+            "04_int": 3
+          }
+        }
+      }
+    },
+    {
+      "command": "Save",
+      "visible": true
+    },
+    {
+      "command": "ClipRect",
+      "visible": true,
+      "coords": [
+        0,
+        0,
+        1160,
+        300
+      ],
+      "op": "intersect",
+      "antiAlias": true,
+      "shortDesc": " [0 0 1160 300]"
+    },
+    {
+      "command": "Restore",
+      "visible": true
+    },
+    {
+      "command": "Restore",
+      "visible": true
+    },
+    {
+      "command": "Restore",
+      "visible": true
+    }
+  ],
+  "dim": [
+    1220,
+    360
+  ],
+  "has_save_layer": true
+}
