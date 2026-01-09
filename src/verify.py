@@ -30,6 +30,7 @@ def verify_color_filter(colorfilter: dict):
             assert '01_uint' in colorfilter['values']  # blend mode
 
         case 'SkRuntimeColorFilter':
+            assert False, "Searching for luma filter"
             # 00_int -> stable key (figure this out)
             # 01_string -> the runtime function (exists only if 00_int is 0)
             # 02_bytearray -> funiforms
