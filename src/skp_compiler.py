@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import Any, Literal, Optional
 
 import numpy as np
-import skia  # pyrefly: ignore
+import skia  # ty: ignore
 
 from lambda_skia import (
     BlendMode,

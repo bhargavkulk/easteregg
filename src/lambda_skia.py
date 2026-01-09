@@ -1,7 +1,7 @@
 from dataclasses import dataclass, fields
 from typing import Any, Literal, Self, override
 
-import skia  # pyrefly: ignore
+import skia  # ty: ignore
 
 
 @dataclass

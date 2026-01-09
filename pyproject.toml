@@ -31,16 +31,8 @@ skia-python = [
   { path = "./skia_python-138.0rc1-cp312-cp312-manylinux_2_28_x86_64.whl", marker = "sys_platform == 'linux'" },
 ]
 
-[tool.pyrefly]
-project-includes = ["**/*"]
-project-excludes = [
-    "**/node_modules",
-    "**/__pycache__",
-    "**/*venv/**/*",
-]
-
 [dependency-groups]
 dev = [
-    "pyrefly>=0.28.1",
     "ruff>=0.12.8",
+    "ty>=0.0.8",
 ]
