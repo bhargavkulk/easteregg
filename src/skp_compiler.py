@@ -224,11 +224,45 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> tuple[Layer, skia.Pa
 
                 return Paint(color, blend_mode, style, color_filter, i)
 
+        def rectish_contains(inner: Geometry, outer: Geometry) -> bool:
+            return (
+                isinstance(inner, (Rect, RRect))
+                and isinstance(outer, (Rect, RRect))
+                and inner.l >= outer.l
+                and inner.t >= outer.t
+                and inner.r <= outer.r
+                and inner.b <= outer.b
+            )
+
         def push_clip(g: Geometry, op: ClipOp):
             # given g and op
             # [..., s(m, c, l, b, p)]
             # -->
             # [..., s(m, op(c, g), l, b, p)]
+            if op == 'intersect':
+                # skip redundant intersect:
+                # [..., s(m, Intersect(Intersect(c, g), g), l, b, p)]
+                # -->
+                # [..., s(m, Intersect(c, g), l, b, p)]
+                current_clip = stack[-1].clip
+                if isinstance(current_clip, Intersect):
+                    last_clip = current_clip.g2
+                    if last_clip == g:
+                        return
+
+                    if rectish_contains(last_clip, g):
+                        # [..., s(m, Intersect(Intersect(c, a), b), l, b, p)] where a ⊆ b
+                        # -->
+                        # [..., s(m, Intersect(c, a), l, b, p)]
+                        stack[-1].clip = Intersect(current_clip.g1, last_clip)
+                        return
+
+                    if rectish_contains(g, last_clip):
+                        # [..., s(m, Intersect(Intersect(c, b), a), l, b, p)] where b ⊆ a
+                        # -->
+                        # [..., s(m, Intersect(c, b), l, b, p)]
+                        stack[-1].clip = Intersect(current_clip.g1, g)
+                        return
             stack[-1].clip = (Intersect if op == 'intersect' else Difference)(stack[-1].clip, g)
 
         def push_transform(m: list[float]):
