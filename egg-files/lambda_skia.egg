@@ -133,7 +133,7 @@
           paint
           clip1
           t1)
-    (Paint (Color 255 r g b) (DstIn) (Solid) (IdFilter) i2))
+    (Paint (Color 1.0 r g b) (DstIn) (Solid) (IdFilter) i2))
   (Clip bottom (Intersect shape clip1) t1)
   :ruleset opt)
 
