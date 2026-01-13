@@ -125,15 +125,3 @@
   (Draw (Empty) shape' (Paint (Color a1 r1 g1 b1) (SrcOver) st2 (IdFilter) i2) (Intersect clip shape) t)
   :ruleset opt)
 
-;; GPT produced rw potential for mailru41 : ?? : Unproven : Benchmark mailru 41,45,49
-(rewrite
-  (SaveLayer bottom
-    (Draw (Empty)
-          shape
-          paint
-          clip1
-          t1)
-    (Paint maskColor (DstIn) maskStyle (IdFilter) i2))
-  (Clip bottom (Intersect shape clip1) t1)
-  :when (AlphaOpaque paint)
-  :ruleset opt)
