@@ -179,6 +179,7 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> tuple[Layer, skia.Pa
                         'cap',
                         'strokeJoin',
                         'strokeMiter',
+                        'blur',
                     ):
                         raise NotImplementedError(key, i)
 
@@ -222,7 +223,12 @@ def compile_skp_to_lskia(commands: list[dict[str, Any]]) -> tuple[Layer, skia.Pa
 
                 blend_mode = '(' + json_paint.get('blendMode', 'SrcOver') + ')'
 
-                return Paint(color, blend_mode, style, color_filter, i)
+                if 'blur' in json_paint.keys():
+                    mask = '(BlurMask)'
+                else:
+                    mask = '(NoMask)'
+
+                return Paint(color, blend_mode, style, color_filter, i, mask)
 
         def rectish_contains(inner: Geometry, outer: Geometry) -> bool:
             return (

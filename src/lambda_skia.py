@@ -88,6 +88,8 @@ type Style = Literal['(Solid)', '(Stroke)']
 
 type Filter = Literal['(IdFilter)', '(LumaFilter)']
 
+type Mask = Literal['(NoMask)', '(BlurMask)']
+
 
 @dataclass
 class Geometry(Node):
@@ -321,6 +323,7 @@ class Paint(Node):
     style: Style
     color_filter: Filter
     index: int  # This points to the skia command that uses this paint in the skp
+    mask: Mask
 
     def pprint(self) -> str:
         return (
@@ -332,6 +335,8 @@ class Paint(Node):
             + self.style
             + ', '
             + self.color_filter
+            + ', '
+            + self.mask
             + ')'
         )
 
