@@ -21,8 +21,16 @@
   (IdFilter)
   (LumaFilter))
 
+(datatype Filter
+  (IdFilter)
+  (LumaFilter))
+
+(datatype Filter
+  (NoMask)
+  (BlurMask))
+
 (datatype SkPaint
-  (Paint Fill BlendMode Style Filter i64))
+  (Paint Fill BlendMode Style Filter i64 Mask))
 
 (datatype Geometry
   (Full)
@@ -51,45 +59,48 @@
 (ruleset simp)
 
 ;; REWRITE 1
-(rewrite (SaveLayer l (Empty) (Paint (Color 1.0 r g b) (SrcOver) style (IdFilter) i))
+(rewrite (SaveLayer l (Empty) (Paint (Color 1.0 r g b) (SrcOver) style (IdFilter) i (NoMask)))
          l
          :ruleset opt)
 
 ;; REWRITE 2
-(rewrite (SaveLayer (Empty) (Draw (Empty) g (Paint f bm st ftr i2) c t) (Paint (Color 1.0 r1 g1 b1) (SrcOver) st2 (IdFilter) i1))
-         (Draw (Empty) g (Paint f bm st ftr i2) c t)
+(rewrite (SaveLayer (Empty) (Draw (Empty) g (Paint f bm st ftr i2 (NoMask)) c t)
+                    (Paint (Color 1.0 r1 g1 b1) (SrcOver) st2 (IdFilter) i1 (NoMask)))
+         (Draw (Empty) g (Paint f bm st ftr i2 (NoMask)) c t)
          :ruleset opt)
 
 ;; REWRITE 3
 (rewrite (SaveLayer l1
-                    (Draw l2 g (Paint (Color a2 r2 g2 b2) (SrcOver) f2  ftr i2) c t)
-                    (Paint (Color 1.0 r1 g1 b1) (SrcOver) f1 (IdFilter) i1))
-         (Draw (SaveLayer l1 l2 (Paint (Color 1.0 r1 g1 b1) (SrcOver) f1 (IdFilter) i1))
+                    (Draw l2 g (Paint (Color a2 r2 g2 b2) (SrcOver) f2  ftr i2 (NoMask)) c t)
+                    (Paint (Color 1.0 r1 g1 b1) (SrcOver) f1 (IdFilter) i1 (NoMask)))
+         (Draw (SaveLayer l1 l2 (Paint (Color 1.0 r1 g1 b1) (SrcOver) f1 (IdFilter) i1 (NoMask)))
                g
-               (Paint (Color a2 r2 g2 b2) (SrcOver) f2 ftr i2) c t)
+               (Paint (Color a2 r2 g2 b2) (SrcOver) f2 ftr i2 (NoMask)) c t)
          :ruleset opt)
 
 ;; REWRITE 4
-(rewrite (Draw (Empty) e (Paint (Color 0.0 r g b) (Src) f (IdFilter) i) c t)
+(rewrite (Draw (Empty) e (Paint (Color 0.0 r g b) (Src) f (IdFilter) i (NoMask)) c t)
          (Empty)
          :ruleset simp)
 
 ;; new rewrite
 (rewrite (SaveLayer bottom
-                    (Draw (Empty) (Rect w x y z) (Paint (Color 1.0 r2 g2 b2) (SrcOver) (Solid) (IdFilter) i2) c2 t)
-                    (Paint (Color 1.0 r3 g3 b3) (DstIn) st2 (IdFilter) i3))
+                    (Draw (Empty) (Rect w x y z) (Paint (Color 1.0 r2 g2 b2) (SrcOver) (Solid) (IdFilter) i2 (NoMask))
+                          c2 t)
+                    (Paint (Color 1.0 r3 g3 b3) (DstIn) st2 (IdFilter) i3 (NoMask)))
          (Clip bottom (Intersect (Rect w x y z) c2) t)
          :ruleset opt)
 
 (rewrite (SaveLayer bottom
-                    (Draw (Empty) (RRect a b c d ulx uly urx ury lrx lry llx lly) (Paint (Color 1.0 r2 g2 b2) (SrcOver) (Solid) (IdFilter) i2) c2 t)
-                    (Paint (Color 1.0 r3 g3 b3) (DstIn) st2 (IdFilter) i3))
+                    (Draw (Empty) (RRect a b c d ulx uly urx ury lrx lry llx lly)
+                          (Paint (Color 1.0 r2 g2 b2) (SrcOver) (Solid) (IdFilter) i2 (NoMask)) c2 t)
+                    (Paint (Color 1.0 r3 g3 b3) (DstIn) st2 (IdFilter) i3 (NoMask)))
          (Clip bottom (Intersect (RRect a b c d ulx uly urx ury lrx lry llx lly) c2) t)
          :ruleset opt)
 
 (rewrite (SaveLayer bottom
-                    (Draw (Empty) (Path nm nm2) (Paint (Color 1.0 r2 g2 b2) (SrcOver) (Solid) (IdFilter) i2) c2 t)
-                    (Paint (Color 1.0 r3 g3 b3) (DstIn) st2 (IdFilter) i3))
+                    (Draw (Empty) (Path nm nm2) (Paint (Color 1.0 r2 g2 b2) (SrcOver) (Solid) (IdFilter) i2 (NoMask)) c2 t)
+                    (Paint (Color 1.0 r3 g3 b3) (DstIn) st2 (IdFilter) i3 (NoMask)))
          (Clip bottom (Intersect (Path nm nm2) c2) t)
          :ruleset opt)
 
@@ -104,20 +115,21 @@
 
 ;; Luminance masks
 (rewrite (SaveLayer (Empty)
-                    (Draw (Empty) shape (Paint (Color 1.0 1.0 1.0 1.0) (SrcOver) style (IdFilter) i1) clip transform)
-                    (Paint (Color 1.0 r g b) (SrcOver) nostyle (LumaFilter) i2))
-         (Draw (Empty) shape (Paint (Color 1.0 0.0 0.0 0.0) (SrcOver) style (IdFilter) i1) clip transform)
+                    (Draw (Empty) shape (Paint (Color 1.0 1.0 1.0 1.0) (SrcOver) style (IdFilter) i1 (NoMask))
+                          clip transform)
+                    (Paint (Color 1.0 r g b) (SrcOver) nostyle (LumaFilter) i2 (NoMask)))
+         (Draw (Empty) shape (Paint (Color 1.0 0.0 0.0 0.0) (SrcOver) style (IdFilter) i1 (NoMask)) clip transform)
          :ruleset opt)
 
 ;; Gradient Clips
-(rewrite (SaveLayer (Draw (Empty) shape (Paint (Color a r g b) (SrcOver) style (IdFilter) i1) clip transform)
-                    (Draw (Empty) shape (Paint (LinearGradient true) (SrcOver) style (IdFilter) i2) clip transform)
-                    (Paint (Color 1.0 r1 g1 b1) (DstIn) nostyle (IdFilter) i3))
-         (Draw (Empty) shape (Paint (Color a r g b) (SrcOver) style (IdFilter) i1) clip transform)
+(rewrite (SaveLayer (Draw (Empty) shape (Paint (Color a r g b) (SrcOver) style (IdFilter) i1 (NoMask)) clip transform)
+                    (Draw (Empty) shape (Paint (LinearGradient true) (SrcOver) style (IdFilter) i2 (NoMask)) clip transform)
+                    (Paint (Color 1.0 r1 g1 b1) (DstIn) nostyle (IdFilter) i3 (NoMask)))
+         (Draw (Empty) shape (Paint (Color a r g b) (SrcOver) style (IdFilter) i1 (NoMask)) clip transform)
          :ruleset opt)
 
-(rewrite (SaveLayer (Draw (Empty) shape (Paint (Color a r g b) (SrcOver) style (IdFilter) i1) clip transform)
-                    (Draw (Empty) shape (Paint (RadialGradient true) (SrcOver) style (IdFilter) i2) clip transform)
-                    (Paint (Color 1.0 r1 g1 b1) (DstIn) nostyle (IdFilter) i3))
-         (Draw (Empty) shape (Paint (Color a r g b) (SrcOver) style (IdFilter) i1) clip transform)
+(rewrite (SaveLayer (Draw (Empty) shape (Paint (Color a r g b) (SrcOver) style (IdFilter) i1 (NoMask)) clip transform)
+                    (Draw (Empty) shape (Paint (RadialGradient true) (SrcOver) style (IdFilter) i2 (NoMask)) clip transform)
+                    (Paint (Color 1.0 r1 g1 b1) (DstIn) nostyle (IdFilter) i3 (NoMask)))
+         (Draw (Empty) shape (Paint (Color a r g b) (SrcOver) style (IdFilter) i1 (NoMask)) clip transform)
          :ruleset opt)
