@@ -21,11 +21,7 @@
   (IdFilter)
   (LumaFilter))
 
-(datatype Filter
-  (IdFilter)
-  (LumaFilter))
-
-(datatype Filter
+(datatype Mask
   (NoMask)
   (BlurMask))
 
