@@ -214,6 +214,7 @@ def verify_paint(paint: dict):
                 pass
             case 'blendMode':
                 assert isinstance(value, str)
+                assert value != 'DstIn', 'searching for dsting'
                 verify_blend_mode(value)
             case 'blur':
                 # use this to make shadows, do a difference clip, to just draw the borders
