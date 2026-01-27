@@ -50,20 +50,19 @@
 (ruleset opt)
 (ruleset simp)
 
-;; REWRITE 1 - Opaque SrcOver SaveLayer is identity
+;; Opaque SrcOver SaveLayer is identity
 ;; Lean: empty_SrcOver_SaveLayer_is_Empty
 (rewrite (SaveLayer l (Empty) (Paint (Color 1.0 r g b) (SrcOver) style (IdFilter) i))
          l
          :ruleset opt)
 
-;; REWRITE 2 - SrcOver SaveLayer around lone draw is no-op
+;; SrcOver SaveLayer around lone draw is no-op
 ;; Lean: lone_draw_inside_opaque_srcover_savelayer
-(rewrite (SaveLayer (Empty) (Draw (Empty) g (Paint f bm st ftr i2) c t)
-                    (Paint (Color 1.0 r1 g1 b1) (SrcOver) st2 (IdFilter) i1))
+(rewrite (SaveLayer (Empty) (Draw (Empty) g (Paint f bm st ftr i2) c t) (Paint (Color 1.0 r1 g1 b1) (SrcOver) st2 (IdFilter) i1))
          (Draw (Empty) g (Paint f bm st ftr i2) c t)
          :ruleset opt)
 
-;; REWRITE 3 - Push SrcOver SaveLayer inside Draw
+;; Push SrcOver SaveLayer inside Draw
 ;; Lean: last_draw_inside_opaque_srcover_savelayer
 (rewrite (SaveLayer l1
                     (Draw l2 g (Paint (Color a2 r2 g2 b2) (SrcOver) f2  ftr i2) c t)
@@ -73,7 +72,7 @@
                (Paint (Color a2 r2 g2 b2) (SrcOver) f2 ftr i2) c t)
          :ruleset opt)
 
-;; REWRITE 4 - Zero-alpha Src draw is empty
+;; Zero-alpha Src draw is empty
 ;; Lean: empty_src_is_noop
 (rewrite (Draw (Empty) e (Paint (Color 0.0 r g b) (Src) f (IdFilter) i) c t)
          (Empty)
@@ -133,23 +132,9 @@
 
 ;; DstIn combines two aligned draws into masked draw (TextBlob)
 ;; Lean: dstin_into_clip2 / textblob_mask
-(rewrite
-  (SaveLayer
-    (Draw (Empty) shape    (Paint (Color a1 r1 g1 b1) (SrcOver) st1 (IdFilter) i1) clip t)
-    (Draw (Empty) shape'   (Paint (Color 1.0 r2 g2 b2) (SrcOver) st2 (IdFilter) i2) clip t)
-    (Paint (Color 1.0 r3 g3 b3) (DstIn) nostyle (IdFilter) i3))
-  (Draw (Empty) shape' (Paint (Color a1 r1 g1 b1) (SrcOver) st2 (IdFilter) i2) (Intersect clip shape) t)
-  :ruleset opt)
+(rewrite (SaveLayer (Draw (Empty) shape (Paint (Color a r g b) (SrcOver) style (IdFilter) i1) clip transform)
+                    (Draw (Empty) shape (Paint (RadialGradient true) (SrcOver) style (IdFilter) i2) clip transform)
+                    (Paint (Color 1.0 r1 g1 b1) (DstIn) nostyle (IdFilter) i3))
+         (Draw (Empty) shape (Paint (Color a r g b) (SrcOver) style (IdFilter) i1) clip transform)
+         :ruleset opt)
 
-;; Generic DstIn SaveLayer becomes clip
-;; Lean: dstin_into_clip_bottom / mailru
-(rewrite
-  (SaveLayer bottom
-    (Draw (Empty)
-          shape
-          paint
-          clip1
-          t1)
-    (Paint (Color 1.0 r g b) (DstIn) (Solid) (IdFilter) i2))
-  (Clip bottom (Intersect shape clip1) t1)
-  :ruleset opt)
