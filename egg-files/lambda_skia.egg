@@ -50,20 +50,20 @@
 (ruleset opt)
 (ruleset simp)
 
-;; Opaque SrcOver SaveLayer is identity
-;; Lean: empty_SrcOver_SaveLayer_is_Empty
+;; REWRITE 1
+;; theorem OpaqueSaveLayerEmptyLayer
 (rewrite (SaveLayer l (Empty) (Paint (Color 1.0 r g b) (SrcOver) style (IdFilter) i))
          l
          :ruleset opt)
 
-;; SrcOver SaveLayer around lone draw is no-op
-;; Lean: lone_draw_inside_opaque_srcover_savelayer
+;; REWRITE 2
+;; theorem OpaqueSaveLayerRemoveLoneDraw
 (rewrite (SaveLayer (Empty) (Draw (Empty) g (Paint f bm st ftr i2) c t) (Paint (Color 1.0 r1 g1 b1) (SrcOver) st2 (IdFilter) i1))
          (Draw (Empty) g (Paint f bm st ftr i2) c t)
          :ruleset opt)
 
-;; Push SrcOver SaveLayer inside Draw
-;; Lean: last_draw_inside_opaque_srcover_savelayer
+;; REWRITE 3
+;; theorem OpaqueSaveLayerRemoveLastDraw
 (rewrite (SaveLayer l1
                     (Draw l2 g (Paint (Color a2 r2 g2 b2) (SrcOver) f2  ftr i2) c t)
                     (Paint (Color 1.0 r1 g1 b1) (SrcOver) f1 (IdFilter) i1))
@@ -72,66 +72,66 @@
                (Paint (Color a2 r2 g2 b2) (SrcOver) f2 ftr i2) c t)
          :ruleset opt)
 
-;; Zero-alpha Src draw is empty
-;; Lean: empty_src_is_noop
+;; REWRITE 4
+;; theorem EmptySrc
 (rewrite (Draw (Empty) e (Paint (Color 0.0 r g b) (Src) f (IdFilter) i) c t)
          (Empty)
          :ruleset simp)
 
-;; DstIn SaveLayer becomes rectangular clip
-;; Lean: dstin_into_clip_bottom
+;; REWRITE 5
+;; inductive Clips
 (rewrite (SaveLayer bottom
                     (Draw (Empty) (Rect w x y z) (Paint (Color 1.0 r2 g2 b2) (SrcOver) (Solid) (IdFilter) i2) c2 t)
                     (Paint (Color 1.0 r3 g3 b3) (DstIn) st2 (IdFilter) i3))
          (Clip bottom (Intersect (Rect w x y z) c2) t)
          :ruleset opt)
 
-;; DstIn SaveLayer becomes rounded-rect clip
-;; Lean: dstin_into_clip_bottom
+;; REWRITE 6
+;; theorem MaskIntoDstin
 (rewrite (SaveLayer bottom
                     (Draw (Empty) (RRect a b c d ulx uly urx ury lrx lry llx lly) (Paint (Color 1.0 r2 g2 b2) (SrcOver) (Solid) (IdFilter) i2) c2 t)
                     (Paint (Color 1.0 r3 g3 b3) (DstIn) st2 (IdFilter) i3))
          (Clip bottom (Intersect (RRect a b c d ulx uly urx ury lrx lry llx lly) c2) t)
          :ruleset opt)
 
-;; DstIn SaveLayer becomes path clip
-;; Lean: dstin_into_clip_bottom
+;; REWRITE 7
+;; theorem SubsumeColorFilter
 (rewrite (SaveLayer bottom
                     (Draw (Empty) (Path nm nm2) (Paint (Color 1.0 r2 g2 b2) (SrcOver) (Solid) (IdFilter) i2) c2 t)
                     (Paint (Color 1.0 r3 g3 b3) (DstIn) st2 (IdFilter) i3))
          (Clip bottom (Intersect (Path nm nm2) c2) t)
          :ruleset opt)
 
-;; Clip propagation through Draw
-;; Lean: Clips.drawClip
+;; REWRITE 8
+;; theorem luma_to_diff_clip
 (rewrite (Clip (Draw bottom geo paint clip1 transform) clip2 transform)
          (Draw (Clip bottom clip2 transform) geo paint (Intersect clip1 clip2) transform)
          :ruleset opt)
 
-;; Clip of empty layer is empty
-;; Lean: Clips.emptyClip
+;; REWRITE 9
+;; theorem luma_to_diff_clip2
 (rewrite (Clip (Empty) clip transform)
          (Empty)
          :ruleset opt)
 
-;; Luminance mask normalization
-;; Lean: (luma_to_diff_clip / luma_to_diff_clip2)
+;; REWRITE 10
+;; theorem dstin_masks
 (rewrite (SaveLayer (Empty)
                     (Draw (Empty) shape (Paint (Color 1.0 1.0 1.0 1.0) (SrcOver) style (IdFilter) i1) clip transform)
                     (Paint (Color 1.0 r g b) (SrcOver) nostyle (LumaFilter) i2))
          (Draw (Empty) shape (Paint (Color 1.0 0.0 0.0 0.0) (SrcOver) style (IdFilter) i1) clip transform)
          :ruleset opt)
 
-;; Gradient DstIn mask elimination
-;; Lean: dstin_masks
+;; REWRITE 11
+;; better_masks
 (rewrite (SaveLayer (Draw (Empty) shape (Paint (Color a r g b) (SrcOver) style (IdFilter) i1) clip transform)
                     (Draw (Empty) shape (Paint (LinearGradient true) (SrcOver) style (IdFilter) i2) clip transform)
                     (Paint (Color 1.0 r1 g1 b1) (DstIn) nostyle (IdFilter) i3))
          (Draw (Empty) shape (Paint (Color a r g b) (SrcOver) style (IdFilter) i1) clip transform)
          :ruleset opt)
 
-;; DstIn combines two aligned draws into masked draw (TextBlob)
-;; Lean: dstin_into_clip2 / textblob_mask
+;; REWRITE 12
+;; theorem textblob_mask
 (rewrite (SaveLayer (Draw (Empty) shape (Paint (Color a r g b) (SrcOver) style (IdFilter) i1) clip transform)
                     (Draw (Empty) shape (Paint (RadialGradient true) (SrcOver) style (IdFilter) i2) clip transform)
                     (Paint (Color 1.0 r1 g1 b1) (DstIn) nostyle (IdFilter) i3))
