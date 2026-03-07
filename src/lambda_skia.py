@@ -1,5 +1,5 @@
 from dataclasses import dataclass, fields
-from typing import Any, Literal, Self, override
+from typing import Any, Literal, Self, assert_never, override
 
 import skia  # pyrefly: ignore
 
@@ -437,3 +437,81 @@ def pretty_print_layer(layer: Layer) -> str:
         res += '  ' * i + line + '\n'
 
     return res
+
+
+def paint_to_lean(paint: Paint, is_savelayer=False) -> str:
+    fill = ''
+
+    if is_savelayer:
+        match paint.fill:
+            case Color(a, _, _, _):
+                fill = f'Fill.pixel (Alpha {1 if a == 1.0 else a})'
+            case _:
+                fill = f'Fill.pixel (Alpha 1)'
+    else:
+        match paint.fill:
+            case Color(a, r, g, b):
+                fill = (
+                    f'Fill.pixel ⟨{1 if a == 1.0 else a}, {r * a}, {g * a}, {b * a}, by norm_num⟩'
+                )
+            case LinearGradient(is_opaque):
+                fill = 'Fill.shader (LinearGradient' + 'true' if is_opaque else 'false' + ')'
+            case RadialGradient(is_opaque):
+                fill = 'Fill.shader (RadialGradient' + 'true' if is_opaque else 'false' + ')'
+
+    blend_mode = 'BlendMode.' + paint.blend_mode[1:-1].lower()
+    style = paint.style[1:-1].lower()
+    if style == 'solid':
+        style = 'id'
+    color_filter = 'Filter.' + paint.color_filter[1:-1].lower()
+    if color_filter == 'Filter.idfilter':
+        color_filter = 'Filter.id'
+
+    return f'({fill}, {blend_mode}, {style}, {color_filter})'
+
+
+def shape_to_lean(shape: Geometry) -> str:
+    match shape:
+        case Rect(l, t, r, b):
+            return f'(Rect {l} {t} {r} {b})'
+        case Full():
+            return 'Full'
+        case Intersect(a, b):
+            return f'(intersect {shape_to_lean(a)} {shape_to_lean(b)})'
+        case RRect(a, b, c, d, e, f, g, h):
+            return f'(RRect {a} {b} {c} {d} {e} {f} {g} {h})'
+        case Path(a, b):
+            return f'(Path {b})'
+        case TextBlob(a, b, c, d, e, f):
+            return f'(TextBlob {a} {b} {c} {d} {e} {f})'
+        case _:
+            raise NotImplementedError(str(shape))
+
+
+def layer_to_lean(layer: Layer) -> str:
+    match layer:
+        case Empty():
+            return 'empty'
+        case SaveLayer(bottom, top, paint):
+            return ' '.join(
+                [
+                    '(saveLayer',
+                    layer_to_lean(bottom),
+                    layer_to_lean(top),
+                    paint_to_lean(paint, is_savelayer=True),
+                    ')',
+                ]
+            )
+        case Draw(bottom, shape, paint, clip, transform):
+            return ' '.join(
+                [
+                    '(draw',
+                    layer_to_lean(bottom),
+                    shape_to_lean(shape),
+                    paint_to_lean(paint),
+                    shape_to_lean(clip),
+                    ')',
+                ]
+            )
+        case _:
+            raise AssertionError('unreachable code')
